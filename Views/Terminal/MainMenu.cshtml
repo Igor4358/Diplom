@@ -1,0 +1,128 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Главное меню - ТСД Автопитер</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: -20px -20px 20px -20px;
+            padding: 25px 20px;
+            color: white;
+        }
+
+        .greeting {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .warehouse {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .menu-btn {
+            background: white;
+            border: none;
+            border-radius: 16px;
+            padding: 30px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .menu-btn:active {
+            transform: scale(0.96);
+            background: #f0f0f0;
+        }
+
+        .menu-icon {
+            font-size: 48px;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .menu-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .logout-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .logout-btn:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="greeting">👋 Здравствуйте, @ViewBag.UserName</div>
+        <div class="warehouse">🏭 Текущий склад: @ViewBag.WarehouseId</div>
+    </div>
+
+    <div class="menu-grid">
+        <button class="menu-btn" onclick="location.href='/Terminal/PickingOrders'">
+            <span class="menu-icon">📦</span>
+            <span class="menu-title">Сбор заказов</span>
+        </button>
+
+        <button class="menu-btn" onclick="location.href='/Terminal/Receiving'">
+            <span class="menu-icon">📥</span>
+            <span class="menu-title">Приёмка товара</span>
+        </button>
+
+        <button class="menu-btn" onclick="location.href='/Terminal/Sorting'">
+            <span class="menu-icon">📍</span>
+            <span class="menu-title">Сортировка</span>
+        </button>
+
+        <button class="menu-btn" onclick="location.href='/Terminal/FindObject'">
+            <span class="menu-icon">🔍</span>
+            <span class="menu-title">Поиск объекта</span>
+        </button>
+    </div>
+
+    <button class="logout-btn" onclick="location.href='/Terminal/Logout'">
+        🚪 Выход
+    </button>
+</body>
+</html>

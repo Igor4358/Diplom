@@ -1,0 +1,123 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Сканирование ячейки - ТСД Автопитер</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .expected {
+            background: #f0f0f0;
+            padding: 20px;
+            border-radius: 16px;
+            margin: 20px 0;
+        }
+
+        .label {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        input {
+            width: 100%;
+            padding: 20px;
+            font-size: 24px;
+            text-align: center;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .back-btn {
+            background: #999;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h2>🔍 Отсканируйте ячейку</h2>
+
+            <div class="expected">
+                <div class="label">Ожидается ячейка</div>
+                <div class="value">@ViewBag.ExpectedCell</div>
+                <div class="label" style="margin-top:10px">Товар: @ViewBag.ProductName</div>
+            </div>
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="error">❌ @ViewBag.Error</div>
+            }
+
+            <form method="post">
+                <input type="hidden" name="taskId" value="@ViewBag.TaskId">
+                <input type="text" name="scannedCell" id="scannedCell" placeholder="Штрих-код ячейки" autofocus>
+                <button type="submit">Подтвердить</button>
+            </form>
+
+            <button class="back-btn" onclick="history.back()">← Назад</button>
+        </div>
+    </div>
+    <script>
+        document.getElementById('scannedCell')?.focus();
+    </script>
+</body>
+</html>

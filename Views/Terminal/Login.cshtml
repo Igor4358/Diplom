@@ -1,0 +1,172 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Авторизация - ТСД Автопитер</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .pin-input {
+            width: 100%;
+            padding: 20px;
+            font-size: 32px;
+            text-align: center;
+            letter-spacing: 10px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .pin-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            font-size: 20px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        /* Клавиатура для ТСД */
+        .numpad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .numpad button {
+            background: #f0f0f0;
+            color: #333;
+            font-size: 24px;
+            padding: 15px;
+        }
+
+        .numpad button:active {
+            background: #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>🚚 ТСД Автопитер</h1>
+        <div class="subtitle">Введите PIN-код для входа</div>
+
+        @if (ViewBag.Error != null)
+        {
+                <div class="error">@ViewBag.Error</div>
+        }
+
+        <form method="post" id="loginForm">
+            <input type="password" 
+                   name="pinCode" 
+                   id="pinCode" 
+                   class="pin-input" 
+                   maxlength="4" 
+                   pattern="[0-9]*" 
+                   inputmode="numeric"
+                   autofocus>
+            <button type="submit">Войти</button>
+        </form>
+
+        <!-- Цифровая клавиатура для удобства на ТСД -->
+        <div class="numpad">
+            <button type="button" onclick="addDigit('1')">1</button>
+            <button type="button" onclick="addDigit('2')">2</button>
+            <button type="button" onclick="addDigit('3')">3</button>
+            <button type="button" onclick="addDigit('4')">4</button>
+            <button type="button" onclick="addDigit('5')">5</button>
+            <button type="button" onclick="addDigit('6')">6</button>
+            <button type="button" onclick="addDigit('7')">7</button>
+            <button type="button" onclick="addDigit('8')">8</button>
+            <button type="button" onclick="addDigit('9')">9</button>
+            <button type="button" onclick="clearDigit()">⌫</button>
+            <button type="button" onclick="addDigit('0')">0</button>
+            <button type="button" onclick="submitForm()">✓</button>
+        </div>
+    </div>
+
+    <script>
+        function addDigit(digit) {
+            const input = document.getElementById('pinCode');
+            if (input.value.length < 4) {
+                input.value += digit;
+            }
+            if (input.value.length === 4) {
+                document.getElementById('loginForm').submit();
+            }
+        }
+
+        function clearDigit() {
+            const input = document.getElementById('pinCode');
+            input.value = input.value.slice(0, -1);
+        }
+
+        function submitForm() {
+            document.getElementById('loginForm').submit();
+        }
+    </script>
+</body>
+</html>

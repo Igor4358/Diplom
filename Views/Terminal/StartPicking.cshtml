@@ -1,0 +1,137 @@
+﻿@{
+    Layout = null;
+}
+@model List<WMS.Terminal.Models.PickingTask>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Сборка заказа - ТСД Автопитер</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: -20px -20px 20px -20px;
+            padding: 20px;
+            color: white;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            color: white;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .task-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .cell {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .product-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .product-sku {
+            color: #999;
+            font-size: 12px;
+            margin: 5px 0;
+        }
+
+        .qty {
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .pick-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 15px;
+            width: 100%;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .completed {
+            opacity: 0.6;
+            background: #e0e0e0;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #4caf50;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="back-btn" onclick="location.href='/Terminal/PickingOrders'">← Назад</button>
+        <h1>📦 Сборка заказа</h1>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        foreach (var task in Model)
+        {
+            <div class="task-card @(task.Status == "Completed" ? "completed" : "")">
+                <div class="cell">📍 Ячейка: @(task.Cell?.Address ?? "не указана")</div>
+                <div class="product-name">@(task.Product?.Name ?? "неизвестный товар")</div>
+                <div class="product-sku">Артикул: @(task.Product?.Sku ?? "---")</div>
+                <div class="qty">Количество: @task.RequiredQuantity шт</div>
+                @if (task.Status == "Completed")
+                {
+                    <div class="badge">✓ Собрано</div>
+                }
+                else
+                {
+                    <button class="pick-btn" onclick="location.href='/Terminal/ScanCell?taskId=@task.Id'">
+                        🔘 Собрать
+                    </button>
+                }
+            </div>
+        }
+    }
+    else
+    {
+        <div style="text-align: center; padding: 50px; background: white; border-radius: 16px;">
+            📭 Нет позиций для сборки
+        </div>
+    }
+</body>
+</html>

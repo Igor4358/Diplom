@@ -1,0 +1,372 @@
+﻿@{
+    Layout = null;
+}
+@model List<WMS.Terminal.Models.Cell>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Выбор ячейки - ТСД Автопитер</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .product-info {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 16px;
+            margin: 15px 0;
+        }
+
+        .hint {
+            background: #fff3cd;
+            color: #856404;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+            .hint:before {
+                content: "⚠️";
+            }
+
+        .cell-list {
+            margin: 20px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .cell-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 8px 0;
+            background: #f8f9fa;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+            .cell-btn:active {
+                background: #e0e0e0;
+                transform: scale(0.98);
+            }
+
+            .cell-btn.selected {
+                background: #28a745;
+                color: white;
+                border-color: #28a745;
+                position: relative;
+            }
+
+                .cell-btn.selected:after {
+                    content: " ✓";
+                    font-size: 20px;
+                }
+
+        .qty-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 24px;
+            text-align: center;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            margin: 15px 0;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: transform 0.1s;
+        }
+
+            .submit-btn:active {
+                transform: scale(0.98);
+            }
+
+            .submit-btn:disabled {
+                background: #ccc;
+                cursor: not-allowed;
+            }
+
+        .back-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .pulse-animation {
+            animation: pulse 0.5s ease;
+        }
+
+        @@-webkit-keyframes pulse {
+            0% {
+                transform: scale(1);
+                background: #f8f9fa;
+            }
+
+            50% {
+                transform: scale(1.02);
+                background: #ffeaa7;
+            }
+
+            100% {
+                transform: scale(1);
+                background: #f8f9fa;
+            }
+        }
+
+        @@keyframes pulse {
+            0% {
+                transform: scale(1);
+                background: #f8f9fa;
+            }
+
+            50% {
+                transform: scale(1.02);
+                background: #ffeaa7;
+            }
+
+            100% {
+                transform: scale(1);
+                background: #f8f9fa;
+            }
+        }
+
+        @@-webkit-keyframes fadeInOut {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+
+            15% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            85% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+        }
+
+        @@keyframes fadeInOut {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+
+            15% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            85% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h2>📍 Размещение товара</h2>
+
+            <div class="product-info">
+                <strong>@ViewBag.ProductName</strong><br>
+                Артикул: @ViewBag.ProductSku
+            </div>
+
+            <div class="hint">
+                Нажмите на ячейку, чтобы выбрать
+            </div>
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="error">❌ @ViewBag.Error</div>
+            }
+
+            <form method="post" id="placementForm" action="/Terminal/ConfirmReceiving">
+                @Html.AntiForgeryToken()
+
+                <div class="cell-list" id="cellList">
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var cell in Model)
+                        {
+                            <button type="button" class="cell-btn" data-cell-id="@cell.Id" data-cell-addr="@cell.Address">
+                                📦 Ячейка @cell.Address
+                            </button>
+                        }
+                    }
+                    else
+                    {
+                        <div style="color: #999; padding: 20px; text-align: center;">
+                            🏭 Нет доступных ячеек на складе
+                        </div>
+                    }
+                </div>
+
+                <input type="number" name="quantity" id="quantity" class="qty-input" placeholder="Количество" value="1" min="1" required>
+                <input type="hidden" name="cellId" id="selectedCellId" value="">
+
+                <button type="button" class="submit-btn" id="submitBtn">✅ Подтвердить размещение</button>
+            </form>
+
+            <button class="back-btn" onclick="location.href='/Terminal/Receiving'">← Назад</button>
+        </div>
+    </div>
+
+    <script>
+        let selectedCellId = null;
+        let selectedCellAddr = null;
+
+        const submitBtn = document.getElementById('submitBtn');
+        const selectedCellIdInput = document.getElementById('selectedCellId');
+        const quantityInput = document.getElementById('quantity');
+        const form = document.getElementById('placementForm');
+
+        function showAlert(message, isError) {
+            var alertDiv = document.createElement('div');
+            alertDiv.textContent = message;
+            var bgColor = isError ? '#c33' : '#28a745';
+            alertDiv.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: ' + bgColor + '; color: white; padding: 20px 30px; border-radius: 16px; font-size: 20px; font-weight: bold; z-index: 1000; box-shadow: 0 10px 40px rgba(0,0,0,0.3); text-align: center; min-width: 250px; animation: fadeInOut 1.5s ease;';
+            document.body.appendChild(alertDiv);
+            setTimeout(function() { alertDiv.remove(); }, 1500);
+        }
+
+        function highlightCellList() {
+            var cellList = document.getElementById('cellList');
+            cellList.classList.add('pulse-animation');
+            setTimeout(function() { cellList.classList.remove('pulse-animation'); }, 500);
+            var firstCell = document.querySelector('.cell-btn');
+            if (firstCell) {
+                firstCell.style.transition = '0.2s';
+                firstCell.style.backgroundColor = '#ffeaa7';
+                setTimeout(function() { firstCell.style.backgroundColor = ''; }, 500);
+            }
+        }
+
+        document.querySelectorAll('.cell-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.cell-btn').forEach(function(b) { b.classList.remove('selected'); });
+                this.classList.add('selected');
+                selectedCellId = this.getAttribute('data-cell-id');
+                selectedCellAddr = this.getAttribute('data-cell-addr');
+                selectedCellIdInput.value = selectedCellId;
+                submitBtn.style.background = "linear-gradient(135deg, #28a745 0%, #20c997 100%)";
+                showAlert('Выбрана ячейка ' + selectedCellAddr, false);
+            });
+        });
+
+        submitBtn.addEventListener('click', function() {
+            if (!selectedCellId) {
+                showAlert('Сначала выберите ячейку! Нажмите на одну из ячеек выше.', true);
+                highlightCellList();
+                return;
+            }
+            var quantity = quantityInput.value;
+            if (!quantity || quantity < 1) {
+                showAlert('Введите корректное количество (минимум 1)', true);
+                quantityInput.focus();
+                return;
+            }
+            form.submit();
+        });
+
+        quantityInput.focus();
+
+        quantityInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (!selectedCellId) {
+                    showAlert('Сначала выберите ячейку!', true);
+                    highlightCellList();
+                } else {
+                    form.submit();
+                }
+            }
+        });
+
+        @if (Model == null || !Model.Any())
+        {
+            <text>
+                submitBtn.disabled = true;
+                submitBtn.style.background = "#ccc";
+                showAlert("Нет доступных ячеек на складе", true);
+            </text>
+        }
+    </script>
+</body>
+</html>

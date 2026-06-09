@@ -1,0 +1,221 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Поиск объекта - ТСД Автопитер</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 20px;
+            font-size: 24px;
+            text-align: center;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .back-btn {
+            background: #999;
+            margin-top: 10px;
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            text-align: left;
+        }
+
+        .result-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .info-row {
+            display: flex;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .info-label {
+            width: 120px;
+            font-weight: bold;
+            color: #666;
+        }
+
+        .info-value {
+            flex: 1;
+            color: #333;
+        }
+
+        .product-list {
+            margin-top: 15px;
+        }
+
+        .product-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        .product-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .product-sku {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #4caf50;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h2>🔍 Поиск объекта</h2>
+
+            <form method="post">
+                <input type="text" name="searchQuery" id="searchQuery" placeholder="Артикул товара или адрес ячейки" autofocus>
+                <button type="submit">Искать</button>
+            </form>
+
+            <button class="back-btn" onclick="location.href='/Terminal/MainMenu'">← Главное меню</button>
+        </div>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="card error" style="background:#fee; color:#c33;">❌ @ViewBag.Error</div>
+        }
+
+        @if (ViewBag.ResultType == "product")
+        {
+            <div class="result-card">
+                <div class="result-title">📦 Товар найден</div>
+                <div class="info-row">
+                    <div class="info-label">Наименование:</div>
+                    <div class="info-value">@ViewBag.ProductName</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Артикул:</div>
+                    <div class="info-value">@ViewBag.ProductSku</div>
+                </div>
+                @if (!string.IsNullOrEmpty(ViewBag.ProductDescription))
+                {
+                    <div class="info-row">
+                        <div class="info-label">Описание:</div>
+                        <div class="info-value">@ViewBag.ProductDescription</div>
+                    </div>
+                }
+                <div class="info-row">
+                    <div class="info-label">Местоположение:</div>
+                    <div class="info-value"><strong>📍 @ViewBag.CellAddress</strong></div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Количество:</div>
+                    <div class="info-value">@ViewBag.Quantity шт</div>
+                </div>
+            </div>
+        }
+
+        @if (ViewBag.ResultType == "cell")
+        {
+            <div class="result-card">
+                <div class="result-title">📍 Ячейка @ViewBag.CellAddress</div>
+
+                @if (((IEnumerable<dynamic>)ViewBag.Products).Any())
+                {
+                    <div class="product-list">
+                        <div style="margin-bottom: 10px; font-weight: bold;">Содержимое:</div>
+                        @foreach (var item in ViewBag.Products)
+                        {
+                            <div class="product-item">
+                                <div class="product-name">@item.Product.Name</div>
+                                <div class="product-sku">Артикул: @item.Product.Sku</div>
+                                <div class="badge">@item.Quantity шт</div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div style="text-align: center; padding: 20px; color: #999;">
+                        📭 Ячейка пуста
+                    </div>
+                }
+            </div>
+        }
+    </div>
+    <script>
+        document.getElementById('searchQuery')?.focus();
+    </script>
+</body>
+</html>
