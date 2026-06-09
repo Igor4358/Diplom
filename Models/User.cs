@@ -13,7 +13,7 @@ namespace WMS.Terminal.Models
 
         [Required]
         [MaxLength(10)]
-        public string PinCode { get; set; } = string.Empty;  // В реальном проекте хэшируйте!
+        public string PinCode { get; set; } = string.Empty;  
 
         public int CurrentWarehouseId { get; set; }
 
