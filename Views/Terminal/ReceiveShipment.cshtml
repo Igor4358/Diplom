@@ -1,0 +1,164 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Приёмка товара - ТСД Автопитер</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .info {
+            background: #f0f0f0;
+            padding: 20px;
+            border-radius: 16px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 20px;
+            font-size: 24px;
+            text-align: center;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .numpad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+            .numpad button {
+                background: #f0f0f0;
+                color: #333;
+                font-size: 24px;
+            }
+
+        .remaining {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h2>📥 Сканируйте товар</h2>
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="success">✅ @TempData["Success"]</div>
+            }
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="error">❌ @ViewBag.Error</div>
+            }
+
+            <div class="info">
+                <div><strong>📦 Товар:</strong> @ViewBag.ProductName</div>
+                <div><strong>📊 Ожидается:</strong> @ViewBag.ExpectedQuantity шт</div>
+                <div><strong>✅ Уже принято:</strong> @ViewBag.ReceivedQuantity шт</div>
+                <div><strong>⏳ Осталось принять:</strong> <span class="remaining">@ViewBag.RemainingQuantity шт</span></div>
+            </div>
+
+            <form method="post" id="receiveForm">
+                <input type="text" name="scannedSku" id="scannedSku" placeholder="Отсканируйте штрих-код" autofocus>
+                <input type="number" name="receivedQuantity" id="quantity" placeholder="Количество" value="1" min="1" max="@ViewBag.RemainingQuantity">
+                <button type="submit">Подтвердить приёмку</button>
+            </form>
+
+            <div class="numpad">
+                <button type="button" onclick="addDigit('1')">1</button>
+                <button type="button" onclick="addDigit('2')">2</button>
+                <button type="button" onclick="addDigit('3')">3</button>
+                <button type="button" onclick="addDigit('4')">4</button>
+                <button type="button" onclick="addDigit('5')">5</button>
+                <button type="button" onclick="addDigit('6')">6</button>
+                <button type="button" onclick="addDigit('7')">7</button>
+                <button type="button" onclick="addDigit('8')">8</button>
+                <button type="button" onclick="addDigit('9')">9</button>
+                <button type="button" onclick="clearDigit()">⌫</button>
+                <button type="button" onclick="addDigit('0')">0</button>
+                <button type="button" onclick="submitForm()">✓</button>
+            </div>
+        </div>
+
+        <button class="back-btn" style="background:#999; margin-top:10px;" onclick="location.href='/Terminal/ReceiveByInvoice'">← Назад к накладным</button>
+    </div>
+
+    <script>
+        const qtyInput = document.getElementById('quantity');
+        const maxQty = @ViewBag.RemainingQuantity;
+
+        function addDigit(d) {
+            if (qtyInput.value === '0') qtyInput.value = d;
+            else qtyInput.value = qtyInput.value + d;
+            if (parseInt(qtyInput.value) > maxQty) qtyInput.value = maxQty;
+        }
+        function clearDigit() { qtyInput.value = qtyInput.value.slice(0, -1) || '1'; }
+        function submitForm() { document.getElementById('receiveForm').submit(); }
+
+        document.getElementById('scannedSku')?.focus();
+    </script>
+</body>
+</html>

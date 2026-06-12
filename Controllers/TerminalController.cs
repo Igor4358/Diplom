@@ -113,6 +113,31 @@ namespace WMS.Terminal.Controllers
             ViewBag.WarehouseId = warehouseName ?? (warehouseId?.ToString() ?? "не выбран");
             return View();
         }
+        // Список всех товаров на складе
+        [HttpGet]
+        public async Task<IActionResult> AllProducts(string search = "")
+        {
+            var warehouseId = HttpContext.Session.GetInt32("WarehouseId");
+            if (warehouseId == null) return RedirectToAction("SelectWarehouse");
+
+            var stocks = await _db.Stocks
+                .Include(s => s.Product)
+                .Include(s => s.Cell)
+                .Where(s => s.Cell != null && s.Cell.WarehouseId == warehouseId && s.Quantity > 0)
+                .ToListAsync();
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                stocks = stocks.Where(s =>
+                    s.Product!.Name.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                    s.Product!.Sku.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                    s.Cell!.Address.Contains(search, StringComparison.OrdinalIgnoreCase)
+                ).ToList();
+            }
+
+            ViewBag.Search = search;
+            return View(stocks);
+        }
 
         // Выход (разлогин)
         [HttpGet]
@@ -179,6 +204,22 @@ namespace WMS.Terminal.Controllers
             HttpContext.Session.SetInt32("CurrentOrderId", orderId);
 
             return View(tasks);
+        }
+
+        // Список ожидаемых поставок
+        [HttpGet]
+        public async Task<IActionResult> ExpectedShipments()
+        {
+            var warehouseId = HttpContext.Session.GetInt32("WarehouseId");
+            if (warehouseId == null) return RedirectToAction("SelectWarehouse");
+
+            var shipments = await _db.ExpectedShipments
+                .Include(s => s.Product)
+                .Where(s => s.Status != "Completed")
+                .OrderBy(s => s.ExpectedDate)
+                .ToListAsync();
+
+            return View(shipments);
         }
 
         // Сканирование ячейки (первый шаг сборки)
@@ -312,7 +353,20 @@ namespace WMS.Terminal.Controllers
 
             return View();
         }
+        // История операций (логирование)
+        [HttpGet]
+        public async Task<IActionResult> OperationLogs()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return RedirectToAction("Login");
 
+            var logs = await _db.OperationLogs
+                .OrderByDescending(l => l.CreatedAt)
+                .Take(100)  // Последние 100 записей
+                .ToListAsync();
+
+            return View(logs);
+        }
         // Обработка сканирования товара при приёмке
         [HttpPost]
         public async Task<IActionResult> Receiving(string scannedSku)
@@ -343,7 +397,163 @@ namespace WMS.Terminal.Controllers
             // Переходим к выбору ячейки
             return RedirectToAction("SelectCellForReceiving");
         }
+        // Приёмка по накладной (выбор накладной)
+        [HttpGet]
+        public async Task<IActionResult> ReceiveByInvoice()
+        {
+            var warehouseId = HttpContext.Session.GetInt32("WarehouseId");
+            if (warehouseId == null) return RedirectToAction("SelectWarehouse");
 
+            var shipments = await _db.ExpectedShipments
+                .Include(s => s.Product)
+                .Where(s => s.WarehouseId == warehouseId && s.Status != "Completed")
+                .OrderBy(s => s.ExpectedDate)
+                .ToListAsync();
+            // Добавьте эту строку для отладки:
+            Console.WriteLine($"Найдено накладных для склада {warehouseId}: {shipments.Count}");
+
+            return View(shipments);
+        }
+
+        // Выбрали накладную - начинаем приёмку
+        [HttpGet]
+        public async Task<IActionResult> ReceiveShipment(int shipmentId)
+        {
+            var warehouseId = HttpContext.Session.GetInt32("WarehouseId");
+            if (warehouseId == null) return RedirectToAction("SelectWarehouse");
+
+            var shipment = await _db.ExpectedShipments
+                .Include(s => s.Product)
+                .FirstOrDefaultAsync(s => s.Id == shipmentId && s.WarehouseId == warehouseId);
+
+            if (shipment == null) return NotFound();
+
+            HttpContext.Session.SetInt32("CurrentShipmentId", shipment.Id);
+            HttpContext.Session.SetInt32("ShipmentProductId", shipment.ProductId);
+            HttpContext.Session.SetString("ShipmentProductName", shipment.Product?.Name);
+            HttpContext.Session.SetInt32("ShipmentExpectedQty", shipment.ExpectedQuantity);
+            HttpContext.Session.SetInt32("ShipmentReceivedQty", shipment.ReceivedQuantity);
+
+            ViewBag.ProductName = shipment.Product?.Name;
+            ViewBag.ExpectedQuantity = shipment.ExpectedQuantity;
+            ViewBag.ReceivedQuantity = shipment.ReceivedQuantity;
+            ViewBag.RemainingQuantity = shipment.ExpectedQuantity - shipment.ReceivedQuantity;
+
+            return View();
+        }
+
+        // Сканирование товара и ввод количества для приёмки
+        [HttpPost]
+        public async Task<IActionResult> ReceiveShipment(string scannedSku, int receivedQuantity)
+        {
+            var shipmentId = HttpContext.Session.GetInt32("CurrentShipmentId");
+            var productId = HttpContext.Session.GetInt32("ShipmentProductId");
+            var productName = HttpContext.Session.GetString("ShipmentProductName");
+            var expectedQty = HttpContext.Session.GetInt32("ShipmentExpectedQty") ?? 0;
+            var receivedSoFar = HttpContext.Session.GetInt32("ShipmentReceivedQty") ?? 0;
+            var warehouseId = HttpContext.Session.GetInt32("WarehouseId");
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var userName = HttpContext.Session.GetString("UserName");
+
+            if (shipmentId == null || productId == null) return RedirectToAction("ReceiveByInvoice");
+            if (warehouseId == null) return RedirectToAction("SelectWarehouse");
+
+            // Проверяем, что сканируют правильный товар
+            var product = await _db.Products.FirstOrDefaultAsync(p => p.Sku == scannedSku);
+            if (product == null || product.Id != productId)
+            {
+                ViewBag.Error = $"Неверный товар! Ожидается: {productName}";
+                ViewBag.ProductName = productName;
+                ViewBag.ExpectedQuantity = expectedQty;
+                ViewBag.ReceivedQuantity = receivedSoFar;
+                ViewBag.RemainingQuantity = expectedQty - receivedSoFar;
+                return View();
+            }
+
+            // Проверяем, что количество не превышает остаток
+            int remaining = expectedQty - receivedSoFar;
+            if (receivedQuantity > remaining)
+            {
+                ViewBag.Error = $"Слишком много! Осталось принять: {remaining} шт";
+                ViewBag.ProductName = productName;
+                ViewBag.ExpectedQuantity = expectedQty;
+                ViewBag.ReceivedQuantity = receivedSoFar;
+                ViewBag.RemainingQuantity = remaining;
+                return View();
+            }
+
+            // Обновляем поставку
+            var shipment = await _db.ExpectedShipments.FindAsync(shipmentId);
+            if (shipment != null)
+            {
+                shipment.ReceivedQuantity += receivedQuantity;
+
+                if (shipment.ReceivedQuantity >= shipment.ExpectedQuantity)
+                    shipment.Status = "Completed";
+                else if (shipment.ReceivedQuantity > 0)
+                    shipment.Status = "Partial";
+
+                await _db.SaveChangesAsync();
+            }
+
+            // Добавляем товар на склад (в свободную ячейку)
+            var freeCells = await _db.Cells
+                .Where(c => c.WarehouseId == warehouseId)
+                .ToListAsync();
+
+            var targetCell = freeCells.FirstOrDefault();
+            if (targetCell != null)
+            {
+                var existingStock = await _db.Stocks
+                    .FirstOrDefaultAsync(s => s.ProductId == productId && s.CellId == targetCell.Id);
+
+                if (existingStock != null)
+                    existingStock.Quantity += receivedQuantity;
+                else
+                {
+                    _db.Stocks.Add(new Stock
+                    {
+                        ProductId = productId.Value,
+                        CellId = targetCell.Id,
+                        Quantity = receivedQuantity
+                    });
+                }
+                await _db.SaveChangesAsync();
+            }
+
+            // Логируем операцию
+            if (_db.OperationLogs != null)
+            {
+                _db.OperationLogs.Add(new OperationLog
+                {
+                    UserId = userId ?? 0,
+                    UserName = userName ?? "Неизвестный",
+                    OperationType = "Receiving",
+                    Details = $"Принят товар \"{productName}\" по накладной {shipment?.InvoiceNumber} в количестве {receivedQuantity} шт"
+                });
+                await _db.SaveChangesAsync();
+            }
+
+            // Проверяем, завершена ли поставка
+            var updatedShipment = await _db.ExpectedShipments.FindAsync(shipmentId);
+            if (updatedShipment?.Status == "Completed")
+            {
+                TempData["Success"] = $"✅ Поставка \"{productName}\" полностью принята!";
+                HttpContext.Session.Remove("CurrentShipmentId");
+                HttpContext.Session.Remove("ShipmentProductId");
+                HttpContext.Session.Remove("ShipmentProductName");
+                HttpContext.Session.Remove("ShipmentExpectedQty");
+                HttpContext.Session.Remove("ShipmentReceivedQty");
+                return RedirectToAction("ReceiveByInvoice");
+            }
+
+            // Обновляем сессию
+            HttpContext.Session.SetInt32("ShipmentReceivedQty", (receivedSoFar + receivedQuantity));
+
+            TempData["Success"] = $"✅ Принято {receivedQuantity} шт. Осталось: {expectedQty - (receivedSoFar + receivedQuantity)} шт";
+
+            return RedirectToAction("ReceiveShipment", new { shipmentId });
+        }
         // Выбор ячейки для размещения товара
         [HttpGet]
         public async Task<IActionResult> SelectCellForReceiving()
@@ -384,7 +594,8 @@ namespace WMS.Terminal.Controllers
             var warehouseId = HttpContext.Session.GetInt32("WarehouseId");
             var productId = HttpContext.Session.GetInt32("ReceivingProductId");
             var productName = HttpContext.Session.GetString("ReceivingProductName");
-
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var userName = HttpContext.Session.GetString("UserName");
             if (warehouseId == null) return RedirectToAction("SelectWarehouse");
             if (productId == null) return RedirectToAction("Receiving");
 
@@ -408,6 +619,19 @@ namespace WMS.Terminal.Controllers
             }
 
             await _db.SaveChangesAsync();
+
+            if (_db.OperationLogs != null)
+            {
+                var cell = await _db.Cells.FindAsync(cellId);
+                _db.OperationLogs.Add(new OperationLog
+                {
+                    UserId = userId ?? 0,
+                    UserName = userName ?? "Неизвестный",
+                    OperationType = "Receiving",
+                    Details = $"Принят товар \"{productName}\" в количестве {quantity} шт в ячейку {cell?.Address ?? cellId.ToString()}"
+                });
+                await _db.SaveChangesAsync();
+            }
 
             // Очищаем сессию
             HttpContext.Session.Remove("ReceivingProductId");
@@ -514,7 +738,9 @@ namespace WMS.Terminal.Controllers
             var fromCellId = HttpContext.Session.GetInt32("MovingFromCellId");
             var productName = HttpContext.Session.GetString("MovingProductName");
             var totalQuantity = HttpContext.Session.GetInt32("MovingQuantity") ?? 0;
-
+            var fromCell = await _db.Cells.FindAsync(fromCellId);
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var userName = HttpContext.Session.GetString("UserName");
             if (productId == null || fromCellId == null)
             {
                 return RedirectToAction("Sorting");
@@ -582,6 +808,14 @@ namespace WMS.Terminal.Controllers
 
             await _db.SaveChangesAsync();
 
+            _db.OperationLogs.Add(new OperationLog
+            {
+                UserId = userId ?? 0,
+                UserName = HttpContext.Session.GetString("UserName") ?? "Неизвестный",
+                OperationType = "Sorting",
+                Details = $"Перемещён товар \"{productName}\" в количестве {moveQuantity} шт из ячейки {fromCell?.Address} в ячейку {targetCell.Address}"
+            });
+            await _db.SaveChangesAsync();
             // Очищаем сессию
             HttpContext.Session.Remove("MovingProductId");
             HttpContext.Session.Remove("MovingProductName");
@@ -671,6 +905,8 @@ namespace WMS.Terminal.Controllers
             {
                 return NotFound();
             }
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var userName = HttpContext.Session.GetString("UserName");
 
             if (pickedQuantity != task.RequiredQuantity)
             {
@@ -694,6 +930,15 @@ namespace WMS.Terminal.Controllers
             task.Status = "Completed";
             task.PickedQuantity = pickedQuantity;
 
+            await _db.SaveChangesAsync();
+
+            _db.OperationLogs.Add(new OperationLog
+            {
+                UserId = userId ?? 0,
+                UserName = HttpContext.Session.GetString("UserName") ?? "Неизвестный",
+                OperationType = "Picking",
+                Details = $"Собран товар \"{task.Product?.Name}\" в количестве {pickedQuantity} шт из ячейки {task.Cell?.Address}"
+            });
             await _db.SaveChangesAsync();
 
             // Показываем сообщение об успехе

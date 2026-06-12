@@ -20,8 +20,16 @@ build_property._RazorSourceGeneratorDebug =
 build_property.EffectiveAnalysisLevelStyle = 8.0
 build_property.EnableCodeStyleSeverity = 
 
+[C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/AllProducts.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcQWxsUHJvZHVjdHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/ConfirmPick.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcQ29uZmlybVBpY2suY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/ExpectedShipments.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcRXhwZWN0ZWRTaGlwbWVudHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/FindObject.cshtml]
@@ -36,8 +44,20 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcTWFpbk1lbnUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/OperationLogs.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcT3BlcmF0aW9uTG9ncy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/PickingOrders.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcUGlja2luZ09yZGVycy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/ReceiveByInvoice.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcUmVjZWl2ZUJ5SW52b2ljZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/ReceiveShipment.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcUmVjZWl2ZVNoaXBtZW50LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/Receiving.cshtml]

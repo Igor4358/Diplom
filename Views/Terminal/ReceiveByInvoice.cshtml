@@ -1,0 +1,118 @@
+﻿@{
+    Layout = null;
+}
+@model List<WMS.Terminal.Models.ExpectedShipment>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Приёмка по накладной - ТСД Автопитер</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: -20px -20px 20px -20px;
+            padding: 20px;
+            color: white;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            color: white;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .shipment-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+            .shipment-card:active {
+                transform: scale(0.98);
+                background: #f0f0f0;
+            }
+
+        .invoice {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+            .status.Pending {
+                background: #ffc107;
+            }
+
+            .status.Partial {
+                background: #17a2b8;
+                color: white;
+            }
+
+        .progress-bar {
+            background: #e0e0e0;
+            border-radius: 20px;
+            height: 8px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: #4caf50;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="back-btn" onclick="location.href='/Terminal/MainMenu'">← Назад</button>
+        <h1>📥 Приёмка по накладной</h1>
+    </div>
+
+    @if (Model.Any())
+    {
+        foreach (var s in Model)
+        {
+            var percent = s.ReceivedQuantity * 100 / s.ExpectedQuantity;
+            <div class="shipment-card" onclick="location.href='/Terminal/ReceiveShipment?shipmentId=@s.Id'">
+                <div class="invoice">📄 @s.InvoiceNumber</div>
+                <div>📦 @s.Product?.Name</div>
+                <div>Принято: @s.ReceivedQuantity / @s.ExpectedQuantity шт</div>
+                <div class="progress-bar"><div class="progress-fill" style="width: @percent%"></div></div>
+                <div><span class="status @s.Status">@(s.Status == "Pending" ? "Ожидается" : "Частично")</span></div>
+            </div>
+        }
+    }
+    else
+    {
+        <div style="background:white; border-radius:16px; padding:50px; text-align:center; color:#999;">
+            📭 Нет активных накладных для приёмки
+        </div>
+    }
+</body>
+</html>

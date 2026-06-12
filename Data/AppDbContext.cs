@@ -17,6 +17,10 @@ namespace WMS.Terminal.Data
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<PickingTask> PickingTasks { get; set; }
 
+        public DbSet<ExpectedShipment> ExpectedShipments { get; set; }
+
+        public DbSet<OperationLog> OperationLogs { get; set; }
+        public DbSet<ExpectedShipment> ExpectedShipment { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Cell>()

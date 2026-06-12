@@ -1,0 +1,135 @@
+﻿@{
+    Layout = null;
+}
+@model List<WMS.Terminal.Models.OperationLog>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>История операций - ТСД Автопитер</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: -20px -20px 20px -20px;
+            padding: 20px;
+            color: white;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            color: white;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        h1 {
+            font-size: 24px;
+        }
+
+        .log-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .log-type {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+            .log-type.Receiving {
+                background: #d4edda;
+                color: #155724;
+            }
+
+            .log-type.Picking {
+                background: #d1ecf1;
+                color: #0c5460;
+            }
+
+            .log-type.Sorting {
+                background: #fff3cd;
+                color: #856404;
+            }
+
+        .log-date {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .log-user {
+            color: #667eea;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .log-details {
+            color: #333;
+            font-size: 14px;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 50px;
+            color: #999;
+            background: white;
+            border-radius: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="back-btn" onclick="location.href='/Terminal/MainMenu'">← Назад</button>
+        <h1>📜 История операций</h1>
+    </div>
+
+    @if (Model.Any())
+    {
+        foreach (var log in Model)
+        {
+            <div class="log-card">
+                <div class="log-header">
+                    <span class="log-type @log.OperationType">@log.OperationType</span>
+                    <span class="log-date">@log.CreatedAt.ToString("dd.MM.yyyy HH:mm:ss")</span>
+                </div>
+                <div class="log-user">👤 @log.UserName</div>
+                <div class="log-details">@log.Details</div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="empty">
+            📭 История операций пуста
+        </div>
+    }
+</body>
+</html>

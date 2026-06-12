@@ -103,4 +103,5 @@ C:\Users\Ингвар\Diplom\Diplom\obj\Debug\net8.0\refint\WMS.Terminal.dll
 C:\Users\Ингвар\Diplom\Diplom\obj\Debug\net8.0\WMS.Terminal.pdb
 C:\Users\Ингвар\Diplom\Diplom\obj\Debug\net8.0\WMS.Terminal.genruntimeconfig.cache
 C:\Users\Ингвар\Diplom\Diplom\obj\Debug\net8.0\ref\WMS.Terminal.dll
+C:\Users\Ингвар\Diplom\Diplom\obj\Debug\net8.0\WMS.Terminal.sourcelink.json
 C:\Users\Ингвар\Diplom\Diplom\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

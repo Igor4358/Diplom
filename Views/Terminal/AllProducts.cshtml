@@ -1,0 +1,129 @@
+﻿@{
+    Layout = null;
+}
+@model List<WMS.Terminal.Models.Stock>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Все товары - ТСД Автопитер</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: -20px -20px 20px -20px;
+            padding: 20px;
+            color: white;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            color: white;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+        }
+
+        .quantity {
+            font-weight: bold;
+            color: #4caf50;
+        }
+
+        .cell {
+            font-family: monospace;
+            font-size: 14px;
+            background: #f0f0f0;
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 8px;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 50px;
+            color: #999;
+            background: white;
+            border-radius: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="back-btn" onclick="location.href='/Terminal/MainMenu'">← Назад</button>
+        <h1>📋 Все товары на складе</h1>
+    </div>
+
+    <form method="get" style="margin-bottom: 20px;">
+        <input type="text" name="search" class="search-box" placeholder="🔍 Поиск по названию, артикулу или ячейке..." value="@ViewBag.Search" autofocus>
+    </form>
+
+    @if (Model.Any())
+    {
+        <table>
+            <thead>
+                <tr><th>Товар</th><th>Артикул</th><th>Ячейка</th><th>Количество</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var stock in Model)
+                {
+                    <tr>
+                        <td>@stock.Product?.Name</td>
+                        <td>@stock.Product?.Sku</td>
+                        <td><span class="cell">📍 @stock.Cell?.Address</span></td>
+                        <td class="quantity">@stock.Quantity шт</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="empty">
+            📭 Нет товаров на складе
+        </div>
+    }
+</body>
+</html>
