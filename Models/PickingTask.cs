@@ -14,7 +14,7 @@ namespace WMS.Terminal.Models
         public int ProductId { get; set; }
 
         [Required]
-        public int CellId { get; set; }  // Откуда брать
+        public int CellId { get; set; }  
 
         [Required]
         public int RequiredQuantity { get; set; }

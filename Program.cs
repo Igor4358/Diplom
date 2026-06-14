@@ -185,7 +185,7 @@ using (var scope = app.Services.CreateScope())
                 CreatedAt = DateTime.UtcNow
             };
             dbContext.Orders.Add(order);
-            dbContext.SaveChanges();  // без await
+            dbContext.SaveChanges();  
 
             var orderItem = new OrderItem
             {

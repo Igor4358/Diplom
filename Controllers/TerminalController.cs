@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 using WMS.Terminal.Data;
 using WMS.Terminal.Models;
-
 namespace WMS.Terminal.Controllers
 {
     public class TerminalController : Controller
@@ -340,7 +340,69 @@ namespace WMS.Terminal.Controllers
 
             return View();
         }
+        // Экспорт остатков в Excel
+        [HttpGet]
+        [Obsolete]
+        public async Task<IActionResult> ExportStockToExcel()
+        {
 
+            ExcelPackage.License.SetNonCommercialPersonal("Иван Петров");
+
+            var warehouseId = HttpContext.Session.GetInt32("WarehouseId");
+            if (warehouseId == null) return RedirectToAction("SelectWarehouse");
+
+            // Получаем все товары на складе
+            var stocks = await _db.Stocks
+                .Include(s => s.Product)
+                .Include(s => s.Cell)
+                .Where(s => s.Cell != null && s.Cell.WarehouseId == warehouseId && s.Quantity > 0)
+                .OrderBy(s => s.Cell!.Address)
+                .ToListAsync();
+
+            // Создаём Excel файл
+            using var package = new OfficeOpenXml.ExcelPackage();
+            var worksheet = package.Workbook.Worksheets.Add("Остатки на складе");
+
+            // Заголовки
+            worksheet.Cells[1, 1].Value = "Ячейка";
+            worksheet.Cells[1, 2].Value = "Артикул";
+            worksheet.Cells[1, 3].Value = "Наименование товара";
+            worksheet.Cells[1, 4].Value = "Количество";
+            worksheet.Cells[1, 5].Value = "Описание";
+
+            // Стиль заголовков
+            using (var range = worksheet.Cells[1, 1, 1, 5])
+            {
+                range.Style.Font.Bold = true;
+                range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
+            }
+
+            // Заполняем данные
+            int row = 2;
+            foreach (var stock in stocks)
+            {
+                worksheet.Cells[row, 1].Value = stock.Cell?.Address ?? "неизвестно";
+                worksheet.Cells[row, 2].Value = stock.Product?.Sku ?? "";
+                worksheet.Cells[row, 3].Value = stock.Product?.Name ?? "";
+                worksheet.Cells[row, 4].Value = stock.Quantity;
+                worksheet.Cells[row, 5].Value = stock.Product?.Description ?? "";
+                row++;
+            }
+
+            // Автоширина колонок
+            worksheet.Cells.AutoFitColumns();
+
+            // Информация о дате выгрузки
+            worksheet.Cells[row + 1, 1].Value = $"Дата выгрузки: {DateTime.Now:dd.MM.yyyy HH:mm}";
+            worksheet.Cells[row + 1, 1, row + 1, 5].Merge = true;
+
+            // Возвращаем файл
+            var bytes = package.GetAsByteArray();
+            var fileName = $"Остатки_склада_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+
+            return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+        }
         // Страница приёмки товара
         [HttpGet]
         public async Task<IActionResult> Receiving()
@@ -353,6 +415,59 @@ namespace WMS.Terminal.Controllers
 
             return View();
         }
+        // Дашборд с графиками
+        [HttpGet]
+        public async Task<IActionResult> WarehouseDashboard()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var warehouseId = HttpContext.Session.GetInt32("WarehouseId");
+
+            if (userId == null) return RedirectToAction("Login");
+            if (warehouseId == null) return RedirectToAction("SelectWarehouse");
+
+            // Общее количество ячеек на складе
+            var totalCells = await _db.Cells.CountAsync(c => c.WarehouseId == warehouseId);
+
+            // Количество занятых ячеек (где есть товар)
+            var occupiedCells = await _db.Stocks
+                .Where(s => s.Cell != null && s.Cell.WarehouseId == warehouseId && s.Quantity > 0)
+                .Select(s => s.CellId)
+                .Distinct()
+                .CountAsync();
+
+            // Количество пустых ячеек
+            var emptyCells = totalCells - occupiedCells;
+
+            // Загруженность в процентах
+            var occupancyPercent = totalCells > 0 ? (occupiedCells * 100 / totalCells) : 0;
+
+            // Топ-5 самых заполненных ячеек
+            var topCells = await _db.Stocks
+                .Include(s => s.Cell)
+                .Include(s => s.Product)
+                .Where(s => s.Cell != null && s.Cell.WarehouseId == warehouseId && s.Quantity > 0)
+                .GroupBy(s => new { s.CellId, s.Cell!.Address })
+                .Select(g => new { CellAddress = g.Key.Address, TotalQuantity = g.Sum(x => x.Quantity) })
+                .OrderByDescending(x => x.TotalQuantity)
+                .Take(5)
+                .ToListAsync();
+
+            // Общее количество товаров на складе
+            var totalProducts = await _db.Stocks
+                .Where(s => s.Cell != null && s.Cell.WarehouseId == warehouseId)
+                .SumAsync(s => s.Quantity);
+
+            ViewBag.TotalCells = totalCells;
+            ViewBag.OccupiedCells = occupiedCells;
+            ViewBag.EmptyCells = emptyCells;
+            ViewBag.OccupancyPercent = occupancyPercent;
+            ViewBag.TotalProducts = totalProducts;
+            ViewBag.TopCells = topCells;
+
+            return View();
+        }
+
+
         // История операций (логирование)
         [HttpGet]
         public async Task<IActionResult> OperationLogs()
