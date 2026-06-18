@@ -226,4 +226,4 @@ using (var scope = app.Services.CreateScope())
     Console.WriteLine($"========================\n");
 }
 
-app.Run();
+app.Run("http://0.0.0.0:5000");
