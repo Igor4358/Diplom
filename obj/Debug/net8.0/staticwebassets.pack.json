@@ -9,6 +9,10 @@
       "PackagePath": "staticwebassets\\favicon.ico"
     },
     {
+      "Id": "C:\\Users\\Ингвар\\Diplom\\Diplom\\wwwroot\\js\\quagga.min.js",
+      "PackagePath": "staticwebassets\\js\\quagga.min.js"
+    },
+    {
       "Id": "C:\\Users\\Ингвар\\Diplom\\Diplom\\wwwroot\\js\\site.js",
       "PackagePath": "staticwebassets\\js\\site.js"
     },

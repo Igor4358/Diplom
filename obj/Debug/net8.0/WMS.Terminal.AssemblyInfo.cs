@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WMS.Terminal")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0bf96b037cac8d8a32dfdd2ef97f40c21c2e5874")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+37f35d3e14a535e16355b0a70a5a60260b6fe01c")]
 [assembly: System.Reflection.AssemblyProductAttribute("WMS.Terminal")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WMS.Terminal")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

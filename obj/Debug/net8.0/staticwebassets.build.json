@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "NQeYa+KB997uwUHJDUx34L/MV+gx+ZhuTqPPZyIDWmE=",
+  "Hash": "MJW0g1ISdji5dVvIF5v8u1MtKHFApjahEBTLzZNO1Uo=",
   "Source": "WMS.Terminal",
   "BasePath": "_content/WMS.Terminal",
   "Mode": "Default",
@@ -57,6 +57,27 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\favicon.ico"
+    },
+    {
+      "Identity": "C:\\Users\\Ингвар\\Diplom\\Diplom\\wwwroot\\js\\quagga.min.js",
+      "SourceId": "WMS.Terminal",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Ингвар\\Diplom\\Diplom\\wwwroot\\",
+      "BasePath": "_content/WMS.Terminal",
+      "RelativePath": "js/quagga.min#[.{fingerprint}]?.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "vrvlzb8fl5",
+      "Integrity": "5RxzQmkg7BrVqusOIEzRvtLaBGk3utxpIF87eYPtmB8=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\quagga.min.js"
     },
     {
       "Identity": "C:\\Users\\Ингвар\\Diplom\\Diplom\\wwwroot\\js\\site.js",
@@ -1439,6 +1460,88 @@
         {
           "Name": "integrity",
           "Value": "sha256-Jtxf9L+5ITKRc1gIRl4VbUpGkRNfOBXjYTdhJD4facM="
+        }
+      ]
+    },
+    {
+      "Route": "js/quagga.min.js",
+      "AssetFile": "C:\\Users\\Ингвар\\Diplom\\Diplom\\wwwroot\\js\\quagga.min.js",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "142220"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"5RxzQmkg7BrVqusOIEzRvtLaBGk3utxpIF87eYPtmB8=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sun, 21 Jun 2026 13:22:18 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-5RxzQmkg7BrVqusOIEzRvtLaBGk3utxpIF87eYPtmB8="
+        }
+      ]
+    },
+    {
+      "Route": "js/quagga.min.vrvlzb8fl5.js",
+      "AssetFile": "C:\\Users\\Ингвар\\Diplom\\Diplom\\wwwroot\\js\\quagga.min.js",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "142220"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"5RxzQmkg7BrVqusOIEzRvtLaBGk3utxpIF87eYPtmB8=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sun, 21 Jun 2026 13:22:18 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "vrvlzb8fl5"
+        },
+        {
+          "Name": "label",
+          "Value": "js/quagga.min.js"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-5RxzQmkg7BrVqusOIEzRvtLaBGk3utxpIF87eYPtmB8="
         }
       ]
     },

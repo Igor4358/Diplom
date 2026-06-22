@@ -5,8 +5,11 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Поиск объекта - ТСД Автопитер</title>
+
+    <script src="https://unpkg.com/html5-qrcode"></script>
+
     <style>
         * {
             margin: 0;
@@ -14,42 +17,79 @@
             box-sizing: border-box;
         }
 
-        body {
+        html, body {
+            height: 100%;
             font-family: 'Segoe UI', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .container {
-            max-width: 600px;
+            width: 100%;
+            max-width: 480px;
             margin: 0 auto;
         }
 
         .card {
             background: white;
             border-radius: 24px;
-            padding: 30px;
+            padding: 25px 20px;
             text-align: center;
-            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
 
         h2 {
             color: #333;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            font-size: 22px;
         }
 
-        input {
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .back-btn {
+            background: #999;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
             width: 100%;
-            padding: 20px;
-            font-size: 24px;
+            margin-top: 12px;
+        }
+
+            .back-btn:active {
+                transform: scale(0.98);
+            }
+
+        .scan-input {
+            width: 100%;
+            padding: 18px;
+            font-size: 22px;
             text-align: center;
             border: 2px solid #ddd;
             border-radius: 12px;
-            margin: 20px 0;
+            background: #fafafa;
+            margin-bottom: 12px;
         }
 
-        button {
+            .scan-input:focus {
+                outline: none;
+                border-color: #667eea;
+                background: white;
+            }
+
+        .scan-btn {
             width: 100%;
             padding: 16px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -58,40 +98,85 @@
             border-radius: 12px;
             font-size: 18px;
             cursor: pointer;
+            margin-bottom: 12px;
         }
 
-        .back-btn {
-            background: #999;
-            margin-top: 10px;
+            .scan-btn:active {
+                transform: scale(0.97);
+            }
+
+        .scan-btn-stop {
+            background: #ff4444;
         }
 
-        .error {
-            background: #fee;
-            color: #c33;
-            padding: 15px;
+        #reader {
+            width: 100%;
+            max-width: 480px;
+            margin: 10px auto;
+            border-radius: 16px;
+            overflow: hidden;
+            background: #000;
+        }
+
+            #reader video {
+                width: 100%;
+                height: auto;
+                display: block;
+            }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
             border-radius: 12px;
-            margin-bottom: 20px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 5px;
         }
+
+            .submit-btn:active {
+                transform: scale(0.97);
+            }
+
+        .stop-scan-btn {
+            width: 100%;
+            padding: 14px;
+            background: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 10px;
+            display: none;
+        }
+
+            .stop-scan-btn:active {
+                transform: scale(0.97);
+            }
 
         .result-card {
             background: white;
             border-radius: 24px;
-            padding: 30px;
+            padding: 20px;
             text-align: left;
+            margin-top: 20px;
         }
 
         .result-title {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
             color: #667eea;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             border-bottom: 2px solid #eee;
             padding-bottom: 10px;
         }
 
         .info-row {
             display: flex;
-            padding: 10px 0;
+            padding: 8px 0;
             border-bottom: 1px solid #eee;
         }
 
@@ -104,27 +189,6 @@
         .info-value {
             flex: 1;
             color: #333;
-        }
-
-        .product-list {
-            margin-top: 15px;
-        }
-
-        .product-item {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 10px;
-        }
-
-        .product-name {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .product-sku {
-            color: #999;
-            font-size: 12px;
         }
 
         .badge {
@@ -143,46 +207,30 @@
         <div class="card">
             <h2>🔍 Поиск объекта</h2>
 
-            <form method="post">
-                <input type="text" name="searchQuery" id="searchQuery" placeholder="Артикул товара или адрес ячейки" autofocus>
-                <button type="submit">Искать</button>
+            @if (ViewBag.Error != null)
+            {
+                <div class="error">❌ @ViewBag.Error</div>
+            }
+
+            <form method="post" id="searchForm">
+                <input type="text" name="searchQuery" id="searchQuery" class="scan-input" placeholder="Артикул или адрес ячейки" autofocus>
+                <button type="button" id="scanButton" class="scan-btn">📷 Сканировать штрих-код</button>
+                <div id="reader" style="display:none;"></div>
+                <button type="button" id="stopScanBtn" class="stop-scan-btn">⏹ Остановить сканер</button>
+                <button type="submit" class="submit-btn">🔍 Искать</button>
             </form>
 
             <button class="back-btn" onclick="location.href='/Terminal/MainMenu'">← Главное меню</button>
         </div>
 
-        @if (ViewBag.Error != null)
-        {
-            <div class="card error" style="background:#fee; color:#c33;">❌ @ViewBag.Error</div>
-        }
-
         @if (ViewBag.ResultType == "product")
         {
             <div class="result-card">
                 <div class="result-title">📦 Товар найден</div>
-                <div class="info-row">
-                    <div class="info-label">Наименование:</div>
-                    <div class="info-value">@ViewBag.ProductName</div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Артикул:</div>
-                    <div class="info-value">@ViewBag.ProductSku</div>
-                </div>
-                @if (!string.IsNullOrEmpty(ViewBag.ProductDescription))
-                {
-                    <div class="info-row">
-                        <div class="info-label">Описание:</div>
-                        <div class="info-value">@ViewBag.ProductDescription</div>
-                    </div>
-                }
-                <div class="info-row">
-                    <div class="info-label">Местоположение:</div>
-                    <div class="info-value"><strong>📍 @ViewBag.CellAddress</strong></div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Количество:</div>
-                    <div class="info-value">@ViewBag.Quantity шт</div>
-                </div>
+                <div class="info-row"><div class="info-label">Наименование:</div><div class="info-value">@ViewBag.ProductName</div></div>
+                <div class="info-row"><div class="info-label">Артикул:</div><div class="info-value">@ViewBag.ProductSku</div></div>
+                <div class="info-row"><div class="info-label">Местоположение:</div><div class="info-value"><strong>📍 @ViewBag.CellAddress</strong></div></div>
+                <div class="info-row"><div class="info-label">Количество:</div><div class="info-value">@ViewBag.Quantity шт</div></div>
             </div>
         }
 
@@ -190,16 +238,14 @@
         {
             <div class="result-card">
                 <div class="result-title">📍 Ячейка @ViewBag.CellAddress</div>
-
                 @if (((IEnumerable<dynamic>)ViewBag.Products).Any())
                 {
-                    <div class="product-list">
-                        <div style="margin-bottom: 10px; font-weight: bold;">Содержимое:</div>
+                    <div style="margin-top: 10px;">
                         @foreach (var item in ViewBag.Products)
                         {
-                            <div class="product-item">
-                                <div class="product-name">@item.Product.Name</div>
-                                <div class="product-sku">Артикул: @item.Product.Sku</div>
+                            <div style="background: #f8f9fa; padding: 12px; border-radius: 12px; margin-bottom: 8px;">
+                                <div style="font-weight: bold;">@item.Product.Name</div>
+                                <div style="font-size: 12px; color: #999;">Артикул: @item.Product.Sku</div>
                                 <div class="badge">@item.Quantity шт</div>
                             </div>
                         }
@@ -207,15 +253,94 @@
                 }
                 else
                 {
-                    <div style="text-align: center; padding: 20px; color: #999;">
-                        📭 Ячейка пуста
-                    </div>
+                    <div style="text-align: center; padding: 20px; color: #999;">📭 Ячейка пуста</div>
                 }
             </div>
         }
     </div>
+
     <script>
-        document.getElementById('searchQuery')?.focus();
+        // === СКАНЕР ===
+        let html5Scanner = null;
+        let isScanning = false;
+        const scanBtn = document.getElementById('scanButton');
+        const stopBtn = document.getElementById('stopScanBtn');
+        const inputField = document.getElementById('searchQuery');
+        const readerContainer = document.getElementById('reader');
+
+        function startScanner() {
+            if (typeof Html5Qrcode === 'undefined') {
+                alert('Библиотека сканера не загружена.');
+                return;
+            }
+            readerContainer.style.display = 'block';
+            scanBtn.textContent = '⏳ Запуск...';
+            scanBtn.disabled = true;
+
+            html5Scanner = new Html5Qrcode("reader");
+            const config = { fps: 15, qrbox: { width: 250, height: 100 }, aspectRatio: 1.0 };
+
+            html5Scanner.start(
+                { facingMode: "environment" },
+                config,
+                (decodedText) => {
+                    inputField.value = decodedText;
+                    if (navigator.vibrate) navigator.vibrate(200);
+                    stopScanner();
+                    const form = document.getElementById('searchForm');
+                    if (form) setTimeout(() => form.submit(), 300);
+                },
+                (error) => {}
+            ).then(() => {
+                isScanning = true;
+                scanBtn.textContent = '⏹ Остановить сканер';
+                scanBtn.disabled = false;
+                scanBtn.classList.add('scan-btn-stop');
+                stopBtn.style.display = 'block';
+            }).catch((err) => {
+                alert('Ошибка камеры: ' + err);
+                readerContainer.style.display = 'none';
+                scanBtn.textContent = '📷 Сканировать штрих-код';
+                scanBtn.disabled = false;
+                scanBtn.classList.remove('scan-btn-stop');
+                stopBtn.style.display = 'none';
+            });
+        }
+
+        function stopScanner() {
+            if (html5Scanner) {
+                html5Scanner.stop().then(() => {
+                    html5Scanner.clear();
+                    readerContainer.style.display = 'none';
+                    isScanning = false;
+                    scanBtn.textContent = '📷 Сканировать штрих-код';
+                    scanBtn.disabled = false;
+                    scanBtn.classList.remove('scan-btn-stop');
+                    stopBtn.style.display = 'none';
+                    html5Scanner = null;
+                }).catch(() => {});
+            } else {
+                readerContainer.style.display = 'none';
+                isScanning = false;
+                scanBtn.textContent = '📷 Сканировать штрих-код';
+                scanBtn.disabled = false;
+                scanBtn.classList.remove('scan-btn-stop');
+                stopBtn.style.display = 'none';
+            }
+        }
+
+        scanBtn.addEventListener('click', function() {
+            if (isScanning) stopScanner(); else startScanner();
+        });
+        stopBtn.addEventListener('click', stopScanner);
+        inputField.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const form = this.closest('form');
+                if (form) form.submit();
+            }
+        });
+        window.addEventListener('beforeunload', stopScanner);
+        console.log('✅ Сканер для поиска загружен');
     </script>
 </body>
 </html>

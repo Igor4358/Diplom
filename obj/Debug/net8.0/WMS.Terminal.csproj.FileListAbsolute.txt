@@ -104,7 +104,6 @@ C:\Users\Ингвар\Diplom\Diplom\obj\Debug\net8.0\WMS.Terminal.pdb
 C:\Users\Ингвар\Diplom\Diplom\obj\Debug\net8.0\WMS.Terminal.genruntimeconfig.cache
 C:\Users\Ингвар\Diplom\Diplom\obj\Debug\net8.0\ref\WMS.Terminal.dll
 C:\Users\Ингвар\Diplom\Diplom\obj\Debug\net8.0\WMS.Terminal.sourcelink.json
-C:\Users\Ингвар\Diplom\Diplom\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 C:\Users\Ингвар\Diplom\Diplom\bin\Debug\net8.0\EPPlus.dll
 C:\Users\Ингвар\Diplom\Diplom\bin\Debug\net8.0\EPPlus.Interfaces.dll
 C:\Users\Ингвар\Diplom\Diplom\bin\Debug\net8.0\Microsoft.Extensions.Configuration.FileExtensions.dll
@@ -113,3 +112,4 @@ C:\Users\Ингвар\Diplom\Diplom\bin\Debug\net8.0\Microsoft.IO.RecyclableMemo
 C:\Users\Ингвар\Diplom\Diplom\bin\Debug\net8.0\System.Security.Cryptography.Pkcs.dll
 C:\Users\Ингвар\Diplom\Diplom\bin\Debug\net8.0\System.Security.Cryptography.Xml.dll
 C:\Users\Ингвар\Diplom\Diplom\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Security.Cryptography.Pkcs.dll
+C:\Users\Ингвар\Diplom\Diplom\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

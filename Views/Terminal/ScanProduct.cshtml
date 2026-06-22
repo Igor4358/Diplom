@@ -5,8 +5,11 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Сканирование товара - ТСД Автопитер</title>
+
+    <script src="https://unpkg.com/html5-qrcode"></script>
+
     <style>
         * {
             margin: 0;
@@ -14,59 +17,79 @@
             box-sizing: border-box;
         }
 
-        body {
+        html, body {
+            height: 100%;
             font-family: 'Segoe UI', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .container {
-            max-width: 500px;
+            width: 100%;
+            max-width: 480px;
             margin: 0 auto;
         }
 
         .card {
             background: white;
             border-radius: 24px;
-            padding: 30px;
+            padding: 25px 20px;
             text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
 
         h2 {
             color: #333;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            font-size: 22px;
         }
 
-        .expected {
-            background: #f0f0f0;
-            padding: 20px;
-            border-radius: 16px;
-            margin: 20px 0;
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-size: 14px;
         }
 
-        .label {
-            color: #999;
-            font-size: 12px;
-        }
-
-        .value {
-            font-size: 20px;
-            font-weight: bold;
-            color: #667eea;
-        }
-
-        input {
+        .back-btn {
+            background: #999;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
             width: 100%;
-            padding: 20px;
-            font-size: 24px;
+            margin-top: 12px;
+        }
+
+            .back-btn:active {
+                transform: scale(0.98);
+            }
+
+        .scan-input {
+            width: 100%;
+            padding: 18px;
+            font-size: 22px;
             text-align: center;
             border: 2px solid #ddd;
             border-radius: 12px;
-            margin: 20px 0;
+            background: #fafafa;
+            margin-bottom: 12px;
         }
 
-        button {
+            .scan-input:focus {
+                outline: none;
+                border-color: #667eea;
+                background: white;
+            }
+
+        .scan-btn {
             width: 100%;
             padding: 16px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -75,29 +98,94 @@
             border-radius: 12px;
             font-size: 18px;
             cursor: pointer;
+            margin-bottom: 12px;
         }
 
-        .error {
-            background: #fee;
-            color: #c33;
+            .scan-btn:active {
+                transform: scale(0.97);
+            }
+
+        .scan-btn-stop {
+            background: #ff4444;
+        }
+
+        #reader {
+            width: 100%;
+            max-width: 480px;
+            margin: 10px auto;
+            border-radius: 16px;
+            overflow: hidden;
+            background: #000;
+        }
+
+            #reader video {
+                width: 100%;
+                height: auto;
+                display: block;
+            }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+            .submit-btn:active {
+                transform: scale(0.97);
+            }
+
+        .stop-scan-btn {
+            width: 100%;
+            padding: 14px;
+            background: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 10px;
+            display: none;
+        }
+
+            .stop-scan-btn:active {
+                transform: scale(0.97);
+            }
+
+        .info-box {
+            background: #f0f0f0;
             padding: 15px;
             border-radius: 12px;
-            margin-bottom: 20px;
+            margin: 15px 0;
+        }
+
+        .info-label {
+            color: #666;
+            font-size: 12px;
+        }
+
+        .info-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #667eea;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="card">
-            <h2>🔍 Отсканируйте товар</h2>
+            <h2>🔍 Сканирование товара</h2>
 
-            <div class="expected">
-                <div class="label">Ожидается товар</div>
-                <div class="value">@ViewBag.ProductName</div>
-                <div class="label">Артикул</div>
-                <div class="value">@ViewBag.ExpectedSku</div>
-                <div class="label">Количество</div>
-                <div class="value">@ViewBag.RequiredQty шт</div>
+            <div class="info-box">
+                <div class="info-label">Ожидается товар</div>
+                <div class="info-value">@ViewBag.ProductName</div>
+                <div class="info-label" style="margin-top:10px;">Артикул: @ViewBag.ExpectedSku</div>
+                <div class="info-label" style="margin-top:10px;">Количество: @ViewBag.RequiredQty шт</div>
             </div>
 
             @if (ViewBag.Error != null)
@@ -105,15 +193,100 @@
                 <div class="error">❌ @ViewBag.Error</div>
             }
 
-            <form method="post">
+            <form method="post" id="scanProductForm">
                 <input type="hidden" name="taskId" value="@ViewBag.TaskId">
-                <input type="text" name="scannedSku" id="scannedSku" placeholder="Штрих-код товара" autofocus>
-                <button type="submit">Подтвердить</button>
+                <input type="text" name="scannedSku" id="scannedSku" class="scan-input" placeholder="Штрих-код товара" autofocus>
+                <button type="button" id="scanButton" class="scan-btn">📷 Сканировать штрих-код</button>
+                <div id="reader" style="display:none;"></div>
+                <button type="button" id="stopScanBtn" class="stop-scan-btn">⏹ Остановить сканер</button>
+                <button type="submit" class="submit-btn">✅ Подтвердить</button>
             </form>
+
+            <button class="back-btn" onclick="history.back()">← Назад</button>
         </div>
     </div>
+
     <script>
-        document.getElementById('scannedSku')?.focus();
+        let html5Scanner = null;
+        let isScanning = false;
+        const scanBtn = document.getElementById('scanButton');
+        const stopBtn = document.getElementById('stopScanBtn');
+        const inputField = document.getElementById('scannedSku');
+        const readerContainer = document.getElementById('reader');
+
+        function startScanner() {
+            if (typeof Html5Qrcode === 'undefined') {
+                alert('Библиотека сканера не загружена.');
+                return;
+            }
+            readerContainer.style.display = 'block';
+            scanBtn.textContent = '⏳ Запуск...';
+            scanBtn.disabled = true;
+
+            html5Scanner = new Html5Qrcode("reader");
+            const config = { fps: 15, qrbox: { width: 250, height: 100 }, aspectRatio: 1.0 };
+
+            html5Scanner.start(
+                { facingMode: "environment" },
+                config,
+                (decodedText) => {
+                    inputField.value = decodedText;
+                    if (navigator.vibrate) navigator.vibrate(200);
+                    stopScanner();
+                    const form = document.getElementById('scanProductForm');
+                    if (form) setTimeout(() => form.submit(), 300);
+                },
+                (error) => {}
+            ).then(() => {
+                isScanning = true;
+                scanBtn.textContent = '⏹ Остановить сканер';
+                scanBtn.disabled = false;
+                scanBtn.classList.add('scan-btn-stop');
+                stopBtn.style.display = 'block';
+            }).catch((err) => {
+                alert('Ошибка камеры: ' + err);
+                readerContainer.style.display = 'none';
+                scanBtn.textContent = '📷 Сканировать штрих-код';
+                scanBtn.disabled = false;
+                scanBtn.classList.remove('scan-btn-stop');
+                stopBtn.style.display = 'none';
+            });
+        }
+
+        function stopScanner() {
+            if (html5Scanner) {
+                html5Scanner.stop().then(() => {
+                    html5Scanner.clear();
+                    readerContainer.style.display = 'none';
+                    isScanning = false;
+                    scanBtn.textContent = '📷 Сканировать штрих-код';
+                    scanBtn.disabled = false;
+                    scanBtn.classList.remove('scan-btn-stop');
+                    stopBtn.style.display = 'none';
+                    html5Scanner = null;
+                }).catch(() => {});
+            } else {
+                readerContainer.style.display = 'none';
+                isScanning = false;
+                scanBtn.textContent = '📷 Сканировать штрих-код';
+                scanBtn.disabled = false;
+                scanBtn.classList.remove('scan-btn-stop');
+                stopBtn.style.display = 'none';
+            }
+        }
+
+        scanBtn.addEventListener('click', function() {
+            if (isScanning) stopScanner(); else startScanner();
+        });
+        stopBtn.addEventListener('click', stopScanner);
+        inputField.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const form = this.closest('form');
+                if (form) form.submit();
+            }
+        });
+        window.addEventListener('beforeunload', stopScanner);
+        console.log('✅ Сканер для товара загружен');
     </script>
 </body>
 </html>
