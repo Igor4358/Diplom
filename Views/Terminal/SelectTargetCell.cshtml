@@ -132,11 +132,11 @@
             <h2>🔄 Куда переместить?</h2>
 
             <div class="info">
-                <div class="info-row"><strong>📦 Товар:</strong> @ViewBag.ProductName</div>
-                <div class="info-row"><strong>📍 Текущая ячейка:</strong> @ViewBag.CurrentCell</div>
-                <div class="info-row"><strong>📊 Доступно:</strong> <span style="color:#667eea; font-size:20px;">@ViewBag.Quantity шт</span></div>
+                <strong>@ViewBag.ProductName</strong><br>
+                Текущая ячейка: <strong>@ViewBag.CurrentCell</strong><br>
+                Доступно: <strong>@ViewBag.Quantity шт</strong><br>
+                <span style="font-size: 12px; color: #667eea; font-family: monospace;">Штрих-код: @ViewBag.Barcode</span>
             </div>
-
             @if (ViewBag.Error != null)
             {
                 <div class="error">❌ @ViewBag.Error</div>

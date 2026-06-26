@@ -6,7 +6,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <title>Авторизация - ТСД Автопитер</title>
+    <title>Авторизация - ТСД Автосклад</title>
     <style>
         * {
             margin: 0;
@@ -111,7 +111,7 @@
 </head>
 <body>
     <div class="login-container">
-        <h1>🚚 ТСД Автопитер</h1>
+        <h1>🚚 ТСД Автосклад</h1>
         <div class="subtitle">Введите PIN-код для входа</div>
 
         @if (ViewBag.Error != null)
@@ -131,7 +131,6 @@
             <button type="submit">Войти</button>
         </form>
 
-        <!-- Цифровая клавиатура для удобства на ТСД -->
         <div class="numpad">
             <button type="button" onclick="addDigit('1')">1</button>
             <button type="button" onclick="addDigit('2')">2</button>

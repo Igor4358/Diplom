@@ -189,7 +189,7 @@
             }
 
             <form method="post" asp-action="FindProductForSorting" id="sortingForm">
-                <input type="text" name="scannedSku" id="scannedSku" class="scan-input" placeholder="Артикул товара" autofocus>
+                <input type="text" name="scannedSku" id="scannedSku" class="scan-input" placeholder="Штрихкод товара" autofocus>
                 <button type="button" id="scanButton" class="scan-btn">📷 Сканировать штрих-код</button>
                 <div id="reader" style="display:none;"></div>
                 <button type="button" id="stopScanBtn" class="stop-scan-btn">⏹ Остановить сканер</button>
@@ -228,7 +228,6 @@
                     inputField.value = decodedText;
                     if (navigator.vibrate) navigator.vibrate(200);
                     stopScanner();
-                    // Автоматически отправляем форму
                     const form = document.getElementById('sortingForm');
                     if (form) setTimeout(() => form.submit(), 300);
                 },

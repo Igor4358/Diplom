@@ -1,15 +1,16 @@
 ﻿@{
     Layout = null;
 }
-@model dynamic
-
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <title>Поиск объекта - ТСД Автопитер</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Печать штрих-кода - ТСД Автопитер</title>
 
+    <!-- Подключаем JsBarcode для генерации штрих-кода -->
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+    <!-- Подключаем сканер -->
     <script src="https://unpkg.com/html5-qrcode"></script>
 
     <style>
@@ -45,13 +46,28 @@
 
         h2 {
             color: #333;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             font-size: 22px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
         }
 
         .error {
             background: #fee;
             color: #c33;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
             padding: 12px;
             border-radius: 12px;
             margin-bottom: 15px;
@@ -139,7 +155,7 @@
         }
 
             .submit-btn:active {
-                transform: scale(0.97);
+                transform: scale(0.98);
             }
 
         .stop-scan-btn {
@@ -156,175 +172,193 @@
         }
 
             .stop-scan-btn:active {
-                transform: scale(0.97);
-            }
-
-        .result-card {
-            background: white;
-            border-radius: 24px;
-            padding: 20px;
-            text-align: left;
-            margin-top: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .result-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #667eea;
-            margin-bottom: 15px;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-        }
-
-        .info-row {
-            display: flex;
-            align-items: flex-start;
-            padding: 8px 0;
-            border-bottom: 1px solid #eee;
-            gap: 10px;
-            width: 100%;
-            overflow: hidden;
-        }
-
-        .info-label {
-            font-weight: bold;
-            color: #666;
-            flex-shrink: 0;
-            min-width: 90px;
-            max-width: 90px;
-            white-space: nowrap;
-            padding-top: 1px;
-        }
-
-        .info-value {
-            flex: 1;
-            color: #333;
-            word-break: break-word;
-            overflow-wrap: break-word;
-            white-space: normal;
-            line-height: 1.4;
-            min-width: 0;
-        }
-
-        .badge {
-            display: inline-block;
-            background: #4caf50;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            margin-top: 8px;
-        }
-
-        .action-btn {
-            margin-top: 15px;
-            padding: 12px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            cursor: pointer;
-            width: 100%;
-        }
-
-            .action-btn:active {
                 transform: scale(0.98);
             }
 
-        .barcode-display {
-            font-family: monospace;
-            font-size: 12px;
-            color: #667eea;
-            margin-top: 5px;
+        /* Стили для этикетки */
+        .label-container {
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+            .label-container .product-name {
+                font-size: 18px;
+                font-weight: bold;
+                color: #333;
+                margin-bottom: 5px;
+            }
+
+            .label-container .product-sku {
+                font-size: 14px;
+                color: #999;
+            }
+
+            .label-container .cell-address {
+                font-size: 14px;
+                color: #667eea;
+                margin: 8px 0;
+            }
+
+            .label-container .barcode-image {
+                width: 100%;
+                max-width: 300px;
+                height: auto;
+                margin: 10px auto;
+                display: block;
+            }
+
+            .label-container .barcode-number {
+                font-size: 14px;
+                font-family: monospace;
+                color: #666;
+                margin-top: 5px;
+            }
+
+        .print-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #2196f3 0%, #0d47a1 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+            .print-btn:active {
+                transform: scale(0.98);
+            }
+
+        .info-row {
+            display: flex;
+            padding: 5px 0;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .info-label {
+            color: #666;
+        }
+
+        .info-value {
+            font-weight: bold;
+            color: #333;
+        }
+
+        @@media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                max-width: 100%;
+            }
+
+            .card {
+                box-shadow: none;
+                padding: 10px;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            .label-container {
+                border: none;
+                box-shadow: none;
+                padding: 5px;
+            }
+
+                .label-container .barcode-image {
+                    max-width: 200px;
+                }
+
+            .back-btn, .print-btn, .scan-btn, .submit-btn, .stop-scan-btn, #reader, .scan-input {
+                display: none !important;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="card">
-            <h2>🔍 Поиск объекта</h2>
+            <h2>🏷️ Печать штрих-кода</h2>
+            <div class="subtitle">Найдите товар и напечатайте этикетку</div>
 
             @if (ViewBag.Error != null)
             {
                 <div class="error">❌ @ViewBag.Error</div>
             }
+            @if (TempData["Success"] != null)
+            {
+                <div class="success">✅ @TempData["Success"]</div>
+            }
 
-            <form method="post" id="searchForm">
-                <input type="text" name="searchQuery" id="searchQuery" class="scan-input" placeholder="Штрих-код или адрес ячейки" value="@ViewBag.SearchQuery" autofocus>
+            <!-- Форма поиска -->
+            <form method="post" id="searchForm" class="no-print">
+                <input type="text" name="barcode" id="searchBarcode" class="scan-input" placeholder="Штрих-код товара" autofocus>
                 <button type="button" id="scanButton" class="scan-btn">📷 Сканировать штрих-код</button>
                 <div id="reader" style="display:none;"></div>
                 <button type="button" id="stopScanBtn" class="stop-scan-btn">⏹ Остановить сканер</button>
-                <button type="submit" class="submit-btn">🔍 Искать</button>
+                <button type="submit" class="submit-btn">🔍 Найти</button>
             </form>
 
-            <button class="back-btn" onclick="location.href='/Terminal/MainMenu'">← Главное меню</button>
+            <!-- Результат поиска и этикетка -->
+            @if (ViewBag.Found == true)
+            {
+                <div class="label-container" id="labelContainer">
+                    <div class="product-name">@ViewBag.ProductName</div>
+                    <div class="product-sku">Артикул: @ViewBag.ProductSku</div>
+                    <div class="cell-address">📍 Ячейка: @ViewBag.CellAddress</div>
+                    <div style="font-size: 14px; color: #4caf50;">Количество: @ViewBag.Quantity шт</div>
+
+                    <!-- Генерируем штрих-код -->
+                    <svg id="barcodeImage" class="barcode-image"></svg>
+                    <div class="barcode-number">@ViewBag.Barcode</div>
+                </div>
+
+                <!-- Кнопки действий -->
+                <button class="print-btn no-print" onclick="printLabel()">🖨️ Печать этикетки</button>
+                <button class="print-btn no-print" style="background: #ff9800; margin-top: 10px;" onclick="location.href='/Terminal/PrintBarcode'">
+                    🔄 Новый поиск
+                </button>
+
+                <script>
+                    // Генерируем штрих-код
+                    try {
+                        JsBarcode("#barcodeImage", "@ViewBag.Barcode", {
+                            format: "CODE128",
+                            width: 2,
+                            height: 80,
+                            displayValue: false,
+                            margin: 10
+                        });
+                    } catch(e) {
+                        console.log('Ошибка генерации штрих-кода:', e);
+                    }
+
+                    function printLabel() {
+                        window.print();
+                    }
+                </script>
+            }
+            else if (ViewBag.Found == false && ViewBag.Error == null)
+            {
+                <div style="color: #999; padding: 20px;">
+                    <p>🔍 Введите штрих-код или артикул товара</p>
+                    <p style="font-size: 12px; margin-top: 10px;">Или используйте сканер для поиска</p>
+                </div>
+            }
+
+            <button class="back-btn no-print" onclick="location.href='/Terminal/MainMenu'">← Главное меню</button>
         </div>
-
-        @if (ViewBag.ResultType == "product")
-        {
-            <div class="result-card">
-                <div class="result-title">📦 Товар найден</div>
-                <div class="info-row">
-                    <div class="info-label">Название:</div>
-                    <div class="info-value">@ViewBag.ProductName</div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Артикул:</div>
-                    <div class="info-value">@ViewBag.ProductSku</div>
-                </div>
-                @if (!string.IsNullOrEmpty(ViewBag.ProductDescription))
-                {
-                    <div class="info-row">
-                        <div class="info-label">Описание:</div>
-                        <div class="info-value">@ViewBag.ProductDescription</div>
-                    </div>
-                }
-                <div class="info-row">
-                    <div class="info-label">Штрих-код:</div>
-                    <div class="info-value" style="font-family: monospace; color: #667eea;">@ViewBag.Barcode</div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Ячейка:</div>
-                    <div class="info-value"><strong>📍 @ViewBag.CellAddress</strong></div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Количество:</div>
-                    <div class="info-value">@ViewBag.Quantity шт</div>
-                </div>
-                <button class="action-btn" onclick="location.href='/Terminal/Sorting?sku=@ViewBag.Barcode'">
-                    🔄 Переместить товар
-                </button>
-                <button class="action-btn" style="background: #28a745; margin-top: 10px;" onclick="location.href='/Terminal/CellContents?cellAddress=@ViewBag.CellAddress'">
-                    📦 Смотреть содержимое ячейки
-                </button>
-            </div>
-        }
-
-        @if (ViewBag.ResultType == "cell")
-        {
-            <div class="result-card">
-                <div class="result-title">📍 Ячейка @ViewBag.CellAddress</div>
-                @if (((IEnumerable<dynamic>)ViewBag.Products).Any())
-                {
-                    <div style="margin-top: 10px;">
-                        @foreach (var item in ViewBag.Products)
-                        {
-                            <div style="background: #f8f9fa; padding: 12px; border-radius: 12px; margin-bottom: 8px;">
-                                <div style="font-weight: bold;">@item.Product.Name</div>
-                                <div style="font-size: 12px; color: #999;">Артикул: @item.Product.Sku</div>
-                                <div class="badge">@item.Quantity шт</div>
-                            </div>
-                        }
-                    </div>
-                }
-                else
-                {
-                    <div style="text-align: center; padding: 20px; color: #999;">📭 Ячейка пуста</div>
-                }
-            </div>
-        }
     </div>
 
     <script>
@@ -333,7 +367,7 @@
         let isScanning = false;
         const scanBtn = document.getElementById('scanButton');
         const stopBtn = document.getElementById('stopScanBtn');
-        const inputField = document.getElementById('searchQuery');
+        const inputField = document.getElementById('searchBarcode');
         const readerContainer = document.getElementById('reader');
 
         function startScanner() {
@@ -401,14 +435,18 @@
             if (isScanning) stopScanner(); else startScanner();
         });
         stopBtn.addEventListener('click', stopScanner);
+
+        // Поддержка Enter
         inputField.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 const form = this.closest('form');
                 if (form) form.submit();
             }
         });
+
+        // Останавливаем сканер при уходе со страницы
         window.addEventListener('beforeunload', stopScanner);
-        console.log('✅ Сканер для поиска загружен');
+        console.log('✅ Сканер для печати загружен');
     </script>
 </body>
 </html>

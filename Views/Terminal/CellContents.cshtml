@@ -283,7 +283,7 @@
                 }
 
                 <!-- ========== ШТРИХ-КОД ЯЧЕЙКИ (исправленный) ========== -->
-                <div class="barcode-section">
+           /*     <div class="barcode-section">
                     <div class="barcode-section-title">🏷️ Штрих-код ячейки @ViewBag.CellAddress</div>
                     <svg id="barcode-cell" class="barcode-image"></svg>
                     <div class="barcode-hint">Отсканируйте этот код для быстрого перехода к ячейке</div>
@@ -304,10 +304,11 @@
                             console.log('Ошибка генерации штрих-кода:', e);
                         }
                     </script>
-                </div>
+    </div>*/
             }
-
+            
             <button class="back-btn" onclick="location.href='/Terminal/MainMenu'">← Главное меню</button>
+            <button class="back-btn" onclick="history.back()">← Назад</button>
         </div>
     </div>
 
