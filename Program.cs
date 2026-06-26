@@ -22,7 +22,7 @@ builder.Services.AddSession(options =>
 
 var app = builder.Build();
 
-// 4. Middleware (ВАЖНО: порядок имеет значение!)
+// 4. Middleware 
 app.UseHttpsRedirection();
 app.UseStaticFiles();       // для CSS, JS, PWA файлов
 app.UseRouting();
