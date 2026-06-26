@@ -1,0 +1,137 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Добавить поставку - ТСД Автопитер</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 480px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+            .form-group label {
+                display: block;
+                font-weight: bold;
+                color: #333;
+                margin-bottom: 5px;
+            }
+
+            .form-group input {
+                width: 100%;
+                padding: 14px;
+                font-size: 16px;
+                border: 2px solid #ddd;
+                border-radius: 12px;
+            }
+
+                .form-group input:focus {
+                    outline: none;
+                    border-color: #667eea;
+                }
+
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 14px;
+            background: #999;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h2>➕ Новая ожидаемая поставка</h2>
+            <div class="subtitle">Добавьте товар, который должен поступить на склад</div>
+
+            <form method="post">
+                <div class="form-group">
+                    <label>Штрих-код</label>
+                    <input type="text" name="barcode" placeholder="Например: 4601234567890" required>
+                </div>
+                <div class="form-group">
+                    <label>Артикул (SKU)</label>
+                    <input type="text" name="sku" placeholder="Например: WA22724" required>
+                </div>
+                <div class="form-group">
+                    <label>Название товара</label>
+                    <input type="text" name="productName" placeholder="Например: Омыватель зима 4л" required>
+                </div>
+                <div class="form-group">
+                    <label>Количество</label>
+                    <input type="number" name="quantity" value="1" min="1">
+                </div>
+                <div class="form-group">
+                    <label>Поставщик (необязательно)</label>
+                    <input type="text" name="supplier" placeholder="Например: ООО АвтоПлюс">
+                </div>
+
+                <button type="submit" class="btn-primary">✅ Добавить поставку</button>
+            </form>
+
+            <button class="btn-secondary" onclick="location.href='/Terminal/ExpectedReceipts'">← Назад</button>
+        </div>
+    </div>
+</body>
+</html>

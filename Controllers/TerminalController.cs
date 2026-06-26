@@ -3,6 +3,12 @@ using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using WMS.Terminal.Data;
 using WMS.Terminal.Models;
+using ZXing;
+using ZXing.Common;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using ZXing.QrCode;
 namespace WMS.Terminal.Controllers
 {
     public class TerminalController : Controller
@@ -54,7 +60,69 @@ namespace WMS.Terminal.Controllers
 
             return RedirectToAction("MainMenu");
         }
+        // Генерация штрих-кода для товара или ячейки
+        [HttpGet]
+        public IActionResult GenerateBarcode(string data, int width = 300, int height = 150)
+        {
+            if (string.IsNullOrEmpty(data))
+            {
+                return BadRequest("Не указаны данные для штрих-кода");
+            }
 
+            var writer = new BarcodeWriter<Bitmap>
+            {
+                Format = BarcodeFormat.CODE_128,
+                Options = new EncodingOptions
+                {
+                    Width = width,
+                    Height = height,
+                    Margin = 10
+                }
+            };
+
+            var bitmap = writer.Write(data);
+            using var stream = new MemoryStream();
+            bitmap.Save(stream, ImageFormat.Png);
+            return File(stream.ToArray(), "image/png");
+        }
+        [HttpGet]
+        public async Task<IActionResult> AllBarcodes()
+        {
+            var warehouseId = HttpContext.Session.GetInt32("WarehouseId");
+            if (warehouseId == null) return RedirectToAction("SelectWarehouse");
+
+            var model = new BarcodeViewModel();
+
+            // Товары на складе с уникальными штрих-кодами
+            var products = await _db.Stocks
+                .Include(s => s.Product)
+                .Include(s => s.Cell)
+                .Where(s => s.Cell != null && s.Cell.WarehouseId == warehouseId && s.Quantity > 0)
+                .Select(s => new BarcodeProduct
+                {
+                    Name = s.Product!.Name,
+                    Sku = s.Product!.Sku,
+                    CellAddress = s.Cell!.Address,
+                    Barcode = s.Barcode ?? s.Product!.Sku // Если нет штрих-кода — используем артикул
+                })
+                .ToListAsync();
+
+            model.Products = products;
+
+            // Все ячейки склада
+            var cells = await _db.Cells
+                .Where(c => c.WarehouseId == warehouseId)
+                .Select(c => new BarcodeCell
+                {
+                    Address = c.Address,
+                    IsOccupied = _db.Stocks.Any(s => s.CellId == c.Id && s.Quantity > 0)
+                })
+                .ToListAsync();
+
+            model.Cells = cells;
+
+            return View(model);
+        }
         // Страница выбора склада
         [HttpGet]
         public async Task<IActionResult> SelectWarehouse()
@@ -221,7 +289,70 @@ namespace WMS.Terminal.Controllers
 
             return View(shipments);
         }
+        // Страница ожидаемых поставок
+        [HttpGet]
+        public async Task<IActionResult> ExpectedReceipts()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var warehouseId = HttpContext.Session.GetInt32("WarehouseId");
 
+            if (userId == null) return RedirectToAction("Login");
+            if (warehouseId == null) return RedirectToAction("SelectWarehouse");
+
+            // Получаем все ожидаемые поставки для этого склада
+            var receipts = await _db.ExpectedReceipts
+                .Where(e => e.Status != "Completed")
+                .OrderBy(e => e.ExpectedDate)
+                .ToListAsync();
+
+            return View(receipts);
+        }
+        // ============================================================
+        //  ОЖИДАЕМЫЕ ПОСТАВКИ
+        // ============================================================
+
+
+        // Страница добавления новой поставки (GET)
+        [HttpGet]
+        public IActionResult AddExpectedReceipt()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return RedirectToAction("Login");
+
+            return View();
+        }
+
+        // Обработка добавления поставки (POST)
+        [HttpPost]
+        public async Task<IActionResult> AddExpectedReceipt(string barcode, string sku, string productName, int quantity, string supplier)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return RedirectToAction("Login");
+
+            if (string.IsNullOrEmpty(barcode) || string.IsNullOrEmpty(sku) || string.IsNullOrEmpty(productName))
+            {
+                ViewBag.Error = "Заполните все обязательные поля";
+                return View();
+            }
+
+            var receipt = new ExpectedReceipt
+            {
+                Barcode = barcode,
+                Sku = sku,
+                ProductName = productName,
+                ExpectedQuantity = quantity > 0 ? quantity : 1,
+                ReceivedQuantity = 0,
+                Status = "Pending",
+                ExpectedDate = DateTime.UtcNow,
+                Supplier = supplier ?? ""
+            };
+
+            _db.ExpectedReceipts.Add(receipt);
+            await _db.SaveChangesAsync();
+
+            TempData["Success"] = $"Поставка '{productName}' добавлена!";
+            return RedirectToAction("ExpectedReceipts");
+        }
         // Сканирование ячейки (первый шаг сборки)
         [HttpGet]
         public async Task<IActionResult> ScanCell(int taskId)
@@ -404,7 +535,7 @@ namespace WMS.Terminal.Controllers
             return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
         }
         // Страница приёмки товара
-        [HttpGet]
+      [HttpGet]
         public async Task<IActionResult> Receiving()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
@@ -435,27 +566,28 @@ namespace WMS.Terminal.Controllers
                 .Distinct()
                 .CountAsync();
 
-            // Количество пустых ячеек
             var emptyCells = totalCells - occupiedCells;
-
-            // Загруженность в процентах
             var occupancyPercent = totalCells > 0 ? (occupiedCells * 100 / totalCells) : 0;
 
             // Топ-5 самых заполненных ячеек
             var topCells = await _db.Stocks
                 .Include(s => s.Cell)
-                .Include(s => s.Product)
                 .Where(s => s.Cell != null && s.Cell.WarehouseId == warehouseId && s.Quantity > 0)
                 .GroupBy(s => new { s.CellId, s.Cell!.Address })
-                .Select(g => new { CellAddress = g.Key.Address, TotalQuantity = g.Sum(x => x.Quantity) })
+                .Select(g => new { CellId = g.Key.CellId, CellAddress = g.Key.Address, TotalQuantity = g.Sum(x => x.Quantity) })
                 .OrderByDescending(x => x.TotalQuantity)
                 .Take(5)
                 .ToListAsync();
 
-            // Общее количество товаров на складе
             var totalProducts = await _db.Stocks
                 .Where(s => s.Cell != null && s.Cell.WarehouseId == warehouseId)
                 .SumAsync(s => s.Quantity);
+
+            // Получаем все ячейки для страницы "Все ячейки"
+            var allCells = await _db.Cells
+                .Where(c => c.WarehouseId == warehouseId)
+                .Select(c => new { c.Id, c.Address })
+                .ToListAsync();
 
             ViewBag.TotalCells = totalCells;
             ViewBag.OccupiedCells = occupiedCells;
@@ -463,10 +595,76 @@ namespace WMS.Terminal.Controllers
             ViewBag.OccupancyPercent = occupancyPercent;
             ViewBag.TotalProducts = totalProducts;
             ViewBag.TopCells = topCells;
+            ViewBag.AllCells = allCells;
 
             return View();
         }
+        // Список всех ячеек склада
+        [HttpGet]
+        public async Task<IActionResult> AllCells()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var warehouseId = HttpContext.Session.GetInt32("WarehouseId");
 
+            if (userId == null) return RedirectToAction("Login");
+            if (warehouseId == null) return RedirectToAction("SelectWarehouse");
+
+            // Получаем все ячейки склада с информацией о заполненности
+            var cells = await _db.Cells
+                .Where(c => c.WarehouseId == warehouseId)
+                .Select(c => new
+                {
+                    c.Id,
+                    c.Address,
+                    c.IsLocked,
+                    ProductsCount = _db.Stocks.Where(s => s.CellId == c.Id && s.Quantity > 0).Sum(s => s.Quantity)
+                })
+                .OrderBy(c => c.Address)
+                .ToListAsync();
+
+            return View(cells);
+        }
+
+        // Просмотр содержимого ячейки
+        [HttpGet]
+        public async Task<IActionResult> CellContents(string cellAddress = "")
+        {
+            var warehouseId = HttpContext.Session.GetInt32("WarehouseId");
+            if (warehouseId == null) return RedirectToAction("SelectWarehouse");
+
+            // Если адрес не передан — просто показываем страницу с полем ввода
+            if (string.IsNullOrEmpty(cellAddress))
+            {
+                return View(new List<Stock>());
+            }
+
+            // Ищем ячейку по адресу
+            var cell = await _db.Cells
+                .FirstOrDefaultAsync(c => c.Address == cellAddress && c.WarehouseId == warehouseId);
+
+            if (cell == null)
+            {
+                ViewBag.Error = $"Ячейка '{cellAddress}' не найдена на складе";
+                ViewBag.CellAddress = cellAddress;
+                return View(new List<Stock>());
+            }
+
+            // Получаем все товары в этой ячейке
+            var stocks = await _db.Stocks
+                .Include(s => s.Product)
+                .Where(s => s.CellId == cell.Id && s.Quantity > 0)
+                .ToListAsync();
+
+            ViewBag.CellAddress = cell.Address;
+            ViewBag.CellId = cell.Id;
+
+            if (!stocks.Any())
+            {
+                ViewBag.Info = "Ячейка пуста";
+            }
+
+            return View(stocks);
+        }
 
         // История операций (логирование)
         [HttpGet]
@@ -495,22 +693,300 @@ namespace WMS.Terminal.Controllers
                 return View();
             }
 
-            // Ищем товар в базе
-            var product = await _db.Products.FirstOrDefaultAsync(p => p.Sku == scannedSku);
+            // ============================================================
+            // 1. Ищем товар на складе ПО ШТРИХ-КОДУ
+            // ============================================================
+            var existingStock = await _db.Stocks
+                .Include(s => s.Product)
+                .Include(s => s.Cell)
+                .FirstOrDefaultAsync(s => s.Barcode == scannedSku && s.Quantity > 0);
 
-            if (product == null)
+            if (existingStock != null)
             {
-                ViewBag.Error = $"Товар с артикулом {scannedSku} не найден в базе";
-                return View();
+                // Товар уже есть на складе! Показываем уведомление и останавливаем приёмку.
+                TempData["Warning"] = $"⚠️ Товар '{existingStock.Product?.Name}' (арт. {existingStock.Product?.Sku}) УЖЕ ПРИНЯТ на склад!";
+                TempData["WarningDetails"] = $"📍 Ячейка: {existingStock.Cell?.Address}, Количество: {existingStock.Quantity} шт";
+                return RedirectToAction("Receiving");
             }
 
-            // Сохраняем товар в сессию для следующего шага
+            // ============================================================
+            // 2. Ищем товар в ожидаемых поставках
+            // ============================================================
+            var expected = await _db.ExpectedReceipts
+                .FirstOrDefaultAsync(e => e.Barcode == scannedSku && e.Status != "Completed");
+
+            if (expected != null)
+            {
+                // Нашли в ожидаемых поставках → принимаем
+                var existingProduct = await _db.Products
+                    .FirstOrDefaultAsync(p => p.Sku == expected.Sku);
+
+                int productId;
+                if (existingProduct != null)
+                {
+                    productId = existingProduct.Id;
+                }
+                else
+                {
+                    var newProduct = new Product
+                    {
+                        Sku = expected.Sku,
+                        Name = expected.ProductName,
+                        Description = ""
+                    };
+                    _db.Products.Add(newProduct);
+                    await _db.SaveChangesAsync();
+                    productId = newProduct.Id;
+                }
+
+                HttpContext.Session.SetInt32("ExpectedReceiptId", expected.Id);
+                HttpContext.Session.SetInt32("ReceivingProductId", productId);
+                HttpContext.Session.SetString("ReceivingProductName", expected.ProductName);
+                HttpContext.Session.SetString("ReceivingProductSku", expected.Sku);
+                HttpContext.Session.SetString("ReceivingBarcode", scannedSku);
+
+                int remaining = expected.ExpectedQuantity - expected.ReceivedQuantity;
+                HttpContext.Session.SetInt32("ReceivingQuantity", remaining);
+
+                return RedirectToAction("SelectCellForReceiving");
+            }
+
+            // ============================================================
+            // 3. Проверяем, есть ли товар с таким артикулом (если штрих-код = артикул)
+            // ============================================================
+            var productBySku = await _db.Products.FirstOrDefaultAsync(p => p.Sku == scannedSku);
+            if (productBySku != null)
+            {
+                ViewBag.NewBarcode = scannedSku;
+                ViewBag.ExistingProductSku = productBySku.Sku;
+                ViewBag.ExistingProductName = productBySku.Name;
+                ViewBag.Error = $"Товар '{productBySku.Name}' уже есть в базе, но без штрих-кода. Добавьте штрих-код к существующему товару.";
+                return View("LinkBarcodeToExistingProduct");
+            }
+
+            // ============================================================
+            // 4. Товар не найден → предлагаем создать новый
+            // ============================================================
+            ViewBag.NewBarcode = scannedSku;
+            ViewBag.Error = $"Товар со штрих-кодом '{scannedSku}' не найден. Заполните форму для создания нового товара.";
+            return View("CreateNewProduct");
+        }
+        // Страница создания нового товара (GET)
+        [HttpGet]
+        public IActionResult CreateNewProduct(string? barcode)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return RedirectToAction("Login");
+
+            // Если передан штрих-код, подставляем его в поле
+            ViewBag.NewBarcode = barcode ?? "";
+            return View();
+        }
+        [HttpGet]
+        public async Task<IActionResult> CompletedReceipts()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return RedirectToAction("Login");
+
+            var receipts = await _db.ExpectedReceipts
+                .Where(e => e.Status == "Completed")
+                .OrderByDescending(e => e.ExpectedDate)
+                .Take(50)
+                .ToListAsync();
+
+            return View(receipts);
+        }
+        [HttpPost]
+        public async Task<IActionResult> LinkBarcodeToExistingProduct(string barcode, string sku, int quantity)
+        {
+            var warehouseId = HttpContext.Session.GetInt32("WarehouseId");
+            if (warehouseId == null) return RedirectToAction("SelectWarehouse");
+
+            // Находим существующий товар
+            var product = await _db.Products.FirstOrDefaultAsync(p => p.Sku == sku);
+            if (product == null)
+            {
+                ViewBag.Error = "Товар не найден";
+                return RedirectToAction("Receiving");
+            }
+
+            // Проверяем, есть ли уже товар на складе с таким штрих-кодом
+            var existingStock = await _db.Stocks
+                .FirstOrDefaultAsync(s => s.Barcode == barcode && s.Quantity > 0);
+
+            if (existingStock != null)
+            {
+                TempData["Success"] = $"Товар со штрих-кодом '{barcode}' уже есть на складе! Количество увеличено.";
+                existingStock.Quantity += quantity;
+                await _db.SaveChangesAsync();
+                return RedirectToAction("Receiving");
+            }
+
+            // Сохраняем в сессии для выбора ячейки
             HttpContext.Session.SetInt32("ReceivingProductId", product.Id);
             HttpContext.Session.SetString("ReceivingProductName", product.Name);
             HttpContext.Session.SetString("ReceivingProductSku", product.Sku);
+            HttpContext.Session.SetInt32("ReceivingQuantity", quantity);
+            HttpContext.Session.SetString("ReceivingBarcode", barcode);
 
-            // Переходим к выбору ячейки
+            // Добавляем штрих-код в ExpectedReceipts для истории
+            var expected = new ExpectedReceipt
+            {
+                Barcode = barcode,
+                Sku = sku,
+                ProductName = product.Name,
+                ExpectedQuantity = quantity,
+                ReceivedQuantity = 0,
+                Status = "Pending",
+                ExpectedDate = DateTime.UtcNow,
+                Supplier = "Привязка штрих-кода"
+            };
+            _db.ExpectedReceipts.Add(expected);
+            await _db.SaveChangesAsync();
+            HttpContext.Session.SetInt32("ExpectedReceiptId", expected.Id);
+
+            TempData["Success"] = $"Штрих-код '{barcode}' связан с товаром '{product.Name}'! Выберите ячейку для размещения.";
             return RedirectToAction("SelectCellForReceiving");
+        }
+        /*  [HttpGet]
+          public async Task<IActionResult> ConfirmExistingStockReceiving()
+          {
+              var productName = HttpContext.Session.GetString("ReceivingProductName");
+              var productSku = HttpContext.Session.GetString("ReceivingProductSku");
+              var quantity = HttpContext.Session.GetInt32("ReceivingQuantity") ?? 1;
+              var cellId = HttpContext.Session.GetInt32("ReceivingCellId");
+
+              ViewBag.ProductName = productName;
+              ViewBag.ProductSku = productSku;
+              ViewBag.Quantity = quantity;
+
+              var cell = await _db.Cells.FindAsync(cellId);
+              ViewBag.CellAddress = cell?.Address ?? "неизвестно";
+
+              return View();
+          }
+        */
+
+        /*  [HttpPost]
+          public async Task<IActionResult> ConfirmExistingStockReceiving(int confirmQuantity)
+          {
+              var existingStockId = HttpContext.Session.GetInt32("ExistingStockId");
+              var productName = HttpContext.Session.GetString("ReceivingProductName");
+              var userId = HttpContext.Session.GetInt32("UserId");
+              var userName = HttpContext.Session.GetString("UserName");
+
+              if (existingStockId == null)
+              {
+                  return RedirectToAction("Receiving");
+              }
+
+              var stock = await _db.Stocks
+                  .Include(s => s.Product)
+                  .Include(s => s.Cell)
+                  .FirstOrDefaultAsync(s => s.Id == existingStockId);
+
+              if (stock == null)
+              {
+                  TempData["Error"] = "Товар не найден на складе";
+                  return RedirectToAction("Receiving");
+              }
+
+              stock.Quantity += confirmQuantity;
+              await _db.SaveChangesAsync();
+
+              // Логируем
+              if (_db.OperationLogs != null)
+              {
+                  _db.OperationLogs.Add(new OperationLog
+                  {
+                      UserId = userId ?? 0,
+                      UserName = userName ?? "Неизвестный",
+                      OperationType = "Receiving",
+                      Details = $"Добавлено {confirmQuantity} шт к товару '{productName}' в ячейку {stock.Cell?.Address}"
+                  });
+                  await _db.SaveChangesAsync();
+              }
+
+              HttpContext.Session.Remove("ExistingStockId");
+              HttpContext.Session.Remove("ReceivingProductName");
+              HttpContext.Session.Remove("ReceivingProductSku");
+              HttpContext.Session.Remove("ReceivingQuantity");
+              HttpContext.Session.Remove("ReceivingCellId");
+
+              TempData["Success"] = $"✅ К товару '{productName}' добавлено {confirmQuantity} шт.";
+              return RedirectToAction("Receiving");
+          }
+        */
+        // ============================================================
+        //  СОЗДАНИЕ НОВОГО ТОВАРА (POST)
+        // ============================================================
+        [HttpPost]
+        public async Task<IActionResult> CreateNewProduct(string barcode, string sku, string productName, string description, int quantity)
+        {
+            var warehouseId = HttpContext.Session.GetInt32("WarehouseId");
+            if (warehouseId == null) return RedirectToAction("SelectWarehouse");
+
+            try
+            {
+                // Проверяем, не существует ли уже товар с таким артикулом
+                var existingProduct = await _db.Products.FirstOrDefaultAsync(p => p.Sku == sku);
+                if (existingProduct != null)
+                {
+                    ViewBag.Error = $"Товар с артикулом '{sku}' уже существует!";
+                    ViewBag.NewBarcode = barcode;
+                    return View("CreateNewProduct");
+                }
+
+                // Проверяем, не существует ли уже товар с таким штрих-кодом на складе
+                var existingStock = await _db.Stocks.FirstOrDefaultAsync(s => s.Barcode == barcode && s.Quantity > 0);
+                if (existingStock != null)
+                {
+                    TempData["Warning"] = $"Товар со штрих-кодом '{barcode}' уже есть на складе!";
+                    return RedirectToAction("Receiving");
+                }
+
+                // 1. Создаём новый товар
+                var product = new Product
+                {
+                    Sku = sku,
+                    Name = productName,
+                    Description = description ?? ""
+                };
+                _db.Products.Add(product);
+                await _db.SaveChangesAsync();
+
+                // 2. Сохраняем в сессии для следующего шага (выбор ячейки)
+                HttpContext.Session.SetInt32("ReceivingProductId", product.Id);
+                HttpContext.Session.SetString("ReceivingProductName", product.Name);
+                HttpContext.Session.SetString("ReceivingProductSku", product.Sku);
+                HttpContext.Session.SetInt32("ReceivingQuantity", quantity);
+                HttpContext.Session.SetString("ReceivingBarcode", barcode);
+
+                // 3. Добавляем в ожидаемые поставки (для истории)
+                var expected = new ExpectedReceipt
+                {
+                    Barcode = barcode,
+                    Sku = sku,
+                    ProductName = productName,
+                    ExpectedQuantity = quantity,
+                    ReceivedQuantity = 0,
+                    Status = "Pending",
+                    ExpectedDate = DateTime.UtcNow,
+                    Supplier = "Создание нового товара"
+                };
+                _db.ExpectedReceipts.Add(expected);
+                await _db.SaveChangesAsync();
+                HttpContext.Session.SetInt32("ExpectedReceiptId", expected.Id);
+
+                TempData["Success"] = $"Товар '{productName}' создан! Теперь выберите ячейку для размещения.";
+                return RedirectToAction("SelectCellForReceiving");
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = $"Ошибка: {ex.Message}";
+                ViewBag.NewBarcode = barcode;
+                return View("CreateNewProduct");
+            }
         }
         // Приёмка по накладной (выбор накладной)
         [HttpGet]
@@ -701,20 +1177,36 @@ namespace WMS.Terminal.Controllers
 
             return View(freeCells);
         }
+        private string GenerateEan13Barcode()
+        {
+            var random = new Random();
+            var digits = string.Join("", Enumerable.Range(0, 12).Select(_ => random.Next(0, 10).ToString()));
 
-        // Подтверждение размещения в выбранную ячейку
+            int sum = 0;
+            for (int i = 0; i < 12; i++)
+            {
+                int digit = int.Parse(digits[i].ToString());
+                if (i % 2 == 0) sum += digit;
+                else sum += digit * 3;
+            }
+            int checkDigit = (10 - (sum % 10)) % 10;
+
+            return digits + checkDigit.ToString();
+        }
         [HttpPost]
         public async Task<IActionResult> ConfirmReceiving(int cellId, int quantity)
         {
             var warehouseId = HttpContext.Session.GetInt32("WarehouseId");
             var productId = HttpContext.Session.GetInt32("ReceivingProductId");
             var productName = HttpContext.Session.GetString("ReceivingProductName");
+            var expectedReceiptId = HttpContext.Session.GetInt32("ExpectedReceiptId");
             var userId = HttpContext.Session.GetInt32("UserId");
             var userName = HttpContext.Session.GetString("UserName");
+
             if (warehouseId == null) return RedirectToAction("SelectWarehouse");
             if (productId == null) return RedirectToAction("Receiving");
 
-            // Проверяем, есть ли уже этот товар в этой ячейке
+            // 1. Добавляем/обновляем товар в ячейке
             var existingStock = await _db.Stocks
                 .FirstOrDefaultAsync(s => s.ProductId == productId && s.CellId == cellId);
 
@@ -728,13 +1220,30 @@ namespace WMS.Terminal.Controllers
                 {
                     ProductId = productId.Value,
                     CellId = cellId,
-                    Quantity = quantity
+                    Quantity = quantity,
+                    Barcode = GenerateEan13Barcode()
                 };
                 _db.Stocks.Add(newStock);
             }
 
+            // 2. Если приёмка была из ожидаемой поставки — обновляем количество
+            if (expectedReceiptId.HasValue)
+            {
+                var expected = await _db.ExpectedReceipts.FindAsync(expectedReceiptId.Value);
+                if (expected != null)
+                {
+                    expected.ReceivedQuantity += quantity;
+
+                    if (expected.ReceivedQuantity >= expected.ExpectedQuantity)
+                        expected.Status = "Completed";
+                    else if (expected.ReceivedQuantity > 0)
+                        expected.Status = "Partial";
+                }
+            }
+
             await _db.SaveChangesAsync();
 
+            // 3. Логируем операцию
             if (_db.OperationLogs != null)
             {
                 var cell = await _db.Cells.FindAsync(cellId);
@@ -748,13 +1257,13 @@ namespace WMS.Terminal.Controllers
                 await _db.SaveChangesAsync();
             }
 
-            // Очищаем сессию
+            // 4. Очищаем сессию
             HttpContext.Session.Remove("ReceivingProductId");
             HttpContext.Session.Remove("ReceivingProductName");
             HttpContext.Session.Remove("ReceivingProductSku");
+            HttpContext.Session.Remove("ExpectedReceiptId");
 
             TempData["Success"] = $"Товар \"{productName}\" в количестве {quantity} шт принят на склад";
-
             return RedirectToAction("Receiving");
         }
         // Страница сортировки - выбор товара для перемещения
@@ -771,6 +1280,7 @@ namespace WMS.Terminal.Controllers
         }
 
         // Поиск товара по штрих-коду для сортировки
+        // Поиск товара по штрих-коду для сортировки
         [HttpPost]
         public async Task<IActionResult> FindProductForSorting(string scannedSku)
         {
@@ -783,41 +1293,55 @@ namespace WMS.Terminal.Controllers
                 return View("Sorting");
             }
 
-            var product = await _db.Products.FirstOrDefaultAsync(p => p.Sku == scannedSku);
-            if (product == null)
-            {
-                ViewBag.Error = $"Товар с артикулом {scannedSku} не найден";
-                return View("Sorting");
-            }
-
-            // Ищем текущее местоположение товара
-            var currentStock = await _db.Stocks
+            // ============================================================
+            // 1. Ищем товар на складе ПО ШТРИХ-КОДУ (а не по артикулу)
+            // ============================================================
+            var stock = await _db.Stocks
+                .Include(s => s.Product)
                 .Include(s => s.Cell)
-                .FirstOrDefaultAsync(s => s.ProductId == product.Id && s.Cell != null && s.Cell.WarehouseId == warehouseId);
+                .FirstOrDefaultAsync(s => s.Barcode == scannedSku && s.Cell != null && s.Cell.WarehouseId == warehouseId && s.Quantity > 0);
 
-            if (currentStock == null || currentStock.Quantity <= 0)
+            if (stock == null)
             {
-                ViewBag.Error = $"Товар \"{product.Name}\" не найден на складе";
+                // Проверяем, есть ли товар с таким артикулом (для обратной совместимости)
+                var productBySku = await _db.Products.FirstOrDefaultAsync(p => p.Sku == scannedSku);
+                if (productBySku != null)
+                {
+                    // Ищем, есть ли этот товар на складе (по артикулу)
+                    var stockByProduct = await _db.Stocks
+                        .Include(s => s.Cell)
+                        .FirstOrDefaultAsync(s => s.ProductId == productBySku.Id && s.Cell != null && s.Cell.WarehouseId == warehouseId && s.Quantity > 0);
+
+                    if (stockByProduct != null)
+                    {
+                        // Нашли по артикулу — используем его
+                        stock = stockByProduct;
+                    }
+                }
+            }
+
+            if (stock == null)
+            {
+                ViewBag.Error = $"Товар со штрих-кодом '{scannedSku}' не найден на складе";
                 return View("Sorting");
             }
-            Console.WriteLine($"DEBUG: Quantity = {currentStock.Quantity}");
+
             // Сохраняем в сессию
-            HttpContext.Session.SetInt32("MovingProductId", product.Id);
-            HttpContext.Session.SetString("MovingProductName", product.Name);
-            HttpContext.Session.SetString("MovingProductSku", product.Sku);
-            HttpContext.Session.SetInt32("MovingFromCellId", currentStock.CellId);
-            HttpContext.Session.SetInt32("MovingQuantity", currentStock.Quantity);
+            HttpContext.Session.SetInt32("MovingProductId", stock.ProductId);
+            HttpContext.Session.SetString("MovingProductName", stock.Product?.Name ?? "Неизвестный товар");
+            HttpContext.Session.SetString("MovingProductSku", stock.Product?.Sku ?? "");
+            HttpContext.Session.SetInt32("MovingFromCellId", stock.CellId);
+            HttpContext.Session.SetInt32("MovingQuantity", stock.Quantity);
 
             // Получаем список ячеек для представления
             var cells = await _db.Cells
-                .Where(c => c.WarehouseId == warehouseId && c.Id != currentStock.CellId)
+                .Where(c => c.WarehouseId == warehouseId && c.Id != stock.CellId)
                 .ToListAsync();
 
-            // Передаём данные через ViewBag и ViewData
-            ViewBag.ProductName = product.Name;
-            ViewBag.ProductSku = product.Sku;
-            ViewBag.CurrentCell = currentStock.Cell?.Address ?? "неизвестно";
-            ViewBag.Quantity = currentStock.Quantity;  // ← убедитесь, что это число
+            ViewBag.ProductName = stock.Product?.Name;
+            ViewBag.ProductSku = stock.Product?.Sku;
+            ViewBag.CurrentCell = stock.Cell?.Address ?? "неизвестно";
+            ViewBag.Quantity = stock.Quantity;
 
             return View("SelectTargetCell", cells);
         }

@@ -1,0 +1,190 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Связать штрих-код - ТСД Автопитер</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 480px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .product-info {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+            .product-info .label {
+                color: #666;
+                font-size: 12px;
+            }
+
+            .product-info .value {
+                font-size: 18px;
+                font-weight: bold;
+                color: #333;
+            }
+
+        .barcode-display {
+            background: #e8f0fe;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+            .barcode-display .label {
+                color: #666;
+                font-size: 12px;
+            }
+
+            .barcode-display .value {
+                font-size: 20px;
+                font-weight: bold;
+                color: #667eea;
+                font-family: monospace;
+            }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+            .form-group label {
+                display: block;
+                font-weight: bold;
+                color: #333;
+                margin-bottom: 5px;
+            }
+
+            .form-group input {
+                width: 100%;
+                padding: 14px;
+                font-size: 16px;
+                border: 2px solid #ddd;
+                border-radius: 12px;
+            }
+
+                .form-group input:focus {
+                    outline: none;
+                    border-color: #667eea;
+                }
+
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 14px;
+            background: #999;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+            .btn-primary:active, .btn-secondary:active {
+                transform: scale(0.98);
+            }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h2>🔗 Связать штрих-код</h2>
+            <div class="subtitle">Товар уже есть в базе, но без штрих-кода</div>
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="error">❌ @ViewBag.Error</div>
+            }
+
+            <div class="product-info">
+                <div class="label">Существующий товар</div>
+                <div class="value">@ViewBag.ExistingProductName</div>
+                <div style="font-size:14px; color:#999;">Артикул: @ViewBag.ExistingProductSku</div>
+            </div>
+
+            <div class="barcode-display">
+                <div class="label">Новый штрих-код</div>
+                <div class="value">@ViewBag.NewBarcode</div>
+            </div>
+
+            <form method="post" action="/Terminal/LinkBarcodeToExistingProduct">
+                <input type="hidden" name="barcode" value="@ViewBag.NewBarcode">
+                <input type="hidden" name="sku" value="@ViewBag.ExistingProductSku">
+
+                <div class="form-group">
+                    <label>Количество для добавления</label>
+                    <input type="number" name="quantity" value="1" min="1">
+                </div>
+
+                <button type="submit" class="btn-primary">✅ Связать и принять</button>
+            </form>
+
+            <button class="btn-secondary" onclick="location.href='/Terminal/Receiving'">← Назад</button>
+        </div>
+    </div>
+</body>
+</html>

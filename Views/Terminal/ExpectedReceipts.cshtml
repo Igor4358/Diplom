@@ -1,0 +1,217 @@
+﻿@{
+    Layout = null;
+}
+@model List<WMS.Terminal.Models.ExpectedReceipt>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Ожидаемые поставки - ТСД Автопитер</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: -20px -20px 20px -20px;
+            padding: 20px;
+            color: white;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            color: white;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        h1 {
+            font-size: 24px;
+        }
+
+        .receipt-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .receipt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .receipt-product {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .receipt-sku {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .receipt-details {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 10px 0;
+        }
+
+            .receipt-details span {
+                background: #f0f0f0;
+                padding: 4px 12px;
+                border-radius: 20px;
+                font-size: 14px;
+            }
+
+        .status-pending {
+            background: #ff9800;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .status-partial {
+            background: #2196f3;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .status-completed {
+            background: #4caf50;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 50px;
+            color: #999;
+            background: white;
+            border-radius: 16px;
+        }
+
+        .add-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 15px 0;
+            width: 100%;
+        }
+
+            .add-btn:active {
+                transform: scale(0.98);
+            }
+
+        .barcode-display {
+            font-family: monospace;
+            font-size: 12px;
+            color: #667eea;
+            margin-top: 5px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #eee;
+            border-radius: 3px;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            background: #4caf50;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="back-btn" onclick="location.href='/Terminal/MainMenu'">← Назад</button>
+        <h1>📋 Ожидаемые поставки</h1>
+    </div>
+
+    <button class="add-btn" onclick="location.href='/Terminal/AddExpectedReceipt'">
+        ➕ Добавить ожидаемую поставку
+    </button>
+
+    @if (Model.Any())
+    {
+        foreach (var item in Model)
+        {
+            var percent = item.ExpectedQuantity > 0
+            ? (item.ReceivedQuantity * 100 / item.ExpectedQuantity)
+            : 0;
+            var statusClass = item.Status == "Completed" ? "status-completed" :
+            (item.Status == "Partial" ? "status-partial" : "status-pending");
+
+            <div class="receipt-card">
+                <div class="receipt-header">
+                    <div>
+                        <div class="receipt-product">@item.ProductName</div>
+                        <div class="receipt-sku">Артикул: @item.Sku</div>
+                        <div class="barcode-display">Штрих-код: @item.Barcode</div>
+                    </div>
+                    <span class="@statusClass">@item.Status</span>
+                </div>
+
+                <div class="receipt-details">
+                    <span>📦 Ожидается: @item.ExpectedQuantity шт</span>
+                    <span>📥 Принято: @item.ReceivedQuantity шт</span>
+                    <span>📅 @item.ExpectedDate.ToString("dd.MM.yyyy")</span>
+                    @if (!string.IsNullOrEmpty(item.Supplier))
+                    {
+                        <span>🏭 @item.Supplier</span>
+                    }
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: @percent%;"></div>
+                    <div class="progress-fill" style="width: @percent%;"></div>
+                </div>
+                <div style="font-size: 12px; color: #999; margin-top: 5px;">Прогресс: @percent%</div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="empty">
+            📭 Нет ожидаемых поставок<br>
+            <small>Нажмите "Добавить ожидаемую поставку" для создания</small>
+        </div>
+        <!-- Добавляем кнопку для просмотра завершённых -->
+        <button class="add-btn" style="background:#667eea;" onclick="location.href='/Terminal/CompletedReceipts'">
+            📋 Показать завершённые поставки
+        </button>
+    }
+</body>
+</html>

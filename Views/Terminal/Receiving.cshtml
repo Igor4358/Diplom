@@ -187,9 +187,18 @@
                 <div class="success">✅ @TempData["Success"]</div>
             }
 
-            @if (ViewBag.Error != null)
+            @if (TempData["Warning"] != null)
             {
-                <div class="error">❌ @ViewBag.Error</div>
+                <div class="warning" style="background: #fff3cd; border: 2px solid #ff9800; color: #856404; padding: 15px; border-radius: 12px; margin-bottom: 15px; text-align: left;">
+                    <div style="font-size: 18px; font-weight: bold;">⚠️ @TempData["Warning"]</div>
+                    @if (TempData["WarningDetails"] != null)
+                    {
+                        <div style="margin-top: 5px; font-size: 14px;">@TempData["WarningDetails"]</div>
+                    }
+                    <button onclick="location.href='/Terminal/Receiving'" style="margin-top: 10px; padding: 8px 20px; background: #ff9800; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                        🔄 Понятно, продолжить
+                    </button>
+                </div>
             }
 
             <form method="post" id="receivingForm">

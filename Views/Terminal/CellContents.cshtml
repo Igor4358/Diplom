@@ -1,0 +1,398 @@
+﻿@{
+    Layout = null;
+}
+@model List<WMS.Terminal.Models.Stock>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Содержимое ячейки - ТСД Автопитер</title>
+
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .info {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .back-btn {
+            background: #999;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 12px;
+        }
+
+            .back-btn:active {
+                transform: scale(0.98);
+            }
+
+        .scan-input {
+            width: 100%;
+            padding: 18px;
+            font-size: 22px;
+            text-align: center;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            background: #fafafa;
+            margin-bottom: 12px;
+        }
+
+            .scan-input:focus {
+                outline: none;
+                border-color: #667eea;
+                background: white;
+            }
+
+        .scan-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-bottom: 12px;
+        }
+
+            .scan-btn:active {
+                transform: scale(0.97);
+            }
+
+        .scan-btn-stop {
+            background: #ff4444;
+        }
+
+        #reader {
+            width: 100%;
+            max-width: 480px;
+            margin: 10px auto;
+            border-radius: 16px;
+            overflow: hidden;
+            background: #000;
+        }
+
+            #reader video {
+                width: 100%;
+                height: auto;
+                display: block;
+            }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+            .submit-btn:active {
+                transform: scale(0.97);
+            }
+
+        .stop-scan-btn {
+            width: 100%;
+            padding: 14px;
+            background: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 10px;
+            display: none;
+        }
+
+            .stop-scan-btn:active {
+                transform: scale(0.97);
+            }
+
+        .cell-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px;
+            border-radius: 12px;
+            margin: 15px 0;
+            font-size: 18px;
+        }
+
+        .product-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .product-name {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .product-sku {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .product-qty {
+            background: #4caf50;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .empty-message {
+            color: #999;
+            padding: 30px 0;
+        }
+
+        .barcode-section {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .barcode-section-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .barcode-image {
+            width: 100%;
+            max-width: 280px;
+            height: auto;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .barcode-hint {
+            font-size: 12px;
+            color: #999;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h2>📦 Содержимое ячейки</h2>
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="error">❌ @ViewBag.Error</div>
+            }
+            @if (ViewBag.Info != null)
+            {
+                <div class="info">ℹ️ @ViewBag.Info</div>
+            }
+
+            <form method="get" id="cellForm">
+                <input type="text" name="cellAddress" id="cellAddress" class="scan-input" placeholder="Адрес ячейки (например, 406a231)" value="@ViewBag.CellAddress" autofocus>
+                <button type="button" id="scanButton" class="scan-btn">📷 Сканировать QR-код ячейки</button>
+                <div id="reader" style="display:none;"></div>
+                <button type="button" id="stopScanBtn" class="stop-scan-btn">⏹ Остановить сканер</button>
+                <button type="submit" class="submit-btn">🔍 Показать</button>
+            </form>
+
+            @if (ViewBag.CellAddress != null)
+            {
+                <div class="cell-header">📍 Ячейка @ViewBag.CellAddress</div>
+
+                @if (Model.Any())
+                {
+                    @foreach (var stock in Model)
+                    {
+                        <div class="product-item">
+                            <div>
+                                <div class="product-name">@stock.Product?.Name</div>
+                                <div class="product-sku">Артикул: @stock.Product?.Sku</div>
+                                <div class="product-sku" style="font-size: 10px; color: #667eea;">Штрих-код: @stock.Barcode</div>
+                            </div>
+                            <div class="product-qty">@stock.Quantity шт</div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="empty-message">📭 Ячейка пуста</div>
+                }
+
+                <!-- ========== ШТРИХ-КОД ЯЧЕЙКИ (исправленный) ========== -->
+                <div class="barcode-section">
+                    <div class="barcode-section-title">🏷️ Штрих-код ячейки @ViewBag.CellAddress</div>
+                    <svg id="barcode-cell" class="barcode-image"></svg>
+                    <div class="barcode-hint">Отсканируйте этот код для быстрого перехода к ячейке</div>
+                    <div style="font-size: 11px; color: #999; margin-top: 5px; word-break: break-all;">
+                        Код: @ViewBag.CellAddress
+                    </div>
+                    <script>
+                        try {
+                            JsBarcode("#barcode-cell", "@ViewBag.CellAddress", {
+                                format: "CODE128",
+                                width: 2,
+                                height: 80,
+                                displayValue: true,
+                                fontSize: 14,
+                                margin: 10
+                            });
+                        } catch(e) {
+                            console.log('Ошибка генерации штрих-кода:', e);
+                        }
+                    </script>
+                </div>
+            }
+
+            <button class="back-btn" onclick="location.href='/Terminal/MainMenu'">← Главное меню</button>
+        </div>
+    </div>
+
+    <script>
+        // === СКАНЕР ===
+        let html5Scanner = null;
+        let isScanning = false;
+        const scanBtn = document.getElementById('scanButton');
+        const stopBtn = document.getElementById('stopScanBtn');
+        const inputField = document.getElementById('cellAddress');
+        const readerContainer = document.getElementById('reader');
+
+        function startScanner() {
+            if (typeof Html5Qrcode === 'undefined') {
+                alert('Библиотека сканера не загружена.');
+                return;
+            }
+            readerContainer.style.display = 'block';
+            scanBtn.textContent = '⏳ Запуск...';
+            scanBtn.disabled = true;
+
+            html5Scanner = new Html5Qrcode("reader");
+            const config = { fps: 15, qrbox: { width: 250, height: 100 }, aspectRatio: 1.0 };
+
+            html5Scanner.start(
+                { facingMode: "environment" },
+                config,
+                (decodedText) => {
+                    inputField.value = decodedText;
+                    if (navigator.vibrate) navigator.vibrate(200);
+                    stopScanner();
+                    const form = document.getElementById('cellForm');
+                    if (form) setTimeout(() => form.submit(), 300);
+                },
+                (error) => {}
+            ).then(() => {
+                isScanning = true;
+                scanBtn.textContent = '⏹ Остановить сканер';
+                scanBtn.disabled = false;
+                scanBtn.classList.add('scan-btn-stop');
+                stopBtn.style.display = 'block';
+            }).catch((err) => {
+                alert('Ошибка камеры: ' + err);
+                readerContainer.style.display = 'none';
+                scanBtn.textContent = '📷 Сканировать QR-код ячейки';
+                scanBtn.disabled = false;
+                scanBtn.classList.remove('scan-btn-stop');
+                stopBtn.style.display = 'none';
+            });
+        }
+
+        function stopScanner() {
+            if (html5Scanner) {
+                html5Scanner.stop().then(() => {
+                    html5Scanner.clear();
+                    readerContainer.style.display = 'none';
+                    isScanning = false;
+                    scanBtn.textContent = '📷 Сканировать QR-код ячейки';
+                    scanBtn.disabled = false;
+                    scanBtn.classList.remove('scan-btn-stop');
+                    stopBtn.style.display = 'none';
+                    html5Scanner = null;
+                }).catch(() => {});
+            } else {
+                readerContainer.style.display = 'none';
+                isScanning = false;
+                scanBtn.textContent = '📷 Сканировать QR-код ячейки';
+                scanBtn.disabled = false;
+                scanBtn.classList.remove('scan-btn-stop');
+                stopBtn.style.display = 'none';
+            }
+        }
+
+        scanBtn.addEventListener('click', function() {
+            if (isScanning) stopScanner(); else startScanner();
+        });
+        stopBtn.addEventListener('click', stopScanner);
+        inputField.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const form = this.closest('form');
+                if (form) form.submit();
+            }
+        });
+        window.addEventListener('beforeunload', stopScanner);
+        console.log('✅ Сканер для ячейки загружен');
+    </script>
+</body>
+</html>

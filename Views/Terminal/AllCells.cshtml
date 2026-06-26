@@ -1,0 +1,214 @@
+﻿@{
+    Layout = null;
+}
+@model IEnumerable<dynamic>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Все ячейки - ТСД Автопитер</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: -20px -20px 20px -20px;
+            padding: 20px;
+            color: white;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            color: white;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        h1 {
+            font-size: 24px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .cell-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .cell-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+            .cell-card:active {
+                transform: scale(0.96);
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+
+        .cell-address {
+            font-size: 18px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .cell-status {
+            font-size: 14px;
+            color: #666;
+        }
+
+            .cell-status.occupied {
+                color: #4caf50;
+            }
+
+            .cell-status.empty {
+                color: #ff9800;
+            }
+
+            .cell-status.locked {
+                color: #ff4444;
+            }
+
+        .cell-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        .badge-occupied {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-empty {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-locked {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 50px;
+            color: #999;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+
+        .legend-occupied {
+            background: #4caf50;
+        }
+
+        .legend-empty {
+            background: #ff9800;
+        }
+
+        .legend-locked {
+            background: #ff4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="back-btn" onclick="location.href='/Terminal/WarehouseDashboard'">← Назад</button>
+        <h1>📋 Все ячейки склада</h1>
+    </div>
+
+    <input type="text" id="searchInput" class="search-box" placeholder="🔍 Поиск по адресу ячейки..." onkeyup="filterCells()">
+
+    <div class="legend">
+        <span class="legend-item"><span class="legend-color legend-occupied"></span> Есть товар</span>
+        <span class="legend-item"><span class="legend-color legend-empty"></span> Пустая</span>
+        <span class="legend-item"><span class="legend-color legend-locked"></span> Заблокирована</span>
+        <span class="legend-item">👆 Нажмите на ячейку для просмотра содержимого</span>
+    </div>
+
+    <div class="cell-grid" id="cellGrid">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var cell in Model)
+            {
+                var status = cell.IsLocked ? "locked" : (cell.ProductsCount > 0 ? "occupied" : "empty");
+                var statusText = cell.IsLocked ? "🔒 Заблокирована" : (cell.ProductsCount > 0 ? $"📦 {cell.ProductsCount} шт" : "🟡 Пустая");
+                var badgeClass = cell.IsLocked ? "badge-locked" : (cell.ProductsCount > 0 ? "badge-occupied" : "badge-empty");
+                var statusClass = cell.IsLocked ? "locked" : (cell.ProductsCount > 0 ? "occupied" : "empty");
+
+                <div class="cell-card" data-address="@cell.Address" onclick="location.href='/Terminal/CellContents?cellAddress=@cell.Address'">
+                    <div class="cell-address">📍 @cell.Address</div>
+                    <div class="cell-status @statusClass">@statusText</div>
+                    <div class="cell-badge @badgeClass">@(cell.IsLocked ? "🔒 Заблокирована" : (cell.ProductsCount > 0 ? "Есть товар" : "Пустая"))</div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="empty">📭 Нет ячеек на этом складе</div>
+        }
+    </div>
+
+    <button class="back-btn" onclick="location.href='/Terminal/MainMenu'" style="background:#999; color:white; border:none; padding:14px; border-radius:12px; font-size:16px; cursor:pointer; width:100%; margin-top:20px;">← Главное меню</button>
+
+    <script>
+        function filterCells() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.querySelectorAll('.cell-card');
+            cards.forEach(card => {
+                const address = card.getAttribute('data-address').toLowerCase();
+                card.style.display = address.includes(search) ? '' : 'none';
+            });
+        }
+    </script>
+</body>
+</html>
