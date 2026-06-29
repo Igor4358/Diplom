@@ -3,6 +3,70 @@
   "WorkspaceRootPath": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\views\\terminal\\mainmenu.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:views\\terminal\\mainmenu.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\views\\terminal\\manageusers.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:views\\terminal\\manageusers.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\controllers\\terminalcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:controllers\\terminalcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\views\\terminal\\managecells.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:views\\terminal\\managecells.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\views\\terminal\\managewarehouses.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:views\\terminal\\managewarehouses.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\views\\terminal\\addcell.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:views\\terminal\\addcell.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\views\\terminal\\edituser.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:views\\terminal\\edituser.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\views\\terminal\\adminpanel.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:views\\terminal\\adminpanel.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\views\\terminal\\allproducts.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:views\\terminal\\allproducts.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\views\\terminal\\startpicking.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:views\\terminal\\startpicking.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\views\\terminal\\pickingconfirmation.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:views\\terminal\\pickingconfirmation.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\views\\terminal\\scancellforpicking.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:views\\terminal\\scancellforpicking.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\views\\terminal\\confirmpickingquantity.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:views\\terminal\\confirmpickingquantity.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\views\\terminal\\scancell.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:views\\terminal\\scancell.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\views\\terminal\\pickingorders.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:views\\terminal\\pickingorders.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\views\\terminal\\cellcontents.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:views\\terminal\\cellcontents.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
@@ -15,24 +79,12 @@
       "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:models\\cell.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\controllers\\terminalcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:controllers\\terminalcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\views\\terminal\\warehousedashboard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:views\\terminal\\warehousedashboard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\views\\terminal\\receiveshipment.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:views\\terminal\\receiveshipment.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\views\\terminal\\receivebyinvoice.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:views\\terminal\\receivebyinvoice.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\views\\terminal\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:views\\terminal\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\views\\terminal\\selecttargetcell.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
@@ -43,24 +95,8 @@
       "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:views\\terminal\\printbarcode.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\views\\terminal\\mainmenu.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:views\\terminal\\mainmenu.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\views\\terminal\\allcells.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:views\\terminal\\allcells.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\views\\terminal\\receiving.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:views\\terminal\\receiving.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\views\\terminal\\linkbarcodetoexistingproduct.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:views\\terminal\\linkbarcodetoexistingproduct.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\views\\terminal\\addexpectedreceipt.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:views\\terminal\\addexpectedreceipt.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\views\\terminal\\expectedshipments.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
@@ -79,16 +115,8 @@
       "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:models\\barcodeviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\views\\terminal\\allproducts.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:views\\terminal\\allproducts.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\models\\stock.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:models\\stock.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\views\\terminal\\scancell.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:views\\terminal\\scancell.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
@@ -139,16 +167,8 @@
       "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:models\\product.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\models\\warehouse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:models\\warehouse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\views\\terminal\\startpicking.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:views\\terminal\\startpicking.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\wms.terminal.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
@@ -170,7 +190,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 8,
           "Children": [
             {
               "$type": "Bookmark",
@@ -182,46 +202,228 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "CellContents.cshtml",
-              "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\CellContents.cshtml",
-              "RelativeDocumentMoniker": "Views\\Terminal\\CellContents.cshtml",
-              "ToolTip": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\CellContents.cshtml",
-              "RelativeToolTip": "Views\\Terminal\\CellContents.cshtml",
-              "ViewState": "AgIAABcBAAAAAAAAAAAAACUBAAAdAAAAAAAAAA==",
+              "DocumentIndex": 5,
+              "Title": "AddCell.cshtml",
+              "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\AddCell.cshtml",
+              "RelativeDocumentMoniker": "Views\\Terminal\\AddCell.cshtml",
+              "ToolTip": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\AddCell.cshtml",
+              "RelativeToolTip": "Views\\Terminal\\AddCell.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-06-26T18:28:32.591Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "Login.cshtml",
-              "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\Login.cshtml",
-              "RelativeDocumentMoniker": "Views\\Terminal\\Login.cshtml",
-              "ToolTip": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\Login.cshtml",
-              "RelativeToolTip": "Views\\Terminal\\Login.cshtml",
-              "ViewState": "AgIAAHAAAAAAAAAAAAAAAHgAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-06-26T17:39:04.005Z",
+              "WhenOpened": "2026-06-29T18:11:40.465Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
+              "Title": "ManageCells.cshtml",
+              "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\ManageCells.cshtml",
+              "RelativeDocumentMoniker": "Views\\Terminal\\ManageCells.cshtml",
+              "ToolTip": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\ManageCells.cshtml",
+              "RelativeToolTip": "Views\\Terminal\\ManageCells.cshtml",
+              "ViewState": "AgIAAJgAAAAAAAAAAADwv60AAAAhAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-06-29T18:11:18.154Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ManageWarehouses.cshtml",
+              "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\ManageWarehouses.cshtml",
+              "RelativeDocumentMoniker": "Views\\Terminal\\ManageWarehouses.cshtml",
+              "ToolTip": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\ManageWarehouses.cshtml",
+              "RelativeToolTip": "Views\\Terminal\\ManageWarehouses.cshtml",
+              "ViewState": "AgIAAJQAAAAAAAAAAADwv6oAAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-06-29T18:10:26.794Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "EditUser.cshtml",
+              "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\EditUser.cshtml",
+              "RelativeDocumentMoniker": "Views\\Terminal\\EditUser.cshtml",
+              "ToolTip": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\EditUser.cshtml",
+              "RelativeToolTip": "Views\\Terminal\\EditUser.cshtml",
+              "ViewState": "AgIAAKQAAAAAAAAAAADwv7YAAAAcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-06-29T17:57:07.26Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ManageUsers.cshtml",
+              "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\ManageUsers.cshtml",
+              "RelativeDocumentMoniker": "Views\\Terminal\\ManageUsers.cshtml",
+              "ToolTip": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\ManageUsers.cshtml",
+              "RelativeToolTip": "Views\\Terminal\\ManageUsers.cshtml",
+              "ViewState": "AgIAABUBAAAAAAAAAADwvysBAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-06-29T17:56:17.46Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "TerminalController.cs",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Controllers\\TerminalController.cs",
               "RelativeDocumentMoniker": "Controllers\\TerminalController.cs",
               "ToolTip": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Controllers\\TerminalController.cs",
               "RelativeToolTip": "Controllers\\TerminalController.cs",
-              "ViewState": "AgIAAJYEAAAAAAAAAAAAAK0EAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAAEQDAAAAAAAAAAAAAE0DAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-05-25T17:35:10.722Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 0,
+              "Title": "MainMenu.cshtml",
+              "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\MainMenu.cshtml",
+              "RelativeDocumentMoniker": "Views\\Terminal\\MainMenu.cshtml",
+              "ToolTip": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\MainMenu.cshtml",
+              "RelativeToolTip": "Views\\Terminal\\MainMenu.cshtml",
+              "ViewState": "AgIAAAYBAAAAAAAAAADwvyMBAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-06-09T17:45:10.095Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "AdminPanel.cshtml",
+              "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\AdminPanel.cshtml",
+              "RelativeDocumentMoniker": "Views\\Terminal\\AdminPanel.cshtml",
+              "ToolTip": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\AdminPanel.cshtml",
+              "RelativeToolTip": "Views\\Terminal\\AdminPanel.cshtml",
+              "ViewState": "AgIAAG8AAAAAAAAAAADwv30AAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-06-29T17:55:51.203Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "PickingConfirmation.cshtml",
+              "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\PickingConfirmation.cshtml",
+              "RelativeDocumentMoniker": "Views\\Terminal\\PickingConfirmation.cshtml",
+              "ToolTip": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\PickingConfirmation.cshtml",
+              "RelativeToolTip": "Views\\Terminal\\PickingConfirmation.cshtml",
+              "ViewState": "AgIAAKkAAAAAAAAAAAAAALIAAABPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-06-29T08:24:34.878Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "StartPicking.cshtml",
+              "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\StartPicking.cshtml",
+              "RelativeDocumentMoniker": "Views\\Terminal\\StartPicking.cshtml",
+              "ToolTip": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\StartPicking.cshtml",
+              "RelativeToolTip": "Views\\Terminal\\StartPicking.cshtml",
+              "ViewState": "AgIAAFwBAAAAAAAAAADwv2YBAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-05-26T12:42:38.765Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "User.cs",
+              "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Models\\User.cs",
+              "RelativeDocumentMoniker": "Models\\User.cs",
+              "ToolTip": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Models\\User.cs",
+              "RelativeToolTip": "Models\\User.cs",
+              "ViewState": "AgIAAAIAAAAAAAAAAADwvxUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-25T16:48:51.097Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "ScanCellForPicking.cshtml",
+              "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\ScanCellForPicking.cshtml",
+              "RelativeDocumentMoniker": "Views\\Terminal\\ScanCellForPicking.cshtml",
+              "ToolTip": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\ScanCellForPicking.cshtml",
+              "RelativeToolTip": "Views\\Terminal\\ScanCellForPicking.cshtml",
+              "ViewState": "AgIAAJ0AAAAAAAAAAADwv6IAAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-06-29T07:57:33.023Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "AllProducts.cshtml",
+              "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\AllProducts.cshtml",
+              "RelativeDocumentMoniker": "Views\\Terminal\\AllProducts.cshtml",
+              "ToolTip": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\AllProducts.cshtml",
+              "RelativeToolTip": "Views\\Terminal\\AllProducts.cshtml",
+              "ViewState": "AgIAAEkAAAAAAAAAAAAiwFsAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-06-21T13:13:00.472Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "ConfirmPickingQuantity.cshtml",
+              "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\ConfirmPickingQuantity.cshtml",
+              "RelativeDocumentMoniker": "Views\\Terminal\\ConfirmPickingQuantity.cshtml",
+              "ToolTip": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\ConfirmPickingQuantity.cshtml",
+              "RelativeToolTip": "Views\\Terminal\\ConfirmPickingQuantity.cshtml",
+              "ViewState": "AgIAAMIAAAAAAAAAAADwv9EAAAA6AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-06-28T18:40:47.856Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "PickingOrders.cshtml",
+              "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\PickingOrders.cshtml",
+              "RelativeDocumentMoniker": "Views\\Terminal\\PickingOrders.cshtml",
+              "ToolTip": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\PickingOrders.cshtml",
+              "RelativeToolTip": "Views\\Terminal\\PickingOrders.cshtml",
+              "ViewState": "AgIAAI4AAAAAAAAAAADwv6MAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-06-28T18:36:02.694Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "CellContents.cshtml",
+              "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\CellContents.cshtml",
+              "RelativeDocumentMoniker": "Views\\Terminal\\CellContents.cshtml",
+              "ToolTip": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\CellContents.cshtml",
+              "RelativeToolTip": "Views\\Terminal\\CellContents.cshtml",
+              "ViewState": "AgIAABcBAAAAAAAAAAAAAC4BAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-06-26T18:28:32.591Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "ScanCell.cshtml",
+              "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\ScanCell.cshtml",
+              "RelativeDocumentMoniker": "Views\\Terminal\\ScanCell.cshtml",
+              "ToolTip": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\ScanCell.cshtml",
+              "RelativeToolTip": "Views\\Terminal\\ScanCell.cshtml",
+              "ViewState": "AgIAABIBAAAAAAAAAAAmwCIBAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-05-26T12:43:04.265Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
               "Title": "ReceiveByInvoice.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\ReceiveByInvoice.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\ReceiveByInvoice.cshtml",
@@ -234,20 +436,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "ReceiveShipment.cshtml",
-              "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\ReceiveShipment.cshtml",
-              "RelativeDocumentMoniker": "Views\\Terminal\\ReceiveShipment.cshtml",
-              "ToolTip": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\ReceiveShipment.cshtml",
-              "RelativeToolTip": "Views\\Terminal\\ReceiveShipment.cshtml",
-              "ViewState": "AgIAAIgAAAAAAAAAAAAkwJMAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-06-09T19:55:51.431Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 19,
               "Title": "WarehouseDashboard.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\WarehouseDashboard.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\WarehouseDashboard.cshtml",
@@ -260,7 +449,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 18,
               "Title": "Cell.cs",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Models\\Cell.cs",
               "RelativeDocumentMoniker": "Models\\Cell.cs",
@@ -273,7 +462,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 17,
               "Title": "ConfirmPick.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\ConfirmPick.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\ConfirmPick.cshtml",
@@ -286,7 +475,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 21,
               "Title": "SelectTargetCell.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\SelectTargetCell.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\SelectTargetCell.cshtml",
@@ -299,7 +488,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 22,
               "Title": "PrintBarcode.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\PrintBarcode.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\PrintBarcode.cshtml",
@@ -312,20 +501,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "MainMenu.cshtml",
-              "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\MainMenu.cshtml",
-              "RelativeDocumentMoniker": "Views\\Terminal\\MainMenu.cshtml",
-              "ToolTip": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\MainMenu.cshtml",
-              "RelativeToolTip": "Views\\Terminal\\MainMenu.cshtml",
-              "ViewState": "AgIAAJkAAAAAAAAAAAAAAKcAAAAtAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-06-09T17:45:10.095Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 23,
               "Title": "AllCells.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\AllCells.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\AllCells.cshtml",
@@ -338,46 +514,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "Receiving.cshtml",
-              "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\Receiving.cshtml",
-              "RelativeDocumentMoniker": "Views\\Terminal\\Receiving.cshtml",
-              "ToolTip": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\Receiving.cshtml",
-              "RelativeToolTip": "Views\\Terminal\\Receiving.cshtml",
-              "ViewState": "AgIAALUAAAAAAAAAAAAAwLwAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-06-21T13:19:51.829Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "LinkBarcodeToExistingProduct.cshtml",
-              "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\LinkBarcodeToExistingProduct.cshtml",
-              "RelativeDocumentMoniker": "Views\\Terminal\\LinkBarcodeToExistingProduct.cshtml",
-              "ToolTip": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\LinkBarcodeToExistingProduct.cshtml",
-              "RelativeToolTip": "Views\\Terminal\\LinkBarcodeToExistingProduct.cshtml",
-              "ViewState": "AgIAAKEAAAAAAAAAAAAAwKsAAAASAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-06-24T13:19:53.415Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "AddExpectedReceipt.cshtml",
-              "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\AddExpectedReceipt.cshtml",
-              "RelativeDocumentMoniker": "Views\\Terminal\\AddExpectedReceipt.cshtml",
-              "ToolTip": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\AddExpectedReceipt.cshtml",
-              "RelativeToolTip": "Views\\Terminal\\AddExpectedReceipt.cshtml",
-              "ViewState": "AgIAAGwAAAAAAAAAAAAAwIAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-06-24T12:17:55.89Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 26,
               "Title": "ExpectedReceipt.cs",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Models\\ExpectedReceipt.cs",
               "RelativeDocumentMoniker": "Models\\ExpectedReceipt.cs",
@@ -390,7 +527,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 25,
               "Title": "ExpectedShipment.cs",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Models\\ExpectedShipment.cs",
               "RelativeDocumentMoniker": "Models\\ExpectedShipment.cs",
@@ -403,7 +540,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 24,
               "Title": "ExpectedShipments.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\ExpectedShipments.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\ExpectedShipments.cshtml",
@@ -416,7 +553,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 27,
               "Title": "BarcodeViewModel.cs",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Models\\BarcodeViewModel.cs",
               "RelativeDocumentMoniker": "Models\\BarcodeViewModel.cs",
@@ -429,20 +566,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
-              "Title": "AllProducts.cshtml",
-              "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\AllProducts.cshtml",
-              "RelativeDocumentMoniker": "Views\\Terminal\\AllProducts.cshtml",
-              "ToolTip": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\AllProducts.cshtml",
-              "RelativeToolTip": "Views\\Terminal\\AllProducts.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAWAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-06-21T13:13:00.472Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 28,
               "Title": "Stock.cs",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Models\\Stock.cs",
               "RelativeDocumentMoniker": "Models\\Stock.cs",
@@ -455,7 +579,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 29,
               "Title": "launchSettings.json",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Properties\\launchSettings.json",
               "RelativeDocumentMoniker": "Properties\\launchSettings.json",
@@ -467,19 +591,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
-              "Title": "ScanCell.cshtml",
-              "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\ScanCell.cshtml",
-              "RelativeDocumentMoniker": "Views\\Terminal\\ScanCell.cshtml",
-              "ToolTip": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\ScanCell.cshtml",
-              "RelativeToolTip": "Views\\Terminal\\ScanCell.cshtml",
-              "ViewState": "AgIAABIBAAAAAAAAAAAmwCIBAAAHAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-26T12:43:04.265Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 30,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
@@ -491,7 +603,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 31,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\appsettings.json",
               "RelativeDocumentMoniker": "appsettings.json",
@@ -503,7 +615,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 32,
               "Title": "_ViewStart.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\_ViewStart.cshtml",
               "RelativeDocumentMoniker": "Views\\_ViewStart.cshtml",
@@ -515,7 +627,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 33,
               "Title": "HomeController.cs",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Controllers\\HomeController.cs",
               "RelativeDocumentMoniker": "Controllers\\HomeController.cs",
@@ -527,7 +639,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 34,
               "Title": "AppDbContextModelSnapshot.cs",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Migrations\\AppDbContextModelSnapshot.cs",
               "RelativeDocumentMoniker": "Migrations\\AppDbContextModelSnapshot.cs",
@@ -539,7 +651,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 35,
               "Title": "ErrorViewModel.cs",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Models\\ErrorViewModel.cs",
               "RelativeDocumentMoniker": "Models\\ErrorViewModel.cs",
@@ -551,7 +663,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 36,
               "Title": "OperationLog.cs",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Models\\OperationLog.cs",
               "RelativeDocumentMoniker": "Models\\OperationLog.cs",
@@ -563,7 +675,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
+              "DocumentIndex": 37,
               "Title": "Order.cs",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Models\\Order.cs",
               "RelativeDocumentMoniker": "Models\\Order.cs",
@@ -575,7 +687,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
+              "DocumentIndex": 38,
               "Title": "OrderItem.cs",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Models\\OrderItem.cs",
               "RelativeDocumentMoniker": "Models\\OrderItem.cs",
@@ -587,7 +699,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 39,
               "Title": "PickingTask.cs",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Models\\PickingTask.cs",
               "RelativeDocumentMoniker": "Models\\PickingTask.cs",
@@ -599,7 +711,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 33,
+              "DocumentIndex": 40,
               "Title": "Product.cs",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Models\\Product.cs",
               "RelativeDocumentMoniker": "Models\\Product.cs",
@@ -611,19 +723,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 36,
-              "Title": "StartPicking.cshtml",
-              "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\StartPicking.cshtml",
-              "RelativeDocumentMoniker": "Views\\Terminal\\StartPicking.cshtml",
-              "ToolTip": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\StartPicking.cshtml",
-              "RelativeToolTip": "Views\\Terminal\\StartPicking.cshtml",
-              "ViewState": "AgIAADIAAAAAAAAAAAAAADIAAAAFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-05-26T12:42:38.765Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 35,
+              "DocumentIndex": 41,
               "Title": "Warehouse.cs",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Models\\Warehouse.cs",
               "RelativeDocumentMoniker": "Models\\Warehouse.cs",
@@ -635,19 +735,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 34,
-              "Title": "User.cs",
-              "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Models\\User.cs",
-              "RelativeDocumentMoniker": "Models\\User.cs",
-              "ToolTip": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Models\\User.cs",
-              "RelativeToolTip": "Models\\User.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAuwBYAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-25T16:48:51.097Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 37,
+              "DocumentIndex": 42,
               "Title": "WMS.Terminal.csproj",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\WMS.Terminal.csproj",
               "RelativeDocumentMoniker": "WMS.Terminal.csproj",
@@ -659,7 +747,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 38,
+              "DocumentIndex": 43,
               "Title": "SelectCellForReceiving.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\SelectCellForReceiving.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\SelectCellForReceiving.cshtml",
@@ -671,7 +759,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 39,
+              "DocumentIndex": 44,
               "Title": "SelectWarehouse.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\SelectWarehouse.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\SelectWarehouse.cshtml",

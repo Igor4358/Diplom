@@ -1,0 +1,249 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Подтверждение сборки - ТСД Автопитер</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 480px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 30px 25px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .success-icon {
+            font-size: 72px;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: #28a745;
+            margin-bottom: 5px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: left;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+            .info-row:last-child {
+                border-bottom: none;
+            }
+
+        .info-label {
+            color: #666;
+        }
+
+        .info-value {
+            font-weight: bold;
+            color: #333;
+        }
+
+            .info-value.success {
+                color: #28a745;
+            }
+
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+
+            .btn-primary:active {
+                transform: scale(0.98);
+            }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 14px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+            .btn-secondary:active {
+                transform: scale(0.98);
+            }
+
+        .btn-warning {
+            width: 100%;
+            padding: 14px;
+            background: #ff9800;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+            .btn-warning:active {
+                transform: scale(0.98);
+            }
+
+        .status-badge {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+            .status-badge.partial {
+                background: #2196f3;
+            }
+
+            .status-badge.pending {
+                background: #ff9800;
+            }
+
+        .confetti {
+            font-size: 40px;
+            letter-spacing: 10px;
+        }
+
+        .remaining-info {
+            margin-top: 10px;
+            padding: 10px;
+            background: #fff3cd;
+            border-radius: 8px;
+            color: #856404;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="success-icon">✅</div>
+            <h2>Сборка выполнена!</h2>
+
+            @if (ViewBag.IsCompleted)
+            {
+                <div class="subtitle">Заказ полностью собран и отправлен!</div>
+            }
+            else
+            {
+                <div class="subtitle">Часть заказа собрана. Продолжайте сборку.</div>
+            }
+
+            <div class="info-box">
+                <div class="info-row">
+                    <span class="info-label">📋 Заказ</span>
+                    <span class="info-value">№ @ViewBag.OrderNumber</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">📦 Товар</span>
+                    <span class="info-value">@ViewBag.ProductName</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">✅ Собрано</span>
+                    <span class="info-value success">@ViewBag.Quantity шт</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">🚚 Отправлено на</span>
+                    <span class="info-value">@ViewBag.TargetWarehouse</span>
+                </div>
+                @if (ViewBag.IsCompleted)
+                {
+                    <div class="info-row">
+                        <span class="info-label">📌 Статус</span>
+                        <span class="info-value"><span class="status-badge">✅ Завершён</span></span>
+                    </div>
+                }
+                else
+                {
+                    <div class="info-row">
+                        <span class="info-label">📌 Статус</span>
+                        <span class="info-value"><span class="status-badge partial">🔄 Частично</span></span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">📊 Осталось собрать</span>
+                        <span class="info-value" style="color: #2196f3;">@ViewBag.Remaining шт</span>
+                    </div>
+                }
+            </div>
+
+            @if (!ViewBag.IsCompleted)
+            {
+                <div class="remaining-info">
+                    ⚠️ Заказ собран не полностью. Продолжите сборку.
+                </div>
+                <button class="btn-primary" onclick="location.href='/Terminal/StartPicking?orderId=@ViewBag.OrderId'">
+                    🔄 Продолжить сборку
+                </button>
+            }
+            else
+            {
+                <button class="btn-primary" onclick="location.href='/Terminal/PickingOrders'">
+                    📋 К списку заказов
+                </button>
+            }
+
+            <button class="btn-secondary" onclick="location.href='/Terminal/PickingOrders'">
+                📋 Все заказы
+            </button>
+
+            <button class="btn-warning" onclick="location.href='/Terminal/MainMenu'">
+                🏠 Главное меню
+            </button>
+        </div>
+    </div>
+</body>
+</html>

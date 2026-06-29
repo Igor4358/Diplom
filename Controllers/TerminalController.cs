@@ -37,28 +37,208 @@ namespace WMS.Terminal.Controllers
                 return View();
             }
 
-            // Ищем пользователя по PIN
             var user = await _db.Users
                 .Include(u => u.CurrentWarehouse)
-                .FirstOrDefaultAsync(u => u.PinCode == pinCode);
+                .FirstOrDefaultAsync(u => u.PinCode == pinCode && u.IsActive);
 
             if (user == null)
             {
-                ViewBag.Error = "Неверный PIN-код";
+                ViewBag.Error = "Неверный PIN-код или пользователь деактивирован";
                 return View();
             }
 
-            // Сохраняем ID пользователя в сессии
             HttpContext.Session.SetInt32("UserId", user.Id);
             HttpContext.Session.SetString("UserName", user.FullName);
+            HttpContext.Session.SetString("UserRole", user.Role ?? "Worker"); // ← Добавляем роль
 
-            // Если у пользователя нет выбранного склада, отправим на выбор
+            // Обновляем время последнего входа
+            user.LastLoginAt = DateTime.UtcNow;
+            await _db.SaveChangesAsync();
+
             if (user.CurrentWarehouseId == 0)
             {
                 return RedirectToAction("SelectWarehouse");
             }
 
             return RedirectToAction("MainMenu");
+        }
+        [HttpGet]
+        public async Task<IActionResult> ManageWarehouses()
+        {
+            if (!IsAuthenticated()) return RedirectToAction("Login");
+            if (!IsAdmin()) return RedirectToAction("MainMenu");
+
+            var warehouses = await _db.Warehouses
+                .OrderBy(w => w.Name)
+                .ToListAsync();
+
+            return View(warehouses);
+        }
+
+        // Страница добавления склада (GET)
+        [HttpGet]
+        public IActionResult AddWarehouse()
+        {
+            if (!IsAuthenticated()) return RedirectToAction("Login");
+            if (!IsAdmin()) return RedirectToAction("MainMenu");
+
+            return View();
+        }
+
+        // Добавление склада (POST)
+        [HttpPost]
+        public async Task<IActionResult> AddWarehouse(string name)
+        {
+            if (!IsAuthenticated()) return RedirectToAction("Login");
+            if (!IsAdmin()) return RedirectToAction("MainMenu");
+
+            if (string.IsNullOrEmpty(name))
+            {
+                ViewBag.Error = "Введите название склада";
+                return View();
+            }
+
+            if (await _db.Warehouses.AnyAsync(w => w.Name == name))
+            {
+                ViewBag.Error = $"Склад '{name}' уже существует";
+                return View();
+            }
+
+            var warehouse = new Warehouse { Name = name };
+            _db.Warehouses.Add(warehouse);
+            await _db.SaveChangesAsync();
+
+            TempData["Success"] = $"Склад '{name}' успешно добавлен!";
+            return RedirectToAction("ManageWarehouses");
+        }
+
+        // Удаление склада (только если нет привязанных пользователей и ячеек)
+        [HttpPost]
+        public async Task<IActionResult> DeleteWarehouse(int id)
+        {
+            if (!IsAuthenticated()) return RedirectToAction("Login");
+            if (!IsAdmin()) return RedirectToAction("MainMenu");
+
+            var warehouse = await _db.Warehouses
+                .Include(w => w.Cells)
+                .Include(w => w.Users)
+                .FirstOrDefaultAsync(w => w.Id == id);
+
+            if (warehouse == null) return NotFound();
+
+            // Проверяем, есть ли привязанные ячейки
+            if (warehouse.Cells.Any())
+            {
+                TempData["Error"] = $"Нельзя удалить склад '{warehouse.Name}', так как есть привязанные ячейки!";
+                return RedirectToAction("ManageWarehouses");
+            }
+
+            // Проверяем, есть ли привязанные пользователи
+            if (warehouse.Users.Any())
+            {
+                TempData["Error"] = $"Нельзя удалить склад '{warehouse.Name}', так как есть привязанные пользователи!";
+                return RedirectToAction("ManageWarehouses");
+            }
+
+            _db.Warehouses.Remove(warehouse);
+            await _db.SaveChangesAsync();
+
+            TempData["Success"] = $"Склад '{warehouse.Name}' успешно удалён";
+            return RedirectToAction("ManageWarehouses");
+        }
+
+        // ============================================================
+        //  УПРАВЛЕНИЕ ЯЧЕЙКАМИ (АДМИНКА)
+        // ============================================================
+
+        // Список всех ячеек
+        [HttpGet]
+        public async Task<IActionResult> ManageCells()
+        {
+            if (!IsAuthenticated()) return RedirectToAction("Login");
+            if (!IsAdmin()) return RedirectToAction("MainMenu");
+
+            var cells = await _db.Cells
+                .Include(c => c.Warehouse)
+                .OrderBy(c => c.WarehouseId)
+                .ThenBy(c => c.Address)
+                .ToListAsync();
+
+            ViewBag.Warehouses = await _db.Warehouses.ToListAsync();
+            return View(cells);
+        }
+
+        // Страница добавления ячейки (GET)
+        [HttpGet]
+        public async Task<IActionResult> AddCell()
+        {
+            if (!IsAuthenticated()) return RedirectToAction("Login");
+            if (!IsAdmin()) return RedirectToAction("MainMenu");
+
+            ViewBag.Warehouses = await _db.Warehouses.ToListAsync();
+            return View();
+        }
+
+        // Добавление ячейки (POST)
+        [HttpPost]
+        public async Task<IActionResult> AddCell(string address, int warehouseId)
+        {
+            if (!IsAuthenticated()) return RedirectToAction("Login");
+            if (!IsAdmin()) return RedirectToAction("MainMenu");
+
+            if (string.IsNullOrEmpty(address))
+            {
+                ViewBag.Error = "Введите адрес ячейки";
+                ViewBag.Warehouses = await _db.Warehouses.ToListAsync();
+                return View();
+            }
+
+            // Проверяем, существует ли уже такая ячейка на этом складе
+            if (await _db.Cells.AnyAsync(c => c.Address == address && c.WarehouseId == warehouseId))
+            {
+                ViewBag.Error = $"Ячейка '{address}' уже существует на этом складе";
+                ViewBag.Warehouses = await _db.Warehouses.ToListAsync();
+                return View();
+            }
+
+            var cell = new Cell
+            {
+                Address = address,
+                WarehouseId = warehouseId
+            };
+
+            _db.Cells.Add(cell);
+            await _db.SaveChangesAsync();
+
+            TempData["Success"] = $"Ячейка '{address}' успешно добавлена!";
+            return RedirectToAction("ManageCells");
+        }
+
+        // Удаление ячейки (только если она пуста)
+        [HttpPost]
+        public async Task<IActionResult> DeleteCell(int id)
+        {
+            if (!IsAuthenticated()) return RedirectToAction("Login");
+            if (!IsAdmin()) return RedirectToAction("MainMenu");
+
+            var cell = await _db.Cells
+                .Include(c => c.Stocks)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (cell == null) return NotFound();
+
+            // Проверяем, есть ли товары в ячейке
+            if (cell.Stocks.Any(s => s.Quantity > 0))
+            {
+                TempData["Error"] = $"Нельзя удалить ячейку '{cell.Address}', так как в ней есть товары!";
+                return RedirectToAction("ManageCells");
+            }
+
+            _db.Cells.Remove(cell);
+            await _db.SaveChangesAsync();
+
+            TempData["Success"] = $"Ячейка '{cell.Address}' успешно удалена";
+            return RedirectToAction("ManageCells");
         }
         // Генерация штрих-кода для товара или ячейки
         [HttpGet]
@@ -199,7 +379,8 @@ namespace WMS.Terminal.Controllers
                 stocks = stocks.Where(s =>
                     s.Product!.Name.Contains(search, StringComparison.OrdinalIgnoreCase) ||
                     s.Product!.Sku.Contains(search, StringComparison.OrdinalIgnoreCase) ||
-                    s.Cell!.Address.Contains(search, StringComparison.OrdinalIgnoreCase)
+                    s.Cell!.Address.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                    (s.Barcode != null && s.Barcode.Contains(search, StringComparison.OrdinalIgnoreCase))
                 ).ToList();
             }
 
@@ -214,64 +395,378 @@ namespace WMS.Terminal.Controllers
             HttpContext.Session.Clear();
             return RedirectToAction("Login");
         }
-        // Список заказов для сборки
+
+        // Список активных заказов для сборки
         [HttpGet]
         public async Task<IActionResult> PickingOrders()
         {
-            // Проверяем, есть ли пользователь в сессии
             var userId = HttpContext.Session.GetInt32("UserId");
             var warehouseId = HttpContext.Session.GetInt32("WarehouseId");
 
-            if (userId == null)
-            {
-                return RedirectToAction("Login");
-            }
+            if (userId == null) return RedirectToAction("Login");
+            if (warehouseId == null) return RedirectToAction("SelectWarehouse");
 
-            if (warehouseId == null)
-            {
-                // Если склад не выбран, возвращаем на выбор
-                return RedirectToAction("SelectWarehouse");
-            }
-
-            // Получаем задания, которые ещё не выполнены
-            var tasks = await _db.PickingTasks
-                .Include(t => t.Order)
-                .Include(t => t.Product)
-                .Include(t => t.Cell)
-                .Where(t => t.Status != "Completed" && t.Cell != null && t.Cell.WarehouseId == warehouseId)
+            // Получаем активные заказы (не завершённые)
+            var orders = await _db.ShipmentOrders
+                .Include(o => o.Product)
+                .Where(o => o.Status != "Completed")
+                .OrderBy(o => o.CreatedAt)
                 .ToListAsync();
 
-            // Группируем по заказам
-            var orders = tasks
-                .Where(t => t.Order != null)
-                .GroupBy(t => new { t.OrderId, t.Order!.OrderNumber })
-                .Select(g => new { g.Key.OrderId, g.Key.OrderNumber, Items = g.ToList() })
-                .ToList();
-
-            // Возвращаем как dynamic, чтобы View могла обработать
-            return View(orders as IEnumerable<dynamic>);
+            return View(orders);
         }
 
-
-        // Начать сборку конкретного заказа
+        // Начать сборку конкретного заказа (GET)
         [HttpGet]
         public async Task<IActionResult> StartPicking(int orderId)
         {
-            var tasks = await _db.PickingTasks
-                .Include(t => t.Product)
-                .Include(t => t.Cell)
-                .Where(t => t.OrderId == orderId && t.Status != "Completed")
-                .ToListAsync();
+            var warehouseId = HttpContext.Session.GetInt32("WarehouseId");
+            if (warehouseId == null) return RedirectToAction("SelectWarehouse");
 
-            if (!tasks.Any())
+            var order = await _db.ShipmentOrders
+                .Include(o => o.Product)
+                .FirstOrDefaultAsync(o => o.Id == orderId);
+
+            if (order == null) return NotFound();
+
+            // Ищем ячейку и штрих-код товара на складе
+            var stock = await _db.Stocks
+                .Include(s => s.Cell)
+                .FirstOrDefaultAsync(s => s.ProductId == order.ProductId && s.Cell != null && s.Cell.WarehouseId == warehouseId && s.Quantity > 0);
+
+            string cellAddress = stock?.Cell?.Address ?? "Не найдена";
+            int availableQuantity = stock?.Quantity ?? 0;
+            string barcode = stock?.Barcode ?? "Не найден";
+
+            // Сохраняем в сессии
+            HttpContext.Session.SetInt32("CurrentOrderId", order.Id);
+            HttpContext.Session.SetInt32("OrderProductId", order.ProductId);
+            HttpContext.Session.SetInt32("OrderQuantity", order.Quantity);
+            HttpContext.Session.SetInt32("OrderCollected", order.CollectedQuantity);
+            HttpContext.Session.SetInt32("PickingStockId", stock?.Id ?? 0);
+            HttpContext.Session.SetInt32("PickingStockQuantity", availableQuantity);
+            HttpContext.Session.SetString("PickingCellAddress", cellAddress);
+            HttpContext.Session.SetString("PickingBarcode", barcode);
+            HttpContext.Session.SetString("TargetWarehouseName", order.TargetWarehouseName ?? "Склад не указан"); 
+
+            ViewBag.CellAddress = cellAddress;
+            ViewBag.AvailableQuantity = availableQuantity;
+            ViewBag.Barcode = barcode;
+            ViewBag.TargetWarehouseName = order.TargetWarehouseName ?? "Склад не указан"; 
+
+            return View(order);
+        }
+
+        // Сканирование ячейки (GET)
+        [HttpGet]
+        public async Task<IActionResult> ScanCellForPicking()
+        {
+            var orderId = HttpContext.Session.GetInt32("CurrentOrderId");
+            if (orderId == null) return RedirectToAction("PickingOrders");
+
+            return View();
+        }
+
+        // Обработка сканирования ячейки (POST)
+        [HttpPost]
+        public async Task<IActionResult> ScanCellForPicking(string scannedCell)
+        {
+            var orderId = HttpContext.Session.GetInt32("CurrentOrderId");
+            var productId = HttpContext.Session.GetInt32("OrderProductId");
+            var warehouseId = HttpContext.Session.GetInt32("WarehouseId");
+
+            if (orderId == null || productId == null || warehouseId == null)
             {
                 return RedirectToAction("PickingOrders");
             }
 
-            // Сохраняем в сессии текущий заказ
-            HttpContext.Session.SetInt32("CurrentOrderId", orderId);
+            if (string.IsNullOrEmpty(scannedCell))
+            {
+                ViewBag.Error = "Отсканируйте ячейку";
+                return View();
+            }
 
-            return View(tasks);
+            // Ищем ячейку на складе
+            var cell = await _db.Cells
+                .FirstOrDefaultAsync(c => c.Address == scannedCell && c.WarehouseId == warehouseId);
+
+            if (cell == null)
+            {
+                ViewBag.Error = $"Ячейка '{scannedCell}' не найдена на складе";
+                return View();
+            }
+
+            // Ищем товар в этой ячейке
+            var stock = await _db.Stocks
+                .Include(s => s.Product)
+                .FirstOrDefaultAsync(s => s.ProductId == productId && s.CellId == cell.Id && s.Quantity > 0);
+
+            if (stock == null)
+            {
+                ViewBag.Error = $"В ячейке '{scannedCell}' нет нужного товара";
+                return View();
+            }
+
+            // Сохраняем ячейку в сессии
+            HttpContext.Session.SetInt32("PickingCellId", cell.Id);
+            HttpContext.Session.SetString("PickingCellAddress", cell.Address);
+            HttpContext.Session.SetInt32("PickingStockId", stock.Id);
+            HttpContext.Session.SetInt32("PickingStockQuantity", stock.Quantity);
+
+            return RedirectToAction("ScanBarcodeForPicking");
+        }
+
+        // Сканирование штрих-кода (GET)
+        [HttpGet]
+        public async Task<IActionResult> ScanBarcodeForPicking()
+        {
+            var productId = HttpContext.Session.GetInt32("OrderProductId");
+            if (productId == null) return RedirectToAction("PickingOrders");
+
+            var product = await _db.Products.FindAsync(productId);
+            var barcode = HttpContext.Session.GetString("PickingBarcode") ?? "Не найден";
+
+            ViewBag.ProductName = product?.Name;
+            ViewBag.ProductSku = product?.Sku;
+            ViewBag.ExpectedBarcode = barcode; // ← Передаём ожидаемый штрих-код
+
+            return View();
+        }
+
+        // Обработка сканирования штрих-кода (POST)
+        [HttpPost]
+        public async Task<IActionResult> ScanBarcodeForPicking(string scannedBarcode)
+        {
+            var orderId = HttpContext.Session.GetInt32("CurrentOrderId");
+            var productId = HttpContext.Session.GetInt32("OrderProductId");
+            var cellId = HttpContext.Session.GetInt32("PickingCellId");
+            var stockId = HttpContext.Session.GetInt32("PickingStockId");
+            var stockQuantity = HttpContext.Session.GetInt32("PickingStockQuantity") ?? 0;
+
+            if (orderId == null || productId == null || cellId == null || stockId == null)
+            {
+                return RedirectToAction("PickingOrders");
+            }
+
+            if (string.IsNullOrEmpty(scannedBarcode))
+            {
+                ViewBag.Error = "Отсканируйте штрих-код товара";
+                return View();
+            }
+
+            // Проверяем, что сканируют правильный товар (по штрих-коду)
+            var stock = await _db.Stocks
+                .Include(s => s.Product)
+                .FirstOrDefaultAsync(s => s.Id == stockId && s.Barcode == scannedBarcode);
+
+            if (stock == null)
+            {
+                ViewBag.Error = $"Неверный товар! Нужен товар со штрих-кодом '{scannedBarcode}'";
+                return View();
+            }
+
+            // Переходим к выбору количества
+            HttpContext.Session.SetInt32("PickingBarcodeQuantity", stock.Quantity);
+            return RedirectToAction("ConfirmPickingQuantity");
+        }
+
+        // Подтверждение количества (GET)
+        [HttpGet]
+        public async Task<IActionResult> ConfirmPickingQuantity()
+        {
+            var orderId = HttpContext.Session.GetInt32("CurrentOrderId");
+            var productId = HttpContext.Session.GetInt32("OrderProductId");
+            var stockQuantity = HttpContext.Session.GetInt32("PickingStockQuantity") ?? 0;
+            var orderQuantity = HttpContext.Session.GetInt32("OrderQuantity") ?? 0;
+            var orderCollected = HttpContext.Session.GetInt32("OrderCollected") ?? 0;
+
+            if (orderId == null) return RedirectToAction("PickingOrders");
+
+            var product = await _db.Products.FindAsync(productId);
+            ViewBag.ProductName = product?.Name;
+            ViewBag.ProductSku = product?.Sku;
+            ViewBag.AvailableQuantity = stockQuantity;
+            ViewBag.NeededQuantity = orderQuantity - orderCollected;
+
+            return View();
+        }
+
+        // Подтверждение количества и завершение сборки (POST)
+        [HttpPost]
+        public async Task<IActionResult> ConfirmPickingQuantity(int pickedQuantity)
+        {
+            var orderId = HttpContext.Session.GetInt32("CurrentOrderId");
+            var productId = HttpContext.Session.GetInt32("OrderProductId");
+            var stockId = HttpContext.Session.GetInt32("PickingStockId");
+            var cellId = HttpContext.Session.GetInt32("PickingCellId");
+            var cellAddress = HttpContext.Session.GetString("PickingCellAddress");
+            var orderQuantity = HttpContext.Session.GetInt32("OrderQuantity") ?? 0;
+            var orderCollected = HttpContext.Session.GetInt32("OrderCollected") ?? 0;
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var userName = HttpContext.Session.GetString("UserName");
+            var targetWarehouseName = HttpContext.Session.GetString("TargetWarehouseName") ?? "Склад не указан";
+
+            if (orderId == null || productId == null || stockId == null || cellId == null)
+            {
+                return RedirectToAction("PickingOrders");
+            }
+
+            // Проверяем, что количество не превышает остаток
+            var stock = await _db.Stocks.FirstOrDefaultAsync(s => s.Id == stockId);
+            if (stock == null)
+            {
+                TempData["Error"] = "Ошибка: товар не найден на складе";
+                return RedirectToAction("PickingOrders");
+            }
+
+            if (pickedQuantity > stock.Quantity)
+            {
+                ViewBag.Error = $"Недостаточно товара! Доступно: {stock.Quantity} шт";
+                return View();
+            }
+
+            int remaining = orderQuantity - orderCollected;
+            if (pickedQuantity > remaining)
+            {
+                ViewBag.Error = $"Можно собрать не более {remaining} шт (остаток по заказу)";
+                return View();
+            }
+
+            // Сохраняем информацию о заказе перед обновлением
+            var order = await _db.ShipmentOrders
+                .Include(o => o.Product)
+                .FirstOrDefaultAsync(o => o.Id == orderId);
+
+            string orderNumber = order?.OrderNumber ?? "Неизвестный";
+            string productName = order?.Product?.Name ?? "Неизвестный товар";
+
+            // 1. Уменьшаем количество на складе
+            stock.Quantity -= pickedQuantity;
+
+            // 2. Обновляем заказ
+            if (order != null)
+            {
+                order.CollectedQuantity += pickedQuantity;
+                if (order.CollectedQuantity >= order.Quantity)
+                {
+                    order.Status = "Completed";
+                    order.CompletedAt = DateTime.UtcNow;
+                }
+                else if (order.CollectedQuantity > 0)
+                {
+                    order.Status = "Partial";
+                }
+                await _db.SaveChangesAsync();
+            }
+
+            // 3. Создаём запись в логе
+            if (_db.OperationLogs != null)
+            {
+                _db.OperationLogs.Add(new OperationLog
+                {
+                    UserId = userId ?? 0,
+                    UserName = userName ?? "Неизвестный",
+                    OperationType = "Picking",
+                    Details = $"Собран товар \"{productName}\" в количестве {pickedQuantity} шт из ячейки {cellAddress} для отгрузки на склад '{targetWarehouseName}'"
+                });
+                await _db.SaveChangesAsync();
+            }
+
+            // 4. Очищаем сессию
+            HttpContext.Session.Remove("PickingCellId");
+            HttpContext.Session.Remove("PickingCellAddress");
+            HttpContext.Session.Remove("PickingStockId");
+            HttpContext.Session.Remove("PickingStockQuantity");
+            HttpContext.Session.Remove("PickingBarcodeQuantity");
+
+            // 5. Проверяем, завершён ли заказ
+            bool isCompleted = order?.Status == "Completed";
+
+            // Сохраняем данные для страницы подтверждения
+            TempData["PickingSuccess"] = true;
+            TempData["PickingOrderNumber"] = orderNumber;
+            TempData["PickingProductName"] = productName;
+            TempData["PickingQuantity"] = pickedQuantity;
+            TempData["PickingTargetWarehouse"] = targetWarehouseName;
+            TempData["PickingIsCompleted"] = isCompleted;
+            TempData["PickingRemaining"] = orderQuantity - (orderCollected + pickedQuantity);
+            TempData["PickingOrderId"] = orderId;
+
+            // Перенаправляем на страницу подтверждения
+            return RedirectToAction("PickingConfirmation");
+        }
+        // Страница подтверждения сборки
+        [HttpGet]
+        public IActionResult PickingConfirmation()
+        {
+            // Проверяем, что есть данные подтверждения
+            if (TempData["PickingSuccess"] == null || !(bool)TempData["PickingSuccess"])
+            {
+                return RedirectToAction("PickingOrders");
+            }
+
+            var orderNumber = TempData["PickingOrderNumber"]?.ToString();
+            var productName = TempData["PickingProductName"]?.ToString();
+            var quantity = TempData["PickingQuantity"] != null ? (int)TempData["PickingQuantity"] : 0;
+            var targetWarehouse = TempData["PickingTargetWarehouse"]?.ToString();
+            var isCompleted = TempData["PickingIsCompleted"] != null && (bool)TempData["PickingIsCompleted"];
+            var remaining = TempData["PickingRemaining"] != null ? (int)TempData["PickingRemaining"] : 0;
+            var orderId = TempData["PickingOrderId"] != null ? (int)TempData["PickingOrderId"] : 0;
+
+            ViewBag.OrderNumber = orderNumber;
+            ViewBag.ProductName = productName;
+            ViewBag.Quantity = quantity;
+            ViewBag.TargetWarehouse = targetWarehouse;
+            ViewBag.IsCompleted = isCompleted;
+            ViewBag.Remaining = remaining;
+            ViewBag.OrderId = orderId;
+
+            return View();
+        }
+        // Генерация тестового заказа (для демонстрации)
+        [HttpGet]
+        public async Task<IActionResult> GenerateTestOrder()
+        {
+            var warehouseId = HttpContext.Session.GetInt32("WarehouseId");
+            if (warehouseId == null) return RedirectToAction("SelectWarehouse");
+
+            var random = new Random();
+
+            // Берем случайный товар со склада
+            var stocks = await _db.Stocks
+                .Include(s => s.Product)
+                .Where(s => s.Cell != null && s.Cell.WarehouseId == warehouseId && s.Quantity > 0)
+                .ToListAsync();
+
+            if (!stocks.Any())
+            {
+                TempData["Error"] = "Нет товаров на складе для создания заказа";
+                return RedirectToAction("PickingOrders");
+            }
+
+            var randomStock = stocks[random.Next(stocks.Count)];
+            var quantity = random.Next(1, Math.Min(randomStock.Quantity, 10));
+
+            var targetWarehouseId = random.Next(1, 1000);
+            var targetWarehouseName = $"Склад #{targetWarehouseId}";
+
+            var order = new ShipmentOrder
+            {
+                OrderNumber = $"SO-{DateTime.Now:yyyyMMdd}-{random.Next(1000, 9999)}",
+                ProductId = randomStock.ProductId,
+                Quantity = quantity,
+                Status = "Pending",
+                CreatedAt = DateTime.UtcNow,
+                TargetWarehouseId = targetWarehouseId,
+                TargetWarehouseName = targetWarehouseName,
+                Notes = $"Сгенерирован автоматически для отгрузки на склад {targetWarehouseId}"
+            };
+
+            _db.ShipmentOrders.Add(order);
+            await _db.SaveChangesAsync();
+
+            TempData["OrderSuccess"] = $"✅ Создан заказ #{order.OrderNumber} на товар '{randomStock.Product?.Name}' в количестве {quantity} шт для отгрузки на склад '{targetWarehouseName}'";
+            return RedirectToAction("PickingOrders");
         }
 
         // Список ожидаемых поставок
@@ -307,11 +802,208 @@ namespace WMS.Terminal.Controllers
 
             return View(receipts);
         }
-        // ============================================================
-        //  ОЖИДАЕМЫЕ ПОСТАВКИ
-        // ============================================================
 
+        // Проверка, является ли текущий пользователь администратором
+        private bool IsAdmin()
+        {
+            var role = HttpContext.Session.GetString("UserRole");
+            return role == "Admin";
+        }
 
+        // Проверка, авторизован ли пользователь
+        private bool IsAuthenticated()
+        {
+            return HttpContext.Session.GetInt32("UserId") != null;
+        }
+
+        // Админ-панель (главная страница админки)
+        [HttpGet]
+        public async Task<IActionResult> AdminPanel()
+        {
+            if (!IsAuthenticated()) return RedirectToAction("Login");
+            if (!IsAdmin()) return RedirectToAction("MainMenu");
+
+            var users = await _db.Users
+                .Include(u => u.CurrentWarehouse)
+                .Where(u => u.Role == "Worker" && u.IsActive)
+                .OrderBy(u => u.FullName)
+                .ToListAsync();
+
+            ViewBag.AdminName = HttpContext.Session.GetString("UserName");
+            return View(users);
+        }
+
+        // Управление пользователями — список всех кладовщиков
+        [HttpGet]
+        public async Task<IActionResult> ManageUsers(string filter = "active")
+        {
+            if (!IsAuthenticated()) return RedirectToAction("Login");
+            if (!IsAdmin()) return RedirectToAction("MainMenu");
+
+            var query = _db.Users
+                .Include(u => u.CurrentWarehouse)
+                .Where(u => u.Role == "Worker");
+
+            // Фильтр: активные, неактивные, все
+            if (filter == "active")
+                query = query.Where(u => u.IsActive);
+            else if (filter == "inactive")
+                query = query.Where(u => !u.IsActive);
+
+            var workers = await query.OrderBy(u => u.FullName).ToListAsync();
+
+            var admins = await _db.Users
+                .Where(u => u.Role == "Admin")
+                .ToListAsync();
+
+            ViewBag.AdminsCount = admins.Count;
+            ViewBag.AdminName = HttpContext.Session.GetString("UserName");
+            ViewBag.CurrentFilter = filter;
+            return View(workers);
+        }
+
+        // Страница добавления нового кладовщика (GET)
+        [HttpGet]
+        public async Task<IActionResult> AddUser()
+        {
+            if (!IsAuthenticated()) return RedirectToAction("Login");
+            if (!IsAdmin()) return RedirectToAction("MainMenu");
+
+            var warehouses = await _db.Warehouses.ToListAsync();
+            ViewBag.Warehouses = warehouses;
+            return View();
+        }
+
+        // Добавление нового кладовщика (POST)
+        [HttpPost]
+        public async Task<IActionResult> AddUser(string fullName, string pinCode, int warehouseId)
+        {
+            if (!IsAuthenticated()) return RedirectToAction("Login");
+            if (!IsAdmin()) return RedirectToAction("MainMenu");
+
+            // Проверяем, что PIN не занят
+            if (await _db.Users.AnyAsync(u => u.PinCode == pinCode))
+            {
+                ViewBag.Error = $"Пользователь с PIN-кодом {pinCode} уже существует";
+                ViewBag.Warehouses = await _db.Warehouses.ToListAsync();
+                return View();
+            }
+
+            var user = new User
+            {
+                FullName = fullName,
+                PinCode = pinCode,
+                CurrentWarehouseId = warehouseId,
+                Role = "Worker",
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _db.Users.Add(user);
+            await _db.SaveChangesAsync();
+
+            TempData["Success"] = $"Кладовщик '{fullName}' успешно добавлен! PIN-код: {pinCode}";
+            return RedirectToAction("ManageUsers");
+        }
+
+        // Страница редактирования пользователя (GET)
+        [HttpGet]
+        public async Task<IActionResult> EditUser(int id)
+        {
+            if (!IsAuthenticated()) return RedirectToAction("Login");
+            if (!IsAdmin()) return RedirectToAction("MainMenu");
+
+            var user = await _db.Users.FindAsync(id);
+            if (user == null) return NotFound();
+
+            var warehouses = await _db.Warehouses.ToListAsync();
+            ViewBag.Warehouses = warehouses;
+            return View(user);
+        }
+
+        // Редактирование пользователя (POST)
+        [HttpPost]
+        public async Task<IActionResult> EditUser(int id, string fullName, string pinCode, int warehouseId, bool isActive)
+        {
+            if (!IsAuthenticated()) return RedirectToAction("Login");
+            if (!IsAdmin()) return RedirectToAction("MainMenu");
+
+            var user = await _db.Users.FindAsync(id);
+            if (user == null) return NotFound();
+
+            // Проверяем, что PIN не занят другим пользователем
+            if (await _db.Users.AnyAsync(u => u.PinCode == pinCode && u.Id != id))
+            {
+                ViewBag.Error = $"Пользователь с PIN-кодом {pinCode} уже существует";
+                ViewBag.Warehouses = await _db.Warehouses.ToListAsync();
+                return View(user);
+            }
+
+            user.FullName = fullName;
+            user.PinCode = pinCode;
+            user.CurrentWarehouseId = warehouseId;
+            user.IsActive = isActive;
+
+            await _db.SaveChangesAsync();
+
+            TempData["Success"] = $"Кладовщик '{fullName}' успешно обновлён!";
+            return RedirectToAction("ManageUsers");
+        }
+
+        // Удаление пользователя (только если есть другие администраторы)
+        [HttpPost]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            if (!IsAuthenticated()) return RedirectToAction("Login");
+            if (!IsAdmin()) return RedirectToAction("MainMenu");
+
+            var user = await _db.Users.FindAsync(id);
+            if (user == null) return NotFound();
+
+            // Нельзя удалить самого себя
+            var currentUserId = HttpContext.Session.GetInt32("UserId");
+            if (user.Id == currentUserId)
+            {
+                TempData["Error"] = "Нельзя удалить самого себя!";
+                return RedirectToAction("ManageUsers");
+            }
+
+            // Проверяем, есть ли другие администраторы
+            var adminCount = await _db.Users.CountAsync(u => u.Role == "Admin" && u.IsActive);
+            if (user.Role == "Admin" && adminCount <= 1)
+            {
+                TempData["Error"] = "Нельзя удалить единственного администратора!";
+                return RedirectToAction("ManageUsers");
+            }
+
+            // ПОЛНОЕ УДАЛЕНИЕ (не деактивация)
+            _db.Users.Remove(user);
+            await _db.SaveChangesAsync();
+
+            TempData["Success"] = $"Кладовщик '{user.FullName}' полностью удалён из системы";
+            return RedirectToAction("ManageUsers");
+        }
+
+        // Сброс пароля (установка нового PIN)
+        [HttpPost]
+        public async Task<IActionResult> ResetUserPin(int id)
+        {
+            if (!IsAuthenticated()) return RedirectToAction("Login");
+            if (!IsAdmin()) return RedirectToAction("MainMenu");
+
+            var user = await _db.Users.FindAsync(id);
+            if (user == null) return NotFound();
+
+            // Генерируем случайный 4-значный PIN
+            var random = new Random();
+            var newPin = random.Next(1000, 9999).ToString();
+
+            user.PinCode = newPin;
+            await _db.SaveChangesAsync();
+
+            TempData["Success"] = $"Новый PIN-код для '{user.FullName}': {newPin}";
+            return RedirectToAction("ManageUsers");
+        }
         // Страница добавления новой поставки (GET)
         [HttpGet]
         public IActionResult AddExpectedReceipt()
@@ -543,6 +1235,7 @@ namespace WMS.Terminal.Controllers
 
             if (userId == null) return RedirectToAction("Login");
             if (warehouseId == null) return RedirectToAction("SelectWarehouse");
+            TempData.Clear();
 
             return View();
         }
@@ -802,7 +1495,6 @@ namespace WMS.Terminal.Controllers
             var warehouseId = HttpContext.Session.GetInt32("WarehouseId");
             if (warehouseId == null) return RedirectToAction("SelectWarehouse");
 
-            // Находим существующий товар
             var product = await _db.Products.FirstOrDefaultAsync(p => p.Sku == sku);
             if (product == null)
             {
@@ -816,20 +1508,20 @@ namespace WMS.Terminal.Controllers
 
             if (existingStock != null)
             {
-                TempData["Success"] = $"Товар со штрих-кодом '{barcode}' уже есть на складе! Количество увеличено.";
+                // Если штрих-код уже есть — добавляем к существующей партии
                 existingStock.Quantity += quantity;
                 await _db.SaveChangesAsync();
+                TempData["Success"] = $"К товару со штрих-кодом '{barcode}' добавлено {quantity} шт";
                 return RedirectToAction("Receiving");
             }
 
-            // Сохраняем в сессии для выбора ячейки
             HttpContext.Session.SetInt32("ReceivingProductId", product.Id);
             HttpContext.Session.SetString("ReceivingProductName", product.Name);
             HttpContext.Session.SetString("ReceivingProductSku", product.Sku);
             HttpContext.Session.SetInt32("ReceivingQuantity", quantity);
-            HttpContext.Session.SetString("ReceivingBarcode", barcode);
+            HttpContext.Session.SetString("ReceivingBarcode", barcode); 
 
-            // Добавляем штрих-код в ExpectedReceipts для истории
+            // Добавляем в ожидаемые поставки для истории
             var expected = new ExpectedReceipt
             {
                 Barcode = barcode,
@@ -845,81 +1537,9 @@ namespace WMS.Terminal.Controllers
             await _db.SaveChangesAsync();
             HttpContext.Session.SetInt32("ExpectedReceiptId", expected.Id);
 
-            TempData["Success"] = $"Штрих-код '{barcode}' связан с товаром '{product.Name}'! Выберите ячейку для размещения.";
+            TempData["Success"] = $"Штрих-код '{barcode}' связан с товаром '{product.Name}'!";
             return RedirectToAction("SelectCellForReceiving");
         }
-        /*  [HttpGet]
-          public async Task<IActionResult> ConfirmExistingStockReceiving()
-          {
-              var productName = HttpContext.Session.GetString("ReceivingProductName");
-              var productSku = HttpContext.Session.GetString("ReceivingProductSku");
-              var quantity = HttpContext.Session.GetInt32("ReceivingQuantity") ?? 1;
-              var cellId = HttpContext.Session.GetInt32("ReceivingCellId");
-
-              ViewBag.ProductName = productName;
-              ViewBag.ProductSku = productSku;
-              ViewBag.Quantity = quantity;
-
-              var cell = await _db.Cells.FindAsync(cellId);
-              ViewBag.CellAddress = cell?.Address ?? "неизвестно";
-
-              return View();
-          }
-        */
-
-        /*  [HttpPost]
-          public async Task<IActionResult> ConfirmExistingStockReceiving(int confirmQuantity)
-          {
-              var existingStockId = HttpContext.Session.GetInt32("ExistingStockId");
-              var productName = HttpContext.Session.GetString("ReceivingProductName");
-              var userId = HttpContext.Session.GetInt32("UserId");
-              var userName = HttpContext.Session.GetString("UserName");
-
-              if (existingStockId == null)
-              {
-                  return RedirectToAction("Receiving");
-              }
-
-              var stock = await _db.Stocks
-                  .Include(s => s.Product)
-                  .Include(s => s.Cell)
-                  .FirstOrDefaultAsync(s => s.Id == existingStockId);
-
-              if (stock == null)
-              {
-                  TempData["Error"] = "Товар не найден на складе";
-                  return RedirectToAction("Receiving");
-              }
-
-              stock.Quantity += confirmQuantity;
-              await _db.SaveChangesAsync();
-
-              // Логируем
-              if (_db.OperationLogs != null)
-              {
-                  _db.OperationLogs.Add(new OperationLog
-                  {
-                      UserId = userId ?? 0,
-                      UserName = userName ?? "Неизвестный",
-                      OperationType = "Receiving",
-                      Details = $"Добавлено {confirmQuantity} шт к товару '{productName}' в ячейку {stock.Cell?.Address}"
-                  });
-                  await _db.SaveChangesAsync();
-              }
-
-              HttpContext.Session.Remove("ExistingStockId");
-              HttpContext.Session.Remove("ReceivingProductName");
-              HttpContext.Session.Remove("ReceivingProductSku");
-              HttpContext.Session.Remove("ReceivingQuantity");
-              HttpContext.Session.Remove("ReceivingCellId");
-
-              TempData["Success"] = $"✅ К товару '{productName}' добавлено {confirmQuantity} шт.";
-              return RedirectToAction("Receiving");
-          }
-        */
-        // ============================================================
-        //  СОЗДАНИЕ НОВОГО ТОВАРА (POST)
-        // ============================================================
         [HttpPost]
         public async Task<IActionResult> CreateNewProduct(string barcode, string sku, string productName, string description, int quantity)
         {
@@ -1209,7 +1829,7 @@ namespace WMS.Terminal.Controllers
             if (warehouseId == null) return RedirectToAction("SelectWarehouse");
             if (productId == null) return RedirectToAction("Receiving");
 
-            // 1. Добавляем/обновляем товар в ячейке
+            // Проверяем, есть ли уже этот товар в этой ячейке
             var existingStock = await _db.Stocks
                 .FirstOrDefaultAsync(s => s.ProductId == productId && s.CellId == cellId);
 
@@ -1224,7 +1844,7 @@ namespace WMS.Terminal.Controllers
                     ProductId = productId.Value,
                     CellId = cellId,
                     Quantity = quantity,
-                    Barcode = GenerateEan13Barcode()
+                    Barcode = GenerateEan13Barcode() // ← КАЖДАЯ ПАРТИЯ ПОЛУЧАЕТ СВОЙ ШТРИХ-КОД
                 };
                 _db.Stocks.Add(newStock);
             }
@@ -1236,7 +1856,6 @@ namespace WMS.Terminal.Controllers
                 if (expected != null)
                 {
                     expected.ReceivedQuantity += quantity;
-
                     if (expected.ReceivedQuantity >= expected.ExpectedQuantity)
                         expected.Status = "Completed";
                     else if (expected.ReceivedQuantity > 0)

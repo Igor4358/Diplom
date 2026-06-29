@@ -1,7 +1,7 @@
 ﻿@{
     Layout = null;
 }
-@model IEnumerable<dynamic>
+@model List<WMS.Terminal.Models.ShipmentOrder>
 
 <!DOCTYPE html>
 <html>
@@ -39,6 +39,10 @@
             cursor: pointer;
         }
 
+        h1 {
+            font-size: 24px;
+        }
+
         .order-card {
             background: white;
             border-radius: 16px;
@@ -46,7 +50,12 @@
             margin-bottom: 15px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             cursor: pointer;
+            transition: transform 0.2s;
         }
+
+            .order-card:active {
+                transform: scale(0.98);
+            }
 
         .order-number {
             font-size: 20px;
@@ -54,40 +63,109 @@
             color: #333;
         }
 
-        .order-items {
+        .order-product {
             color: #666;
-            margin-top: 8px;
+            margin-top: 5px;
+        }
+
+        .order-details {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 10px;
             font-size: 14px;
+        }
+
+            .order-details span {
+                background: #f0f0f0;
+                padding: 4px 12px;
+                border-radius: 20px;
+            }
+
+        .status-pending {
+            background: #ff9800;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .status-partial {
+            background: #2196f3;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .status-completed {
+            background: #4caf50;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
         }
 
         .empty {
             text-align: center;
             padding: 50px;
             color: #999;
+            background: white;
+            border-radius: 16px;
         }
+
+        .generate-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 15px 0;
+            width: 100%;
+        }
+
+            .generate-btn:active {
+                transform: scale(0.98);
+            }
     </style>
 </head>
 <body>
     <div class="header">
         <button class="back-btn" onclick="location.href='/Terminal/MainMenu'">← Назад</button>
-        <h1>📦 Сбор заказов</h1>
+        <h1>📦 Сбор заказов для отгрузки</h1>
     </div>
 
-    @if (Model != null && Model.Any())
+    <button class="generate-btn" onclick="location.href='/Terminal/GenerateTestOrder'">➕ Сгенерировать тестовый заказ</button>
+
+    @if (Model.Any())
     {
         foreach (var order in Model)
         {
-            <div class="order-card" onclick="location.href='/Terminal/StartPicking?orderId=@order.OrderId'">
-                <div class="order-number">Заказ № @order.OrderNumber</div>
-                <div class="order-items">Позиций к сборке: @order.Items.Count</div>
+            var statusClass = order.Status == "Completed" ? "status-completed" :
+            (order.Status == "Partial" ? "status-partial" : "status-pending");
+            var progress = order.Quantity > 0 ? (order.CollectedQuantity * 100 / order.Quantity) : 0;
+
+            <div class="order-card" onclick="location.href='/Terminal/StartPicking?orderId=@order.Id'">
+                <div class="order-number">📋 Заказ № @order.OrderNumber</div>
+                <div class="order-product">📦 @order.Product?.Name</div>
+                <div class="order-details">
+                    <span>Артикул: @order.Product?.Sku</span>
+                    <span>Заказано: @order.Quantity шт</span>
+                    <span>Собрано: @order.CollectedQuantity шт</span>
+                    <span>Прогресс: @progress%</span>
+                    <span>🚚 @order.TargetWarehouseName</span>
+                    <span class="@statusClass">@order.Status</span>
+                </div>
             </div>
         }
     }
     else
     {
         <div class="empty">
-            📭 Нет заказов для сборки<br>
-            <small>(Сначала создайте заказ в базе данных)</small>
+            📭 Нет активных заказов<br>
+            <small>Нажмите "Сгенерировать тестовый заказ" для создания</small>
         </div>
     }
 </body>

@@ -1,0 +1,179 @@
+﻿@{
+    Layout = null;
+}
+@model List<WMS.Terminal.Models.ExpectedReceipt>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Завершённые поставки - ТСД Автопитер</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: -20px -20px 20px -20px;
+            padding: 20px;
+            color: white;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            color: white;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        h1 {
+            font-size: 24px;
+        }
+
+        .receipt-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .receipt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .receipt-product {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .receipt-sku {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .receipt-details {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 10px 0;
+        }
+
+            .receipt-details span {
+                background: #f0f0f0;
+                padding: 4px 12px;
+                border-radius: 20px;
+                font-size: 14px;
+            }
+
+        .status-completed {
+            background: #4caf50;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-block;
+        }
+
+        .barcode-display {
+            font-family: monospace;
+            font-size: 12px;
+            color: #667eea;
+            margin-top: 5px;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 50px;
+            color: #999;
+            background: white;
+            border-radius: 16px;
+        }
+
+        .back-to-active-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 15px 0;
+            width: 100%;
+        }
+
+            .back-to-active-btn:active {
+                transform: scale(0.98);
+            }
+
+        .completed-date {
+            color: #999;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="back-btn" onclick="location.href='/Terminal/ExpectedReceipts'">← Назад</button>
+        <h1>📋 Завершённые поставки</h1>
+    </div>
+
+    <button class="back-to-active-btn" onclick="location.href='/Terminal/ExpectedReceipts'">
+        📦 Вернуться к активным поставкам
+    </button>
+
+    @if (Model.Any())
+    {
+        foreach (var item in Model)
+        {
+            <div class="receipt-card">
+                <div class="receipt-header">
+                    <div>
+                        <div class="receipt-product">@item.ProductName</div>
+                        <div class="receipt-sku">Артикул: @item.Sku</div>
+                        <div class="barcode-display">Штрих-код: @item.Barcode</div>
+                    </div>
+                    <span class="status-completed">✅ Завершена</span>
+                </div>
+
+                <div class="receipt-details">
+                    <span>📦 Ожидалось: @item.ExpectedQuantity шт</span>
+                    <span>📥 Принято: @item.ReceivedQuantity шт</span>
+                    <span>📅 @item.ExpectedDate.ToString("dd.MM.yyyy")</span>
+                    @if (!string.IsNullOrEmpty(item.Supplier))
+                    {
+                        <span>🏭 @item.Supplier</span>
+                    }
+                </div>
+                <div class="completed-date">
+                    ✅ Завершена: @DateTime.Now.ToString("dd.MM.yyyy HH:mm")
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="empty">
+            📭 Нет завершённых поставок
+        </div>
+    }
+</body>
+</html>

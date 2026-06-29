@@ -1,0 +1,162 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Добавить ячейку - ТСД Автопитер</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 480px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+            .form-group label {
+                display: block;
+                font-weight: bold;
+                color: #333;
+                margin-bottom: 5px;
+                font-size: 14px;
+            }
+
+            .form-group input, .form-group select {
+                width: 100%;
+                padding: 14px;
+                font-size: 16px;
+                border: 2px solid #ddd;
+                border-radius: 12px;
+                background: #fafafa;
+            }
+
+                .form-group input:focus, .form-group select:focus {
+                    outline: none;
+                    border-color: #667eea;
+                    background: white;
+                }
+
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+            .btn-primary:active {
+                transform: scale(0.98);
+            }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 14px;
+            background: #999;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+            .btn-secondary:active {
+                transform: scale(0.98);
+            }
+
+        .hint {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h2>➕ Добавить ячейку</h2>
+            <div class="subtitle">Создайте новую ячейку на складе</div>
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="error">❌ @ViewBag.Error</div>
+            }
+
+            <form method="post">
+                <div class="form-group">
+                    <label>Адрес ячейки</label>
+                    <input type="text" name="address" placeholder="Например: 406a231" required>
+                    <div class="hint">💡 Формат: номер склада + буква + номер, например 406a231</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Склад</label>
+                    <select name="warehouseId" required>
+                        @foreach (var warehouse in ViewBag.Warehouses)
+                        {
+                            <option value="@warehouse.Id">@warehouse.Name</option>
+                        }
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-primary">✅ Добавить ячейку</button>
+            </form>
+
+            <button class="btn-secondary" onclick="location.href='/Terminal/ManageCells'">← Назад</button>
+        </div>
+    </div>
+</body>
+</html>

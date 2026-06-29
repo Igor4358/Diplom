@@ -1,0 +1,307 @@
+﻿@{
+    Layout = null;
+}
+@model List<WMS.Terminal.Models.User>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Управление кладовщиками - ТСД Автопитер</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: -20px -20px 20px -20px;
+            padding: 20px;
+            color: white;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            color: white;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        h1 {
+            font-size: 24px;
+        }
+
+        .add-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 15px 0;
+            width: 100%;
+        }
+
+            .add-btn:active {
+                transform: scale(0.98);
+            }
+
+        .table-container {
+            overflow-x: auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th, td {
+            padding: 12px 10px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 50px;
+            color: #999;
+        }
+
+        .btn-edit {
+            background: #2196f3;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+            .btn-edit:active {
+                transform: scale(0.95);
+            }
+
+        .btn-delete {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+            .btn-delete:active {
+                transform: scale(0.95);
+            }
+
+        .btn-reset {
+            background: #ff9800;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+            .btn-reset:active {
+                transform: scale(0.95);
+            }
+
+        .badge-active {
+            background: #4caf50;
+            color: white;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .badge-inactive {
+            background: #ff4444;
+            color: white;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .badge-admin {
+            background: #ff9800;
+            color: white;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .status-info {
+            margin: 10px 0;
+            padding: 10px;
+            background: #e3f2fd;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #1976d2;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+            .filter-btn.active {
+                background: #667eea;
+                color: white;
+            }
+
+            .filter-btn:not(.active) {
+                background: #e0e0e0;
+                color: #333;
+            }
+
+            .filter-btn:active {
+                transform: scale(0.95);
+            }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="back-btn" onclick="location.href='/Terminal/AdminPanel'">← Назад</button>
+        <h1>👥 Управление кладовщиками</h1>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="success">✅ @TempData["Success"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="error">❌ @TempData["Error"]</div>
+    }
+
+    <div class="status-info">
+        👑 Администраторов: @ViewBag.AdminsCount
+    </div>
+
+    <!-- Фильтр -->
+    <div class="filter-bar">
+        <a href="/Terminal/ManageUsers?filter=active" class="filter-btn @(ViewBag.CurrentFilter == "active" ? "active" : "")">🟢 Активные</a>
+        <a href="/Terminal/ManageUsers?filter=inactive" class="filter-btn @(ViewBag.CurrentFilter == "inactive" ? "active" : "")">🔴 Неактивные</a>
+        <a href="/Terminal/ManageUsers?filter=all" class="filter-btn @(ViewBag.CurrentFilter == "all" ? "active" : "")">📋 Все</a>
+    </div>
+
+    <button class="add-btn" onclick="location.href='/Terminal/AddUser'">➕ Добавить кладовщика</button>
+
+    @if (Model.Any())
+    {
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Имя</th>
+                        <th>PIN-код</th>
+                        <th>Склад</th>
+                        <th>Статус</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td>@user.FullName</td>
+                            <td style="font-family: monospace; font-size: 16px; font-weight: bold; color: #667eea;">@user.PinCode</td>
+                            <td>@(user.CurrentWarehouse != null ? user.CurrentWarehouse.Name : "Не указан")</td>
+                            <td>
+                                @if (user.IsActive)
+                                {
+                                    <span class="badge-active">Активен</span>
+                                }
+                                else
+                                {
+                                    <span class="badge-inactive">Деактивирован</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn-edit" onclick="location.href='/Terminal/EditUser?id=@user.Id'">✏️</button>
+                                    <form method="post" action="/Terminal/ResetUserPin" style="display:inline;"
+                                          onsubmit="return confirm('Сбросить PIN-код для @user.FullName?');">
+                                        <input type="hidden" name="id" value="@user.Id">
+                                        <button type="submit" class="btn-reset">🔄</button>
+                                    </form>
+                                    <form method="post" action="/Terminal/DeleteUser" style="display:inline;"
+                                          onsubmit="return confirm('УДАЛИТЬ пользователя @user.FullName из системы? Это действие необратимо!');">
+                                        <input type="hidden" name="id" value="@user.Id">
+                                        <button type="submit" class="btn-delete">🗑️</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="empty">📭 Нет кладовщиков</div>
+    }
+</body>
+</html>

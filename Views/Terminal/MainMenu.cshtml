@@ -20,75 +20,193 @@
             padding: 20px;
         }
 
+        /* ========== HEADER ========== */
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             margin: -20px -20px 20px -20px;
-            padding: 25px 20px;
+            padding: 20px 25px;
             color: white;
+            border-bottom: 3px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header-left {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
         }
 
         .greeting {
             font-size: 20px;
-            margin-bottom: 5px;
+            font-weight: 600;
         }
 
-        .warehouse {
-            font-size: 14px;
-            opacity: 0.9;
+        .warehouse-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            font-size: 15px;
+            opacity: 0.95;
         }
 
+        .change-warehouse-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 5px 14px;
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+
+            .change-warehouse-btn:hover {
+                background: rgba(255, 255, 255, 0.35);
+            }
+
+            .change-warehouse-btn:active {
+                transform: scale(0.95);
+            }
+
+        .admin-badge {
+            background: #ff9800;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .admin-btn {
+            background: #ff9800;
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.15s, background 0.2s;
+            box-shadow: 0 2px 8px rgba(255, 152, 0, 0.4);
+        }
+
+            .admin-btn:hover {
+                background: #ffa726;
+            }
+
+            .admin-btn:active {
+                transform: scale(0.95);
+            }
+
+        /* ========== МЕНЮ ========== */
+        /* ========== МЕНЮ ========== */
         .menu-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 15px;
-            max-width: 600px;
+            max-width: 800px;
             margin: 0 auto;
+        }
+
+        /* На планшетах и ПК — 3 колонки */
+        @@media (min-width: 600px) {
+            .menu-grid
+
+        {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            max-width: 900px;
+        }
+
+        }
+
+        /* На больших экранах — 4 колонки */
+        @@media (min-width: 1024px) {
+            .menu-grid
+
+        {
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            max-width: 1100px;
+        }
+
         }
 
         .menu-btn {
             background: white;
             border: none;
             border-radius: 16px;
-            padding: 30px 15px;
+            padding: 25px 12px;
             text-align: center;
             cursor: pointer;
             transition: all 0.2s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .menu-btn:active {
-            transform: scale(0.96);
-            background: #f0f0f0;
-        }
-
-        .change-warehouse-btn {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 13px;
-            cursor: pointer;
-            transition: background 0.2s;
-            white-space: nowrap;
-        }
-
-            .change-warehouse-btn:active {
-                background: rgba(255, 255, 255, 0.4);
-                transform: scale(0.95);
+            .menu-btn:active {
+                transform: scale(0.96);
+                background: #f0f0f0;
             }
+
+        /* На ПК — hover эффект */
+        @@media (hover: hover) {
+            .menu-btn:hover
+
+        {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        }
+
         .menu-icon {
-            font-size: 48px;
+            font-size: 38px;
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .menu-title {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
             color: #333;
         }
 
+        /* Адаптация для телефонов */
+        @@media (max-width: 480px) {
+            .menu-btn
+
+        {
+            padding: 20px 10px;
+        }
+
+        .menu-icon {
+            font-size: 32px;
+        }
+
+        .menu-title {
+            font-size: 13px;
+        }
+
+        }
+
+        /* ========== КНОПКА ВЫХОДА ========== */
         .logout-btn {
             position: fixed;
             bottom: 20px;
@@ -101,27 +219,66 @@
             font-size: 14px;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
-        .logout-btn:active {
-            transform: scale(0.95);
+            .logout-btn:active {
+                transform: scale(0.95);
+            }
+
+        @@media (max-width: 600px) {
+            .header-top
+
+        {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 10px;
+        }
+
+        .header-right {
+            justify-content: flex-start;
+        }
+
+        .greeting {
+            font-size: 17px;
+        }
+
+        .warehouse-info {
+            font-size: 14px;
+            gap: 10px;
+        }
+
+        .admin-btn {
+            font-size: 14px;
+            padding: 6px 14px;
+        }
+
         }
     </style>
 </head>
 <body>
     <div class="header">
         <div class="header-top">
-            <div class="greeting">👋 Здравствуйте, @ViewBag.UserName</div>
-            <div class="warehouse-info">
-                <span>🏭 Склад: <strong>@ViewBag.WarehouseId</strong></span>
-                <button class="change-warehouse-btn" onclick="location.href='/Terminal/SelectWarehouse'">
-                    🔄 Выбрать склад
-                </button>
+            <div class="header-left">
+                <div class="greeting">👋 Здравствуйте, @ViewBag.UserName</div>
+                <div class="warehouse-info">
+                    <span>🏭 Склад: <strong>@ViewBag.WarehouseId</strong></span>
+                    <button class="change-warehouse-btn" onclick="location.href='/Terminal/SelectWarehouse'">
+                        🔄 Выбрать склад
+                    </button>
+                </div>
+            </div>
+            <div class="header-right">
+                @if (Context.Session.GetString("UserRole") == "Admin")
+                {
+                    <span class="admin-badge">👑 Админ</span>
+                    <button class="admin-btn" onclick="location.href='/Terminal/AdminPanel'">
+                        ⚙️ Админка
+                    </button>
+                }
             </div>
         </div>
     </div>
-
     <div class="menu-grid">
         <button class="menu-btn" onclick="location.href='/Terminal/PickingOrders'">
             <span class="menu-icon">📦</span>

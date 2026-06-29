@@ -5,12 +5,9 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Приёмка товара - ТСД Автопитер</title>
-
-    <!-- ПОДКЛЮЧАЕМ НОВУЮ БИБЛИОТЕКУ ДЛЯ СКАНЕРА -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Сканирование ячейки - ТСД Автопитер</title>
     <script src="https://unpkg.com/html5-qrcode"></script>
-
     <style>
         * {
             margin: 0;
@@ -18,44 +15,39 @@
             box-sizing: border-box;
         }
 
-        html,
         body {
-            height: 100%;
             font-family: 'Segoe UI', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 15px;
+            min-height: 100vh;
+            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
         .container {
-            width: 100%;
             max-width: 480px;
+            width: 100%;
             margin: 0 auto;
         }
 
         .card {
             background: white;
             border-radius: 24px;
-            padding: 25px 20px;
+            padding: 25px;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
 
         h2 {
             color: #333;
-            margin-bottom: 15px;
-            font-size: 22px;
+            margin-bottom: 10px;
         }
 
-        .success {
-            background: #d4edda;
-            color: #155724;
-            padding: 12px;
-            border-radius: 12px;
-            margin-bottom: 15px;
+        .subtitle {
+            color: #666;
             font-size: 14px;
+            margin-bottom: 20px;
         }
 
         .error {
@@ -66,22 +58,6 @@
             margin-bottom: 15px;
             font-size: 14px;
         }
-
-        .back-btn {
-            background: #999;
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 12px;
-            font-size: 16px;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 12px;
-        }
-
-            .back-btn:active {
-                transform: scale(0.98);
-            }
 
         .scan-input {
             width: 100%;
@@ -120,7 +96,6 @@
             background: #ff4444;
         }
 
-        /* КОНТЕЙНЕР ДЛЯ НОВОГО СКАНЕРА */
         #reader {
             width: 100%;
             max-width: 480px;
@@ -149,7 +124,7 @@
         }
 
             .submit-btn:active {
-                transform: scale(0.97);
+                transform: scale(0.98);
             }
 
         .stop-scan-btn {
@@ -166,117 +141,87 @@
         }
 
             .stop-scan-btn:active {
-                transform: scale(0.97);
+                transform: scale(0.98);
             }
 
-        .scan-hint {
-            font-size: 14px;
-            color: #666;
-            margin: 10px 0;
+        .back-btn {
+            background: #999;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 12px;
         }
+
+            .back-btn:active {
+                transform: scale(0.98);
+            }
     </style>
 </head>
 <body>
-
     <div class="container">
         <div class="card">
-            <h2>📥 Приёмка товара</h2>
-
-            @if (TempData["Success"] != null)
-            {
-                <div class="success">✅ @TempData["Success"]</div>
-                TempData.Remove("Success");
-            }
-
-            @if (TempData["Warning"] != null)
-            {
-                <div class="warning" style="background: #fff3cd; border: 2px solid #ff9800; color: #856404; padding: 15px; border-radius: 12px; margin-bottom: 15px; text-align: left;">
-                    <div style="font-size: 18px; font-weight: bold;">⚠️ @TempData["Warning"]</div>
-                    @if (TempData["WarningDetails"] != null)
-                    {
-                        <div style="margin-top: 5px; font-size: 14px;">@TempData["WarningDetails"]</div>
-                    }
-                    <button onclick="location.href='/Terminal/Receiving'" style="margin-top: 10px; padding: 8px 20px; background: #ff9800; color: white; border: none; border-radius: 8px; cursor: pointer;">
-                        🔄 Понятно, продолжить
-                    </button>
+            <h2>🔍 Сканирование ячейки</h2>
+            <div class="subtitle">Найдите ячейку с товаром для заказа</div>
+            <div class="info-box" style="background: #e8f0fe; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 2px solid #667eea;">
+                <div style="color: #666; font-size: 12px;">📍 Ожидается ячейка</div>
+                <div style="font-size: 28px; font-weight: bold; color: #667eea; font-family: monospace;">@Context.Session.GetString("PickingCellAddress")</div>
+                <div style="font-size: 14px; color: #666; margin-top: 5px;">
+                    📦 Доступно: @Context.Session.GetInt32("PickingStockQuantity") шт
                 </div>
+            </div>
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="error">❌ @ViewBag.Error</div>
             }
 
-            <form method="post" id="receivingForm">
-
-                <input type="text" name="scannedSku" id="scannedSku" class="scan-input"
-                       placeholder="Введите или отсканируйте код" autofocus>
-
-                <button type="button" id="scanButton" class="scan-btn">📷 Сканировать штрих-код</button>
-
+            <form method="post" id="scanForm">
+                <input type="text" name="scannedCell" id="scannedCell" class="scan-input" placeholder="Адрес ячейки" autofocus>
+                <button type="button" id="scanButton" class="scan-btn">📷 Сканировать QR-код ячейки</button>
                 <div id="reader" style="display:none;"></div>
-
                 <button type="button" id="stopScanBtn" class="stop-scan-btn">⏹ Остановить сканер</button>
-
-                <button type="submit" class="submit-btn">✅ Далее</button>
+                <button type="submit" class="submit-btn">✅ Подтвердить</button>
             </form>
 
-            <button class="back-btn" onclick="location.href='/Terminal/MainMenu'">← Главное меню</button>
+            <button class="back-btn" onclick="location.href='/Terminal/StartPicking?orderId=@Context.Session.GetInt32("CurrentOrderId")'">← Назад</button>
         </div>
     </div>
 
     <script>
-        // ============================================================
-        //  НОВЫЙ СКАНЕР НА HTML5-QRCODE
-        // ============================================================
-
         let html5Scanner = null;
         let isScanning = false;
-
         const scanBtn = document.getElementById('scanButton');
         const stopBtn = document.getElementById('stopScanBtn');
-        const inputField = document.getElementById('scannedSku');
+        const inputField = document.getElementById('scannedCell');
         const readerContainer = document.getElementById('reader');
 
-        // Функция запуска сканера
         function startScanner() {
             if (typeof Html5Qrcode === 'undefined') {
-                alert('Библиотека сканера не загружена. Проверьте интернет.');
+                alert('Библиотека сканера не загружена.');
                 return;
             }
-
-            // Показываем контейнер
             readerContainer.style.display = 'block';
             scanBtn.textContent = '⏳ Запуск...';
             scanBtn.disabled = true;
 
             html5Scanner = new Html5Qrcode("reader");
-
-            const config = {
-                fps: 15,
-                qrbox: { width: 250, height: 100 },
-                aspectRatio: 1.0
-            };
+            const config = { fps: 15, qrbox: { width: 250, height: 100 }, aspectRatio: 1.0 };
 
             html5Scanner.start(
                 { facingMode: "environment" },
                 config,
-                // onScanSuccess
                 (decodedText) => {
-                    // Успешное сканирование!
                     inputField.value = decodedText;
-
-                    // Вибрация (если есть)
                     if (navigator.vibrate) navigator.vibrate(200);
-
-                    // Отправляем форму
-                    const form = document.getElementById('receivingForm');
-                    if (form) {
-                        setTimeout(() => form.submit(), 300);
-                    }
-
-                    // Останавливаем сканер
                     stopScanner();
+                    const form = document.getElementById('scanForm');
+                    if (form) setTimeout(() => form.submit(), 300);
                 },
-                // onScanError (игнорируем)
-                (error) => {
-                    // Ничего не делаем — это нормально, кадры сканируются постоянно
-                }
+                (error) => {}
             ).then(() => {
                 isScanning = true;
                 scanBtn.textContent = '⏹ Остановить сканер';
@@ -284,68 +229,48 @@
                 scanBtn.classList.add('scan-btn-stop');
                 stopBtn.style.display = 'block';
             }).catch((err) => {
-                alert('Ошибка доступа к камере: ' + err);
+                alert('Ошибка камеры: ' + err);
                 readerContainer.style.display = 'none';
-                scanBtn.textContent = '📷 Сканировать штрих-код';
+                scanBtn.textContent = '📷 Сканировать QR-код ячейки';
                 scanBtn.disabled = false;
                 scanBtn.classList.remove('scan-btn-stop');
                 stopBtn.style.display = 'none';
             });
         }
 
-        // Функция остановки сканера
         function stopScanner() {
             if (html5Scanner) {
                 html5Scanner.stop().then(() => {
                     html5Scanner.clear();
                     readerContainer.style.display = 'none';
                     isScanning = false;
-                    scanBtn.textContent = '📷 Сканировать штрих-код';
+                    scanBtn.textContent = '📷 Сканировать QR-код ячейки';
                     scanBtn.disabled = false;
                     scanBtn.classList.remove('scan-btn-stop');
                     stopBtn.style.display = 'none';
                     html5Scanner = null;
-                }).catch((err) => {
-                    console.warn('Ошибка при остановке сканера:', err);
-                });
+                }).catch(() => {});
             } else {
                 readerContainer.style.display = 'none';
                 isScanning = false;
-                scanBtn.textContent = '📷 Сканировать штрих-код';
+                scanBtn.textContent = '📷 Сканировать QR-код ячейки';
                 scanBtn.disabled = false;
                 scanBtn.classList.remove('scan-btn-stop');
                 stopBtn.style.display = 'none';
             }
         }
 
-        // --- ПРИВЯЗКА КНОПОК ---
-
         scanBtn.addEventListener('click', function() {
-            if (isScanning) {
-                stopScanner();
-            } else {
-                startScanner();
-            }
+            if (isScanning) stopScanner(); else startScanner();
         });
-
         stopBtn.addEventListener('click', stopScanner);
-
-        // Если пользователь нажал Enter в поле ввода
         inputField.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 const form = this.closest('form');
                 if (form) form.submit();
             }
         });
-
-        // Очищаем сканер при уходе со страницы
-        window.addEventListener('beforeunload', function() {
-            stopScanner();
-        });
-
-        // Для отладки
-        console.log('✅ Сканер на html5-qrcode загружен. Нажмите кнопку для запуска.');
+        window.addEventListener('beforeunload', stopScanner);
     </script>
-
 </body>
 </html>

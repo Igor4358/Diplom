@@ -1,7 +1,7 @@
 ﻿@{
     Layout = null;
 }
-@model List<WMS.Terminal.Models.PickingTask>
+@model WMS.Terminal.Models.ShipmentOrder
 
 <!DOCTYPE html>
 <html>
@@ -39,19 +39,35 @@
             cursor: pointer;
         }
 
-        .task-card {
+        h1 {
+            font-size: 24px;
+        }
+
+        .info-card {
             background: white;
             border-radius: 16px;
             padding: 20px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
-        .cell {
-            font-size: 24px;
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            flex-wrap: wrap;
+        }
+
+        .info-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .info-value {
             font-weight: bold;
-            color: #667eea;
-            margin-bottom: 10px;
+            color: #333;
+            text-align: right;
         }
 
         .product-name {
@@ -62,41 +78,162 @@
 
         .product-sku {
             color: #999;
-            font-size: 12px;
-            margin: 5px 0;
+            font-size: 13px;
+            font-weight: normal;
         }
 
-        .qty {
-            color: #666;
-            margin-top: 10px;
-        }
-
-        .pick-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .status-pending {
+            background: #ff9800;
             color: white;
-            border: none;
-            padding: 15px;
-            border-radius: 12px;
-            margin-top: 15px;
-            width: 100%;
-            font-size: 18px;
-            cursor: pointer;
-        }
-
-        .completed {
-            opacity: 0.6;
-            background: #e0e0e0;
-        }
-
-        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
             display: inline-block;
+        }
+
+        .status-partial {
+            background: #2196f3;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-block;
+        }
+
+        .status-completed {
             background: #4caf50;
             color: white;
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 12px;
-            margin-top: 10px;
+            display: inline-block;
         }
+
+        .status-bar {
+            background: #eee;
+            height: 10px;
+            border-radius: 5px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+
+        .status-fill {
+            height: 100%;
+            background: #4caf50;
+            border-radius: 5px;
+            transition: width 0.3s;
+        }
+
+        .target-warehouse {
+            background: #e3f2fd;
+            padding: 12px;
+            border-radius: 12px;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+            .target-warehouse strong {
+                color: #667eea;
+            }
+
+        .cell-address {
+            font-family: monospace;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+
+            .action-btn:active {
+                transform: scale(0.98);
+            }
+
+        .action-btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            padding: 12px;
+            border-radius: 12px;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+            .warning strong {
+                color: #856404;
+            }
+
+        .qty-available {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .qty-unavailable {
+            color: #ff4444;
+            font-weight: bold;
+        }
+
+        .barcode-value {
+            font-family: monospace;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .cell-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            flex-wrap: wrap;
+        }
+
+        .cell-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .cell-value {
+            font-weight: bold;
+            color: #333;
+            text-align: right;
+            font-family: monospace;
+            font-size: 18px;
+            color: #667eea;
+        }
+
+            .cell-value .qty-info {
+                font-size: 14px;
+                color: #666;
+                font-family: 'Segoe UI', sans-serif;
+                font-weight: normal;
+            }
+
+                .cell-value .qty-info.available {
+                    color: #28a745;
+                }
+
+                .cell-value .qty-info.unavailable {
+                    color: #ff4444;
+                }
     </style>
 </head>
 <body>
@@ -105,32 +242,136 @@
         <h1>📦 Сборка заказа</h1>
     </div>
 
-    @if (Model != null && Model.Any())
+    @if (Model != null)
     {
-        foreach (var task in Model)
+        var progress = Model.Quantity > 0 ? (Model.CollectedQuantity * 100 / Model.Quantity) : 0;
+        var remaining = Model.Quantity - Model.CollectedQuantity;
+        var isCompleted = Model.Status == "Completed";
+
+        var statusClass = Model.Status == "Completed" ? "status-completed" :
+        (Model.Status == "Partial" ? "status-partial" : "status-pending");
+
+        <div class="info-card">
+            <!-- Номер заказа -->
+            <div class="info-row">
+                <span class="info-label">Номер заказа</span>
+                <span class="info-value">№ @Model.OrderNumber</span>
+            </div>
+
+            <!-- Статус -->
+            <div class="info-row">
+                <span class="info-label">Статус</span>
+                <span class="info-value"><span class="@statusClass">@Model.Status</span></span>
+            </div>
+
+            <!-- Товар -->
+            <div class="info-row">
+                <span class="info-label">Товар</span>
+                <span class="info-value" style="text-align: right;">
+                    <div class="product-name">@Model.Product?.Name</div>
+                    <div class="product-sku">Артикул: @Model.Product?.Sku</div>
+                </span>
+            </div>
+
+            <!-- ============================================================ -->
+            <!-- ЯЧЕЙКА — В ЕДИНОМ СТИЛЕ -->
+            <!-- ============================================================ -->
+            <div class="cell-container">
+                <span class="cell-label">📍 Ячейка с товаром</span>
+                <span class="cell-value">
+                    <span>@ViewBag.CellAddress</span>
+                    @if (ViewBag.AvailableQuantity > 0)
+                    {
+                        <span class="qty-info available">📦 @ViewBag.AvailableQuantity шт</span>
+                    }
+                    else
+                    {
+                        <span class="qty-info unavailable">⚠️ нет в наличии</span>
+                    }
+                </span>
+            </div>
+
+            <!-- Штрих-код (добавим для удобства) -->
+            <div class="info-row">
+                <span class="info-label">🏷️ Штрих-код</span>
+                <span class="info-value">
+                    <span class="barcode-value">@ViewBag.Barcode</span>
+                </span>
+            </div>
+
+            <!-- Количество -->
+            <div class="info-row">
+                <span class="info-label">Заказано</span>
+                <span class="info-value">@Model.Quantity шт</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Собрано</span>
+                <span class="info-value">@Model.CollectedQuantity шт</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Осталось собрать</span>
+                <span class="info-value"><strong style="color: #667eea; font-size: 20px;">@remaining шт</strong></span>
+            </div>
+
+            <!-- Прогресс -->
+            <div class="status-bar">
+                <div class="status-fill" style="width: @progress%;"></div>
+            </div>
+            <div style="font-size: 12px; color: #999; margin-top: 5px; text-align: right;">Прогресс: @progress%</div>
+
+            <!-- Склад-получатель -->
+            <div class="target-warehouse">
+                🚚 Отгрузить на: <strong>@(Model.TargetWarehouseName ?? "Склад не указан")</strong>
+                @if (Model.TargetWarehouseId.HasValue)
+                {
+                    <span style="font-size: 12px; color: #999;">(ID: @Model.TargetWarehouseId)</span>
+                }
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.Notes))
+            {
+                <div style="margin-top: 10px; font-size: 12px; color: #666; background: #f8f9fa; padding: 8px; border-radius: 8px;">
+                    📝 @Model.Notes
+                </div>
+            }
+
+            @if (ViewBag.AvailableQuantity <= 0 && !isCompleted)
+            {
+                <div class="warning">
+                    ⚠️ <strong>Внимание!</strong> Товара нет на складе. Невозможно начать сборку.
+                </div>
+            }
+        </div>
+
+        @if (!isCompleted)
         {
-            <div class="task-card @(task.Status == "Completed" ? "completed" : "")">
-                <div class="cell">📍 Ячейка: @(task.Cell?.Address ?? "не указана")</div>
-                <div class="product-name">@(task.Product?.Name ?? "неизвестный товар")</div>
-                <div class="product-sku">Артикул: @(task.Product?.Sku ?? "---")</div>
-                <div class="qty">Количество: @task.RequiredQuantity шт</div>
-                @if (task.Status == "Completed")
-                {
-                    <div class="badge">✓ Собрано</div>
-                }
-                else
-                {
-                    <button class="pick-btn" onclick="location.href='/Terminal/ScanCell?taskId=@task.Id'">
-                        🔘 Собрать
-                    </button>
-                }
+            if (ViewBag.AvailableQuantity > 0)
+            {
+                <button class="action-btn" onclick="location.href='/Terminal/ScanCellForPicking'">
+                    🔍 Начать сборку — сканировать ячейку <strong>@ViewBag.CellAddress</strong>
+                </button>
+            }
+            else
+            {
+                <button class="action-btn" style="background: #ff4444; cursor: not-allowed;" disabled>
+                    ⛔ Нет товара на складе
+                </button>
+            }
+        }
+        else
+        {
+            <div style="text-align: center; padding: 20px; background: #d4edda; border-radius: 16px; color: #155724;">
+                ✅ Заказ полностью собран и отправлен на склад @Model.TargetWarehouseName!
             </div>
         }
     }
     else
     {
-        <div style="text-align: center; padding: 50px; background: white; border-radius: 16px;">
-            📭 Нет позиций для сборки
+        <div class="empty-state">
+            <p>❌ Заказ не найден</p>
+            <button class="action-btn" onclick="location.href='/Terminal/PickingOrders'" style="margin-top:20px;">
+                ← Вернуться к списку заказов
+            </button>
         </div>
     }
 </body>
