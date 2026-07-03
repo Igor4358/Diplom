@@ -16,8 +16,9 @@ namespace WMS.Terminal.Models
 
         [Required]
         [MaxLength(50)]
-        public string OperationType { get; set; } = string.Empty;  // Receiving, Picking, Sorting, Login
+        public string OperationType { get; set; } = string.Empty;
 
+        public int? WarehouseId { get; set; }
         public string Details { get; set; } = string.Empty;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

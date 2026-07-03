@@ -17,6 +17,7 @@ namespace WMS.Terminal.Data
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<PickingTask> PickingTasks { get; set; }
         public DbSet<ShipmentOrder> ShipmentOrders { get; set; }
+        public DbSet<UserWarehouseAccess> UserWarehouseAccesses { get; set; }
 
         public DbSet<ExpectedReceipt> ExpectedReceipts { get; set; }
         public DbSet<ExpectedShipment> ExpectedShipments { get; set; }

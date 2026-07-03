@@ -18,7 +18,7 @@ namespace WMS.Terminal.Models
         public int CurrentWarehouseId { get; set; }
 
         [MaxLength(20)]
-        public string Role { get; set; } = "Worker"; // Admin или Worker
+        public string Role { get; set; } = "Worker"; 
 
         public bool IsActive { get; set; } = true;
 
@@ -27,5 +27,7 @@ namespace WMS.Terminal.Models
         public DateTime? LastLoginAt { get; set; }
 
         public Warehouse? CurrentWarehouse { get; set; }
+
+        public List<UserWarehouseAccess> UserWarehouseAccesses { get; set; } = new();
     }
 }

@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using ZXing.QrCode;
+using System.Linq;
 namespace WMS.Terminal.Controllers
 {
     public class TerminalController : Controller
@@ -303,28 +304,58 @@ namespace WMS.Terminal.Controllers
 
             return View(model);
         }
-        // Страница выбора склада
         [HttpGet]
         public async Task<IActionResult> SelectWarehouse()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId == null)
+            if (userId == null) return RedirectToAction("Login");
+
+            // Получаем только доступные склады
+            var availableIds = await GetAvailableWarehouseIds();
+
+            var warehouses = await _db.Warehouses
+                .Where(w => availableIds.Contains(w.Id))
+                .ToListAsync();
+
+            // Если доступен только один склад — выбираем автоматически
+            if (warehouses.Count == 1)
             {
-                return RedirectToAction("Login");
+                var warehouse = warehouses.First();
+                var currentWarehouseId = HttpContext.Session.GetInt32("WarehouseId");
+
+                // Если уже выбран этот склад — идём в главное меню
+                if (currentWarehouseId == warehouse.Id)
+                {
+                    return RedirectToAction("MainMenu");
+                }
+
+                // Выбираем склад через POST (внутренний вызов)
+                return await SelectWarehouse(warehouse.Id);
             }
 
-            var warehouses = await _db.Warehouses.ToListAsync();
+            // Если складов нет — ошибка
+            if (!warehouses.Any())
+            {
+                TempData["Error"] = "У вас нет доступа ни к одному складу. Обратитесь к администратору.";
+                return RedirectToAction("Logout");
+            }
+
+            // Показываем список складов для выбора
             return View(warehouses);
         }
 
-        // Обработка выбора склада
+        // Обработка выбора склада (POST + GET с параметром)
         [HttpPost]
         public async Task<IActionResult> SelectWarehouse(int warehouseId)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId == null)
+            if (userId == null) return RedirectToAction("Login");
+
+            // Проверяем, есть ли доступ к складу
+            if (!await HasAccessToWarehouse(userId.Value, warehouseId))
             {
-                return RedirectToAction("Login");
+                TempData["Error"] = "У вас нет доступа к этому складу";
+                return RedirectToAction("SelectWarehouse");
             }
 
             var user = await _db.Users.FindAsync(userId);
@@ -335,12 +366,15 @@ namespace WMS.Terminal.Controllers
                 user.CurrentWarehouseId = warehouseId;
                 await _db.SaveChangesAsync();
 
-                // Сохраняем в сессию
                 HttpContext.Session.SetInt32("WarehouseId", warehouseId);
                 HttpContext.Session.SetString("WarehouseName", warehouse.Name);
+
+                TempData["Success"] = $"Выбран склад: {warehouse.Name}";
+                return RedirectToAction("MainMenu");
             }
 
-            return RedirectToAction("MainMenu");
+            TempData["Error"] = "Склад не найден";
+            return RedirectToAction("SelectWarehouse");
         }
 
         // Главное меню терминала
@@ -367,6 +401,13 @@ namespace WMS.Terminal.Controllers
         {
             var warehouseId = HttpContext.Session.GetInt32("WarehouseId");
             if (warehouseId == null) return RedirectToAction("SelectWarehouse");
+
+            // Проверяем доступ к текущему складу
+            if (!await HasAccessToWarehouse(HttpContext.Session.GetInt32("UserId").Value, warehouseId.Value))
+            {
+                TempData["Error"] = "У вас нет доступа к этому складу";
+                return RedirectToAction("SelectWarehouse");
+            }
 
             var stocks = await _db.Stocks
                 .Include(s => s.Product)
@@ -789,14 +830,12 @@ namespace WMS.Terminal.Controllers
         public async Task<IActionResult> ExpectedReceipts()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-            var warehouseId = HttpContext.Session.GetInt32("WarehouseId");
-
             if (userId == null) return RedirectToAction("Login");
-            if (warehouseId == null) return RedirectToAction("SelectWarehouse");
 
-            // Получаем все ожидаемые поставки для этого склада
+            var availableIds = await GetAvailableWarehouseIds();
+
             var receipts = await _db.ExpectedReceipts
-                .Where(e => e.Status != "Completed")
+                .Where(e => e.Status != "Completed" && e.Warehouse != null && availableIds.Contains(e.WarehouseId.Value))
                 .OrderBy(e => e.ExpectedDate)
                 .ToListAsync();
 
@@ -842,15 +881,33 @@ namespace WMS.Terminal.Controllers
 
             var query = _db.Users
                 .Include(u => u.CurrentWarehouse)
+                .Include(u => u.UserWarehouseAccesses)
+                .ThenInclude(a => a.Warehouse)
                 .Where(u => u.Role == "Worker");
 
-            // Фильтр: активные, неактивные, все
             if (filter == "active")
                 query = query.Where(u => u.IsActive);
             else if (filter == "inactive")
                 query = query.Where(u => !u.IsActive);
 
             var workers = await query.OrderBy(u => u.FullName).ToListAsync();
+
+            // Для каждого пользователя загружаем доступные склады
+            var workersWithAccess = new List<dynamic>();
+            foreach (var worker in workers)
+            {
+                var accessIds = await GetUserWarehouseIds(worker.Id);
+                var accessNames = await _db.Warehouses
+                    .Where(w => accessIds.Contains(w.Id))
+                    .Select(w => w.Name)
+                    .ToListAsync();
+
+                workersWithAccess.Add(new
+                {
+                    User = worker,
+                    AccessWarehouses = string.Join(", ", accessNames)
+                });
+            }
 
             var admins = await _db.Users
                 .Where(u => u.Role == "Admin")
@@ -859,6 +916,8 @@ namespace WMS.Terminal.Controllers
             ViewBag.AdminsCount = admins.Count;
             ViewBag.AdminName = HttpContext.Session.GetString("UserName");
             ViewBag.CurrentFilter = filter;
+            ViewBag.WorkersWithAccess = workersWithAccess;
+
             return View(workers);
         }
 
@@ -876,12 +935,18 @@ namespace WMS.Terminal.Controllers
 
         // Добавление нового кладовщика (POST)
         [HttpPost]
-        public async Task<IActionResult> AddUser(string fullName, string pinCode, int warehouseId)
+        public async Task<IActionResult> AddUser(string fullName, string pinCode, List<int> warehouseIds)
         {
             if (!IsAuthenticated()) return RedirectToAction("Login");
             if (!IsAdmin()) return RedirectToAction("MainMenu");
 
-            // Проверяем, что PIN не занят
+            if (string.IsNullOrEmpty(fullName) || string.IsNullOrEmpty(pinCode) || warehouseIds == null || !warehouseIds.Any())
+            {
+                ViewBag.Error = "Заполните все поля и выберите хотя бы один склад";
+                ViewBag.Warehouses = await _db.Warehouses.ToListAsync();
+                return View();
+            }
+
             if (await _db.Users.AnyAsync(u => u.PinCode == pinCode))
             {
                 ViewBag.Error = $"Пользователь с PIN-кодом {pinCode} уже существует";
@@ -889,17 +954,29 @@ namespace WMS.Terminal.Controllers
                 return View();
             }
 
+            // Создаём пользователя
             var user = new User
             {
                 FullName = fullName,
                 PinCode = pinCode,
-                CurrentWarehouseId = warehouseId,
+                CurrentWarehouseId = warehouseIds.First(), // Первый склад как основной
                 Role = "Worker",
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow
             };
 
             _db.Users.Add(user);
+            await _db.SaveChangesAsync();
+
+            // Добавляем доступ к складам
+            foreach (var whId in warehouseIds)
+            {
+                _db.UserWarehouseAccesses.Add(new UserWarehouseAccess
+                {
+                    UserId = user.Id,
+                    WarehouseId = whId
+                });
+            }
             await _db.SaveChangesAsync();
 
             TempData["Success"] = $"Кладовщик '{fullName}' успешно добавлен! PIN-код: {pinCode}";
@@ -913,7 +990,10 @@ namespace WMS.Terminal.Controllers
             if (!IsAuthenticated()) return RedirectToAction("Login");
             if (!IsAdmin()) return RedirectToAction("MainMenu");
 
-            var user = await _db.Users.FindAsync(id);
+            var user = await _db.Users
+                .Include(u => u.UserWarehouseAccesses)
+                .FirstOrDefaultAsync(u =>u.Id == id);
+
             if (user == null) return NotFound();
 
             var warehouses = await _db.Warehouses.ToListAsync();
@@ -923,15 +1003,23 @@ namespace WMS.Terminal.Controllers
 
         // Редактирование пользователя (POST)
         [HttpPost]
-        public async Task<IActionResult> EditUser(int id, string fullName, string pinCode, int warehouseId, bool isActive)
+        public async Task<IActionResult> EditUser(int id, string fullName, string pinCode, List<int> warehouseIds, bool isActive)
         {
             if (!IsAuthenticated()) return RedirectToAction("Login");
             if (!IsAdmin()) return RedirectToAction("MainMenu");
 
-            var user = await _db.Users.FindAsync(id);
+            var user = await _db.Users
+                .Include(u => u.UserWarehouseAccesses)
+                .FirstOrDefaultAsync(u => u.Id == id);
             if (user == null) return NotFound();
 
-            // Проверяем, что PIN не занят другим пользователем
+            if (string.IsNullOrEmpty(fullName) || string.IsNullOrEmpty(pinCode) || warehouseIds == null || !warehouseIds.Any())
+            {
+                ViewBag.Error = "Заполните все поля и выберите хотя бы один склад";
+                ViewBag.Warehouses = await _db.Warehouses.ToListAsync();
+                return View(user);
+            }
+
             if (await _db.Users.AnyAsync(u => u.PinCode == pinCode && u.Id != id))
             {
                 ViewBag.Error = $"Пользователь с PIN-кодом {pinCode} уже существует";
@@ -941,8 +1029,22 @@ namespace WMS.Terminal.Controllers
 
             user.FullName = fullName;
             user.PinCode = pinCode;
-            user.CurrentWarehouseId = warehouseId;
+            user.CurrentWarehouseId = warehouseIds.First();
             user.IsActive = isActive;
+
+            // Обновляем доступ к складам
+            if (user.UserWarehouseAccesses != null)
+            {
+                _db.UserWarehouseAccesses.RemoveRange(user.UserWarehouseAccesses);
+            }
+            foreach (var whId in warehouseIds)
+            {
+                _db.UserWarehouseAccesses.Add(new UserWarehouseAccess
+                {
+                    UserId = user.Id,
+                    WarehouseId = whId
+                });
+            }
 
             await _db.SaveChangesAsync();
 
@@ -1019,7 +1121,9 @@ namespace WMS.Terminal.Controllers
         public async Task<IActionResult> AddExpectedReceipt(string barcode, string sku, string productName, int quantity, string supplier)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
+            var warehouseId = HttpContext.Session.GetInt32("WarehouseId");
             if (userId == null) return RedirectToAction("Login");
+            if (warehouseId == null) return RedirectToAction("SelectWarehouse");
 
             if (string.IsNullOrEmpty(barcode) || string.IsNullOrEmpty(sku) || string.IsNullOrEmpty(productName))
             {
@@ -1036,7 +1140,8 @@ namespace WMS.Terminal.Controllers
                 ReceivedQuantity = 0,
                 Status = "Pending",
                 ExpectedDate = DateTime.UtcNow,
-                Supplier = supplier ?? ""
+                Supplier = supplier ?? "",
+                WarehouseId = warehouseId.Value
             };
 
             _db.ExpectedReceipts.Add(receipt);
@@ -1249,6 +1354,12 @@ namespace WMS.Terminal.Controllers
             if (userId == null) return RedirectToAction("Login");
             if (warehouseId == null) return RedirectToAction("SelectWarehouse");
 
+            // Проверяем доступ к текущему складу
+            if (!await HasAccessToWarehouse(userId.Value, warehouseId.Value))
+            {
+                TempData["Error"] = "У вас нет доступа к этому складу";
+                return RedirectToAction("SelectWarehouse");
+            }
             // Общее количество ячеек на складе
             var totalCells = await _db.Cells.CountAsync(c => c.WarehouseId == warehouseId);
 
@@ -1386,9 +1497,7 @@ namespace WMS.Terminal.Controllers
                 return View();
             }
 
-            // ============================================================
             // 1. Ищем товар на складе ПО ШТРИХ-КОДУ
-            // ============================================================
             var existingStock = await _db.Stocks
                 .Include(s => s.Product)
                 .Include(s => s.Cell)
@@ -1401,10 +1510,7 @@ namespace WMS.Terminal.Controllers
                 TempData["WarningDetails"] = $"📍 Ячейка: {existingStock.Cell?.Address}, Количество: {existingStock.Quantity} шт";
                 return RedirectToAction("Receiving");
             }
-
-            // ============================================================
             // 2. Ищем товар в ожидаемых поставках
-            // ============================================================
             var expected = await _db.ExpectedReceipts
                 .FirstOrDefaultAsync(e => e.Barcode == scannedSku && e.Status != "Completed");
 
@@ -1481,13 +1587,57 @@ namespace WMS.Terminal.Controllers
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null) return RedirectToAction("Login");
 
+            var availableIds = await GetAvailableWarehouseIds();
+
             var receipts = await _db.ExpectedReceipts
-                .Where(e => e.Status == "Completed")
+                .Include(r => r.Warehouse)
+                .Where(e => e.Status == "Completed" && e.Warehouse != null && availableIds.Contains(e.WarehouseId.Value))
                 .OrderByDescending(e => e.ExpectedDate)
                 .Take(50)
                 .ToListAsync();
 
             return View(receipts);
+        }
+
+
+        // Получить список складов, доступных для текущего пользователя
+        private async Task<List<int>> GetAvailableWarehouseIds()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var userRole = HttpContext.Session.GetString("UserRole");
+
+            if (userId == null) return new List<int>();
+
+            // Если админ — видит все склады
+            if (userRole == "Admin")
+            {
+                return await _db.Warehouses.Select(w => w.Id).ToListAsync();
+            }
+
+            // Иначе — только склады, к которым есть доступ
+            return await _db.UserWarehouseAccesses
+                .Where(a => a.UserId == userId)
+                .Select(a => a.WarehouseId)
+                .ToListAsync();
+        }
+
+        // Получить список складов для конкретного пользователя (для админки)
+        private async Task<List<int>> GetUserWarehouseIds(int userId)
+        {
+            return await _db.UserWarehouseAccesses
+                .Where(a => a.UserId == userId)
+                .Select(a => a.WarehouseId)
+                .ToListAsync();
+        }
+
+        // Проверить, есть ли у пользователя доступ к складу
+        private async Task<bool> HasAccessToWarehouse(int userId, int warehouseId)
+        {
+            var userRole = HttpContext.Session.GetString("UserRole");
+            if (userRole == "Admin") return true;
+
+            return await _db.UserWarehouseAccesses
+                .AnyAsync(a => a.UserId == userId && a.WarehouseId == warehouseId);
         }
         [HttpPost]
         public async Task<IActionResult> LinkBarcodeToExistingProduct(string barcode, string sku, int quantity)
@@ -1531,7 +1681,8 @@ namespace WMS.Terminal.Controllers
                 ReceivedQuantity = 0,
                 Status = "Pending",
                 ExpectedDate = DateTime.UtcNow,
-                Supplier = "Привязка штрих-кода"
+                Supplier = "Привязка штрих-кода",
+                WarehouseId = warehouseId.Value
             };
             _db.ExpectedReceipts.Add(expected);
             await _db.SaveChangesAsync();
@@ -1592,7 +1743,8 @@ namespace WMS.Terminal.Controllers
                     ReceivedQuantity = 0,
                     Status = "Pending",
                     ExpectedDate = DateTime.UtcNow,
-                    Supplier = "Создание нового товара"
+                    Supplier = "Создание нового товара",
+                    WarehouseId = warehouseId.Value
                 };
                 _db.ExpectedReceipts.Add(expected);
                 await _db.SaveChangesAsync();
@@ -1844,7 +1996,7 @@ namespace WMS.Terminal.Controllers
                     ProductId = productId.Value,
                     CellId = cellId,
                     Quantity = quantity,
-                    Barcode = GenerateEan13Barcode() // ← КАЖДАЯ ПАРТИЯ ПОЛУЧАЕТ СВОЙ ШТРИХ-КОД
+                    Barcode = GenerateEan13Barcode() 
                 };
                 _db.Stocks.Add(newStock);
             }
@@ -1856,6 +2008,10 @@ namespace WMS.Terminal.Controllers
                 if (expected != null)
                 {
                     expected.ReceivedQuantity += quantity;
+                    if (expected.WarehouseId == 0 && warehouseId.HasValue)
+                    {
+                        expected.WarehouseId = warehouseId.Value;
+                    }
                     if (expected.ReceivedQuantity >= expected.ExpectedQuantity)
                         expected.Status = "Completed";
                     else if (expected.ReceivedQuantity > 0)
@@ -1874,7 +2030,8 @@ namespace WMS.Terminal.Controllers
                     UserId = userId ?? 0,
                     UserName = userName ?? "Неизвестный",
                     OperationType = "Receiving",
-                    Details = $"Принят товар \"{productName}\" в количестве {quantity} шт в ячейку {cell?.Address ?? cellId.ToString()}"
+                    Details = $"Принят товар \"{productName}\" в количестве {quantity} шт в ячейку {cell?.Address ?? cellId.ToString()}",
+                    WarehouseId = warehouseId
                 });
                 await _db.SaveChangesAsync();
             }

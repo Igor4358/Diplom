@@ -6,7 +6,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <title>Главное меню - ТСД Автопитер</title>
+    <title>Главное меню - ТСД Автосклад</title>
     <style>
         * {
             margin: 0;
@@ -271,7 +271,6 @@
             <div class="header-right">
                 @if (Context.Session.GetString("UserRole") == "Admin")
                 {
-                    <span class="admin-badge">👑 Админ</span>
                     <button class="admin-btn" onclick="location.href='/Terminal/AdminPanel'">
                         ⚙️ Админка
                     </button>
@@ -281,7 +280,7 @@
     </div>
     <div class="menu-grid">
         <button class="menu-btn" onclick="location.href='/Terminal/PickingOrders'">
-            <span class="menu-icon">📦</span>
+            <span class="menu-icon">📤</span>
             <span class="menu-title">Сбор заказов</span>
         </button>
 

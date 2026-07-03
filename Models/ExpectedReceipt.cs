@@ -8,22 +8,26 @@ namespace WMS.Terminal.Models
         public int Id { get; set; }
 
         [Required]
-        public string Barcode { get; set; } = string.Empty;  // Уникальный штрих-код товара
+        public string Barcode { get; set; } = string.Empty;
 
         [Required]
-        public string Sku { get; set; } = string.Empty;      // Артикул товара
+        public string Sku { get; set; } = string.Empty;
 
         [Required]
-        public string ProductName { get; set; } = string.Empty; // Название товара
+        public string ProductName { get; set; } = string.Empty;
 
-        public int ExpectedQuantity { get; set; } = 1;       // Ожидаемое количество
+        public int ExpectedQuantity { get; set; } = 1;
 
-        public int ReceivedQuantity { get; set; } = 0;       // Уже принято
+        public int ReceivedQuantity { get; set; } = 0;
 
-        public string Status { get; set; } = "Pending";      // Pending, Partial, Completed
+        public string Status { get; set; } = "Pending"; 
 
         public DateTime ExpectedDate { get; set; } = DateTime.UtcNow;
 
-        public string? Supplier { get; set; }                // Поставщик (опционально)
+        public string? Supplier { get; set; }
+
+        public int? WarehouseId { get; set; }  
+
+        public Warehouse? Warehouse { get; set; } 
     }
 }

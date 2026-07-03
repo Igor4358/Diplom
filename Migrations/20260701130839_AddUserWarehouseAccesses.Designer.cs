@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WMS.Terminal.Data;
@@ -11,9 +12,11 @@ using WMS.Terminal.Data;
 namespace WMS.Terminal.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260701130839_AddUserWarehouseAccesses")]
+    partial class AddUserWarehouseAccesses
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -163,9 +166,6 @@ namespace WMS.Terminal.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
-
-                    b.Property<int?>("WarehouseId")
-                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -411,7 +411,7 @@ namespace WMS.Terminal.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("WMS.Terminal.Models.UserWarehouseAccess", b =>
+            modelBuilder.Entity("WMS.Terminal.Models.UserWarehouseAcess", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -569,10 +569,10 @@ namespace WMS.Terminal.Migrations
                     b.Navigation("CurrentWarehouse");
                 });
 
-            modelBuilder.Entity("WMS.Terminal.Models.UserWarehouseAccess", b =>
+            modelBuilder.Entity("WMS.Terminal.Models.UserWarehouseAcess", b =>
                 {
                     b.HasOne("WMS.Terminal.Models.User", "User")
-                        .WithMany("UserWarehouseAccesses")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -603,11 +603,6 @@ namespace WMS.Terminal.Migrations
             modelBuilder.Entity("WMS.Terminal.Models.Product", b =>
                 {
                     b.Navigation("Stocks");
-                });
-
-            modelBuilder.Entity("WMS.Terminal.Models.User", b =>
-                {
-                    b.Navigation("UserWarehouseAccesses");
                 });
 
             modelBuilder.Entity("WMS.Terminal.Models.Warehouse", b =>

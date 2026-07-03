@@ -8,7 +8,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <title>Завершённые поставки - ТСД Автопитер</title>
+    <title>Завершённые поставки - ТСД Автосклад</title>
     <style>
         * {
             margin: 0;
@@ -162,6 +162,7 @@
                     {
                         <span>🏭 @item.Supplier</span>
                     }
+                    <span>📍 Принято на склад: <strong>@(item.Warehouse?.Name ?? "Не указан")</strong></span>
                 </div>
                 <div class="completed-date">
                     ✅ Завершена: @DateTime.Now.ToString("dd.MM.yyyy HH:mm")

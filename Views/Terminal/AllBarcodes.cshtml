@@ -8,7 +8,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <title>Штрих-коды склада - ТСД Автопитер</title>
+    <title>Штрих-коды склада - ТСД Автосклад</title>
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
     <style>
         * {
@@ -133,15 +133,12 @@
 </head>
 <body>
     <div class="header">
-        <button class="back-btn" onclick="location.href='/Terminal/MainMenu'">← Назад</button>
+        <button class="back-btn" onclick="history.back()">← Назад</button>
         <h1>🏷️ Штрих-коды склада</h1>
     </div>
 
     <button class="print-btn" onclick="window.print()">🖨️ Печать штрих-кодов</button>
 
-    <!-- ============================================ -->
-    <!--  БЛОК ТОВАРОВ (исправленный)                 -->
-    <!-- ============================================ -->
     <div class="section-title">📦 Товары на складе</div>
     @if (Model.Products.Any())
     {
@@ -150,7 +147,6 @@
             {
                 <div class="barcode-card">
                     <div class="barcode-label">@item.Name</div>
-                    <!-- Используем уникальный штрих-код товара на складе -->
                     <svg id="barcode-@item.Barcode" class="barcode-image"></svg>
                     <div class="barcode-code">Артикул: @item.Sku</div>
                     <div class="barcode-code" style="font-size: 10px; color: #667eea;">

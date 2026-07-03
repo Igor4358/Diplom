@@ -8,7 +8,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <title>Редактирование - ТСД Автопитер</title>
+    <title>Редактирование - ТСД Автосклад</title>
     <style>
         * {
             margin: 0;
@@ -170,13 +170,18 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Склад</label>
-                    <select name="warehouseId" required>
+                    <label>Доступные склады</label>
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px; padding: 10px; border: 2px solid #ddd; border-radius: 12px; background: #fafafa;">
                         @foreach (var warehouse in ViewBag.Warehouses)
                         {
-                            <option value="@warehouse.Id" selected="@(Model.CurrentWarehouseId == warehouse.Id)">@warehouse.Name</option>
+                            var isChecked = Model.UserWarehouseAccesses.Any(a => a.WarehouseId == warehouse.Id);
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px;">
+                                <input type="checkbox" name="warehouseIds" value="@warehouse.Id" @(isChecked ? "checked" : "")>
+                                @warehouse.Name
+                            </label>
                         }
-                    </select>
+                    </div>
+                    <div class="pin-hint">💡 Выберите все склады, к которым будет доступ у кладовщика</div>
                 </div>
 
                 <div class="checkbox-group">
