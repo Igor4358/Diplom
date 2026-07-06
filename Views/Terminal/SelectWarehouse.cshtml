@@ -8,7 +8,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <title>Выбор склада - ТСД Автосклад</title>
+    <title>Выбор склада - ТСД Автопитер</title>
     <style>
         * {
             margin: 0;
@@ -82,14 +82,9 @@
             margin-bottom: 15px;
             font-size: 14px;
         }
-
+        /* УБИРАЕМ БЛОК ДЛЯ SUCCESS */
         .success {
-            background: #d4edda;
-            color: #155724;
-            padding: 12px;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            font-size: 14px;
+            display: none;
         }
     </style>
 </head>
@@ -103,15 +98,11 @@
             {
                 <div class="error">❌ @TempData["Error"]</div>
             }
-            @if (TempData["Success"] != null)
-            {
-                <div class="success">✅ @TempData["Success"]</div>
-            }
-
             <div class="warehouse-list">
                 @foreach (var warehouse in Model)
                 {
-                    <form method="post" asp-action="SelectWarehouse" asp-route-warehouseId="@warehouse.Id" style="margin:0;">
+                    <form method="post" asp-action="SelectWarehouse" style="margin:0;">
+                        <input type="hidden" name="warehouseId" value="@warehouse.Id" />
                         <button type="submit" class="warehouse-btn">
                             📦 Склад @warehouse.Name
                         </button>

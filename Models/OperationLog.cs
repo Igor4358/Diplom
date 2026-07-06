@@ -20,7 +20,7 @@ namespace WMS.Terminal.Models
 
         public int? WarehouseId { get; set; }
         public string Details { get; set; } = string.Empty;
-
+        public string? Barcode { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

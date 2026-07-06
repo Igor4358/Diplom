@@ -1,0 +1,160 @@
+﻿@{
+    Layout = null;
+}
+@model List<WMS.Terminal.Models.Stock>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Выбор товара - ТСД Автопитер</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 480px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .cell-title {
+            background: #e8f0fe;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .product-btn {
+            width: 100%;
+            padding: 16px;
+            background: #f8f9fa;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 8px 0;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+            .product-btn:active {
+                background: #e0e0e0;
+                transform: scale(0.98);
+            }
+
+        .product-name {
+            font-weight: bold;
+        }
+
+        .product-sku {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .product-qty {
+            background: #4caf50;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .back-btn {
+            background: #999;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 12px;
+        }
+
+            .back-btn:active {
+                transform: scale(0.98);
+            }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h2>📦 Выбор товара</h2>
+            <div class="subtitle">Выберите товар для перемещения</div>
+
+            <div class="cell-title">📍 Ячейка @ViewBag.CellAddress</div>
+
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var stock in Model)
+                {
+                    <form method="post" asp-action="TransferSelectProduct" style="margin:0;">
+                        <input type="hidden" name="stockId" value="@stock.Id">
+                        <button type="submit" class="product-btn">
+                            <div>
+                                <div class="product-name">@stock.Product?.Name</div>
+                                <div class="product-sku">Артикул: @stock.Product?.Sku</div>
+                            </div>
+                            <div class="product-qty">@stock.Quantity шт</div>
+                        </button>
+                    </form>
+                }
+            }
+            else
+            {
+                <div class="error">❌ В ячейке нет товаров</div>
+            }
+
+            <button class="back-btn" onclick="location.href='/Terminal/TransferBetweenWarehouses'">← Назад</button>
+        </div>
+    </div>
+</body>
+</html>

@@ -116,7 +116,6 @@
             }
 
         /* ========== МЕНЮ ========== */
-        /* ========== МЕНЮ ========== */
         .menu-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -206,7 +205,6 @@
 
         }
 
-        /* ========== КНОПКА ВЫХОДА ========== */
         .logout-btn {
             position: fixed;
             bottom: 20px;
@@ -300,6 +298,10 @@
             <span class="menu-icon">📋</span>
             <span class="menu-title">Ожидаемые поставки</span>
         </button>
+        <button class="menu-btn" onclick="location.href='/Terminal/TransferBetweenWarehouses'">
+            <span class="menu-icon">🔄</span>
+            <span class="menu-title">Перемещение между складами</span>
+        </button>
         <button class="menu-btn" onclick="location.href='/Terminal/AllCells'">
             <span class="menu-icon">📋</span>
             <span class="menu-title">Все ячейки</span>
@@ -325,14 +327,15 @@
             <span class="menu-icon">📜</span>
             <span class="menu-title">История</span>
         </button>
-        <button class="menu-btn" onclick="location.href='/Terminal/ReceiveByInvoice'">
+        <!-- <button class="menu-btn" onclick="location.href='/Terminal/ReceiveByInvoice'">
             <span class="menu-icon">📥</span>
             <span class="menu-title">Приёмка по накладной</span>
-        </button>
+                </button> 
+
         <button class="menu-btn" onclick="location.href='/Terminal/ExpectedShipments'">
             <span class="menu-icon">🚚</span>
             <span class="menu-title">Ожидаемые поставки</span>
-        </button>
+        </button> -->
         <button class="menu-btn" onclick="location.href='/Terminal/WarehouseDashboard'">
             <span class="menu-icon">📊</span>
             <span class="menu-title">Аналитика склада</span>

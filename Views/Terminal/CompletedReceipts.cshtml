@@ -165,7 +165,18 @@
                     <span>📍 Принято на склад: <strong>@(item.Warehouse?.Name ?? "Не указан")</strong></span>
                 </div>
                 <div class="completed-date">
-                    ✅ Завершена: @DateTime.Now.ToString("dd.MM.yyyy HH:mm")
+                    ✅ Завершена:
+                    @{
+                        if (item.CompletedAt.HasValue)
+                        {
+                            var localTime = item.CompletedAt.Value.ToLocalTime();
+                            @localTime.ToString("dd.MM.yyyy HH:mm")
+                        }
+                        else
+                        {
+                            @("Не указана")
+                        }
+                    }
                 </div>
             </div>
         }

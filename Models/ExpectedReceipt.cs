@@ -26,7 +26,11 @@ namespace WMS.Terminal.Models
 
         public string? Supplier { get; set; }
 
-        public int? WarehouseId { get; set; }  
+        public string? Notes { get; set; }
+
+        public int? WarehouseId { get; set; }
+
+        public DateTime? CompletedAt { get; set; }
 
         public Warehouse? Warehouse { get; set; } 
     }

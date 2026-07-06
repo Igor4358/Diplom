@@ -1,0 +1,246 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Подтверждение перемещения - ТСД Автопитер</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 480px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .info-box {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 12px;
+            margin: 15px 0;
+        }
+
+            .info-box .label {
+                color: #666;
+                font-size: 12px;
+            }
+
+            .info-box .value {
+                font-size: 18px;
+                font-weight: bold;
+                color: #333;
+            }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+            .form-group label {
+                display: block;
+                font-weight: bold;
+                color: #333;
+                margin-bottom: 5px;
+                font-size: 14px;
+            }
+
+            .form-group input, .form-group select {
+                width: 100%;
+                padding: 14px;
+                font-size: 16px;
+                border: 2px solid #ddd;
+                border-radius: 12px;
+                background: #fafafa;
+            }
+
+                .form-group input:focus, .form-group select:focus {
+                    outline: none;
+                    border-color: #667eea;
+                    background: white;
+                }
+
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+            .btn-primary:active {
+                transform: scale(0.98);
+            }
+
+        .back-btn {
+            background: #999;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 12px;
+        }
+
+            .back-btn:active {
+                transform: scale(0.98);
+            }
+
+        .max-hint {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .numpad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+            .numpad button {
+                background: #f0f0f0;
+                color: #333;
+                border: none;
+                border-radius: 12px;
+                padding: 16px;
+                font-size: 24px;
+                cursor: pointer;
+            }
+
+                .numpad button:active {
+                    background: #ddd;
+                }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h2>✅ Подтверждение перемещения</h2>
+            <div class="subtitle">Укажите количество и склад-получатель</div>
+
+            <div class="info-box">
+                <div class="label">Товар</div>
+                <div class="value">@ViewBag.ProductName</div>
+                <div style="font-size:14px; color:#999; margin-top:5px;">Артикул: @ViewBag.ProductSku</div>
+                <div style="font-size:14px; color:#667eea; margin-top:5px;">📍 Ячейка: @ViewBag.CellAddress</div>
+            </div>
+
+            <form method="post" id="transferForm">
+                <div class="form-group">
+                    <label>Количество</label>
+                    <input type="number" name="quantity" id="quantity" value="1" min="1" max="@ViewBag.MaxQuantity" required>
+                    <div class="max-hint">📦 Доступно: @ViewBag.MaxQuantity шт</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Склад-получатель</label>
+                    <select name="targetWarehouseId" required>
+                        @if (ViewBag.TargetWarehouses != null && ViewBag.TargetWarehouses.Count > 0)
+                        {
+                            @foreach (var warehouse in ViewBag.TargetWarehouses)
+                            {
+                                <option value="@warehouse.Id">@warehouse.Name</option>
+                            }
+                        }
+                        else
+                        {
+                            <option value="">Нет доступных складов</option>
+                        }
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-primary">✅ Подтвердить перемещение</button>
+            </form>
+
+            <div class="numpad">
+                <button type="button" onclick="addDigit('1')">1</button>
+                <button type="button" onclick="addDigit('2')">2</button>
+                <button type="button" onclick="addDigit('3')">3</button>
+                <button type="button" onclick="addDigit('4')">4</button>
+                <button type="button" onclick="addDigit('5')">5</button>
+                <button type="button" onclick="addDigit('6')">6</button>
+                <button type="button" onclick="addDigit('7')">7</button>
+                <button type="button" onclick="addDigit('8')">8</button>
+                <button type="button" onclick="addDigit('9')">9</button>
+                <button type="button" onclick="clearDigit()">⌫</button>
+                <button type="button" onclick="addDigit('0')">0</button>
+                <button type="button" onclick="submitForm()">✓</button>
+            </div>
+
+            <button class="back-btn" onclick="location.href='/Terminal/TransferBetweenWarehouses'">← Назад</button>
+        </div>
+    </div>
+
+    <script>
+        const input = document.getElementById('quantity');
+        const maxQty = @ViewBag.MaxQuantity;
+
+        function addDigit(d) {
+            if (input.value === '0') input.value = d;
+            else if (parseInt(input.value + d) <= maxQty) input.value = input.value + d;
+            else {
+                if (navigator.vibrate) navigator.vibrate(100);
+            }
+        }
+
+        function clearDigit() {
+            input.value = input.value.slice(0, -1) || '0';
+        }
+
+        function submitForm() {
+            document.getElementById('transferForm').submit();
+        }
+
+        input.addEventListener('change', function() {
+            if (parseInt(this.value) > maxQty) {
+                this.value = maxQty;
+                alert('Доступно только ' + maxQty + ' шт!');
+            }
+            if (parseInt(this.value) < 1) this.value = 1;
+        });
+    </script>
+</body>
+</html>

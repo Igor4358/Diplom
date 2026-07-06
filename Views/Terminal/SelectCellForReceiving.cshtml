@@ -8,7 +8,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <title>Выбор ячейки - ТСД Автосклад</title>
+    <title>Выбор ячейки - ТСД Автопитер</title>
     <style>
         * {
             margin: 0;
@@ -21,10 +21,14 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .container {
-            max-width: 500px;
+            max-width: 480px;
+            width: 100%;
             margin: 0 auto;
         }
 
@@ -33,6 +37,7 @@
             border-radius: 24px;
             padding: 30px;
             text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
 
         h2 {
@@ -47,21 +52,15 @@
             margin: 15px 0;
         }
 
-        .hint {
-            background: #fff3cd;
-            color: #856404;
-            padding: 10px;
-            border-radius: 8px;
-            margin: 10px 0;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
+            .product-info .label {
+                color: #666;
+                font-size: 12px;
+            }
 
-            .hint:before {
-                content: "⚠️";
+            .product-info .value {
+                font-size: 18px;
+                font-weight: bold;
+                color: #333;
             }
 
         .cell-list {
@@ -82,7 +81,6 @@
             font-weight: bold;
             text-align: center;
             cursor: pointer;
-            transition: all 0.2s;
         }
 
             .cell-btn:active {
@@ -91,26 +89,25 @@
             }
 
             .cell-btn.selected {
-                background: #28a745;
+                background: #667eea;
                 color: white;
-                border-color: #28a745;
-                position: relative;
+                border-color: #667eea;
             }
-
-                .cell-btn.selected:after {
-                    content: " ✓";
-                    font-size: 20px;
-                }
 
         .qty-input {
             width: 100%;
             padding: 15px;
-            font-size: 24px;
+            font-size: 18px;
             text-align: center;
             border: 2px solid #ddd;
             border-radius: 12px;
             margin: 15px 0;
         }
+
+            .qty-input:focus {
+                outline: none;
+                border-color: #667eea;
+            }
 
         .submit-btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -118,30 +115,23 @@
             border: none;
             padding: 16px;
             border-radius: 12px;
-            font-size: 20px;
-            font-weight: bold;
+            font-size: 18px;
             cursor: pointer;
             width: 100%;
-            margin-top: 10px;
-            transition: transform 0.1s;
         }
 
-            .submit-btn:active {
-                transform: scale(0.98);
-            }
-
             .submit-btn:disabled {
-                background: #ccc;
+                opacity: 0.5;
                 cursor: not-allowed;
             }
 
         .back-btn {
-            background: #6c757d;
+            background: #999;
             color: white;
             border: none;
-            padding: 12px;
+            padding: 16px;
             border-radius: 12px;
-            font-size: 16px;
+            font-size: 18px;
             cursor: pointer;
             width: 100%;
             margin-top: 10px;
@@ -150,92 +140,20 @@
         .error {
             background: #fee;
             color: #c33;
-            padding: 12px;
+            padding: 15px;
             border-radius: 12px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
-        .pulse-animation {
-            animation: pulse 0.5s ease;
+        .max-hint {
+            font-size: 14px;
+            color: #666;
+            margin: 10px 0;
         }
 
-        @@-webkit-keyframes pulse {
-            0% {
-                transform: scale(1);
-                background: #f8f9fa;
+            .max-hint strong {
+                color: #667eea;
             }
-
-            50% {
-                transform: scale(1.02);
-                background: #ffeaa7;
-            }
-
-            100% {
-                transform: scale(1);
-                background: #f8f9fa;
-            }
-        }
-
-        @@keyframes pulse {
-            0% {
-                transform: scale(1);
-                background: #f8f9fa;
-            }
-
-            50% {
-                transform: scale(1.02);
-                background: #ffeaa7;
-            }
-
-            100% {
-                transform: scale(1);
-                background: #f8f9fa;
-            }
-        }
-
-        @@-webkit-keyframes fadeInOut {
-            0% {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(0.8);
-            }
-
-            15% {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1);
-            }
-
-            85% {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1);
-            }
-
-            100% {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(0.8);
-            }
-        }
-
-        @@keyframes fadeInOut {
-            0% {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(0.8);
-            }
-
-            15% {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1);
-            }
-
-            85% {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1);
-            }
-
-            100% {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(0.8);
-            }
-        }
     </style>
 </head>
 <body>
@@ -244,44 +162,47 @@
             <h2>📍 Размещение товара</h2>
 
             <div class="product-info">
-                <strong>@ViewBag.ProductName</strong><br>
-                Артикул: @ViewBag.ProductSku
+                <div class="label">Товар</div>
+                <div class="value">@ViewBag.ProductName</div>
+                <div style="font-size:14px; color:#999; margin-top:5px;">Артикул: @ViewBag.ProductSku</div>
             </div>
 
-            <div class="hint">
-                Нажмите на ячейку, чтобы выбрать
-            </div>
-
-            @if (ViewBag.Error != null)
+            @if (ViewBag.MaxQuantity != null && ViewBag.MaxQuantity > 0)
             {
-                <div class="error">❌ @ViewBag.Error</div>
+                <div class="max-hint">
+                    📦 Можно принять: <strong>@ViewBag.MaxQuantity шт</strong>
+                </div>
             }
 
-            <form method="post" id="placementForm" action="/Terminal/ConfirmReceiving">
-                @Html.AntiForgeryToken()
+            <form method="post" action="/Terminal/ConfirmReceiving" id="placementForm">
+                <input type="hidden" name="cellId" id="selectedCellId" value="">
 
-                <div class="cell-list" id="cellList">
+                <div class="cell-list">
+                    <div style="margin-bottom: 10px; color: #666; font-size: 14px;">Выберите ячейку:</div>
                     @if (Model != null && Model.Any())
                     {
-                        foreach (var cell in Model)
+                        @foreach (var cell in Model)
                         {
                             <button type="button" class="cell-btn" data-cell-id="@cell.Id" data-cell-addr="@cell.Address">
-                                📦 Ячейка @cell.Address
+                                📦 @cell.Address
                             </button>
                         }
                     }
                     else
                     {
-                        <div style="color: #999; padding: 20px; text-align: center;">
-                            🏭 Нет доступных ячеек на складе
+                        <div style="text-align: center; padding: 20px; color: #999;">
+                            ⚠️ Нет доступных ячеек
                         </div>
                     }
                 </div>
 
-                <input type="number" name="quantity" id="quantity" class="qty-input" placeholder="Количество" value="1" min="1" required>
-                <input type="hidden" name="cellId" id="selectedCellId" value="">
+                <input type="number" name="quantity" id="quantity" class="qty-input"
+                       placeholder="Количество" value="1" min="1"
+                       max="@(ViewBag.MaxQuantity ?? 999)">
 
-                <button type="button" class="submit-btn" id="submitBtn">✅ Подтвердить размещение</button>
+                <button type="submit" class="submit-btn" id="submitBtn" disabled>
+                    ✅ Подтвердить размещение
+                </button>
             </form>
 
             <button class="back-btn" onclick="location.href='/Terminal/Receiving'">← Назад</button>
@@ -290,83 +211,32 @@
 
     <script>
         let selectedCellId = null;
-        let selectedCellAddr = null;
+        const maxQty = @(ViewBag.MaxQuantity ?? 999);
+        const qtyInput = document.getElementById('quantity');
 
-        const submitBtn = document.getElementById('submitBtn');
-        const selectedCellIdInput = document.getElementById('selectedCellId');
-        const quantityInput = document.getElementById('quantity');
-        const form = document.getElementById('placementForm');
-
-        function showAlert(message, isError) {
-            var alertDiv = document.createElement('div');
-            alertDiv.textContent = message;
-            var bgColor = isError ? '#c33' : '#28a745';
-            alertDiv.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: ' + bgColor + '; color: white; padding: 20px 30px; border-radius: 16px; font-size: 20px; font-weight: bold; z-index: 1000; box-shadow: 0 10px 40px rgba(0,0,0,0.3); text-align: center; min-width: 250px; animation: fadeInOut 1.5s ease;';
-            document.body.appendChild(alertDiv);
-            setTimeout(function() { alertDiv.remove(); }, 1500);
-        }
-
-        function highlightCellList() {
-            var cellList = document.getElementById('cellList');
-            cellList.classList.add('pulse-animation');
-            setTimeout(function() { cellList.classList.remove('pulse-animation'); }, 500);
-            var firstCell = document.querySelector('.cell-btn');
-            if (firstCell) {
-                firstCell.style.transition = '0.2s';
-                firstCell.style.backgroundColor = '#ffeaa7';
-                setTimeout(function() { firstCell.style.backgroundColor = ''; }, 500);
+        qtyInput.addEventListener('change', function() {
+            if (parseInt(this.value) > maxQty) {
+                this.value = maxQty;
+                alert('Нельзя принять больше ' + maxQty + ' шт!');
             }
-        }
+            if (parseInt(this.value) < 1) this.value = 1;
+        });
 
-        document.querySelectorAll('.cell-btn').forEach(function(btn) {
+        qtyInput.addEventListener('input', function() {
+            if (parseInt(this.value) > maxQty) {
+                this.value = maxQty;
+            }
+        });
+
+        document.querySelectorAll('.cell-btn').forEach(btn => {
             btn.addEventListener('click', function() {
-                document.querySelectorAll('.cell-btn').forEach(function(b) { b.classList.remove('selected'); });
+                document.querySelectorAll('.cell-btn').forEach(b => b.classList.remove('selected'));
                 this.classList.add('selected');
                 selectedCellId = this.getAttribute('data-cell-id');
-                selectedCellAddr = this.getAttribute('data-cell-addr');
-                selectedCellIdInput.value = selectedCellId;
-                submitBtn.style.background = "linear-gradient(135deg, #28a745 0%, #20c997 100%)";
-                showAlert('Выбрана ячейка ' + selectedCellAddr, false);
+                document.getElementById('selectedCellId').value = selectedCellId;
+                document.getElementById('submitBtn').disabled = false;
             });
         });
-
-        submitBtn.addEventListener('click', function() {
-            if (!selectedCellId) {
-                showAlert('Сначала выберите ячейку! Нажмите на одну из ячеек выше.', true);
-                highlightCellList();
-                return;
-            }
-            var quantity = quantityInput.value;
-            if (!quantity || quantity < 1) {
-                showAlert('Введите корректное количество (минимум 1)', true);
-                quantityInput.focus();
-                return;
-            }
-            form.submit();
-        });
-
-        quantityInput.focus();
-
-        quantityInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                if (!selectedCellId) {
-                    showAlert('Сначала выберите ячейку!', true);
-                    highlightCellList();
-                } else {
-                    form.submit();
-                }
-            }
-        });
-
-        @if (Model == null || !Model.Any())
-        {
-            <text>
-                submitBtn.disabled = true;
-                submitBtn.style.background = "#ccc";
-                showAlert("Нет доступных ячеек на складе", true);
-            </text>
-        }
     </script>
 </body>
 </html>

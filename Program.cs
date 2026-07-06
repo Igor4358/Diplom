@@ -42,7 +42,7 @@ using (var scope = app.Services.CreateScope())
     // Создаём БД, если её нет
     dbContext.Database.EnsureCreated();
 
-    // === СОЗДАЁМ ТЕСТОВЫЙ СКЛАД (если нет) ===
+    // === СОЗДАЁМ ТЕСТОВЫЙ СКЛАД (если нет) 
     if (!dbContext.Warehouses.Any())
     {
         var warehouse = new Warehouse { Name = "406" };
@@ -51,7 +51,7 @@ using (var scope = app.Services.CreateScope())
         Console.WriteLine("Склад 406 создан");
     }
 
-    // === СОЗДАЁМ ТЕСТОВЫЕ ЯЧЕЙКИ (если нет) ===
+    // === СОЗДАЁМ ТЕСТОВЫЕ ЯЧЕЙКИ 
     if (!dbContext.Cells.Any())
     {
         var warehouse = dbContext.Warehouses.First();
@@ -66,7 +66,6 @@ using (var scope = app.Services.CreateScope())
         Console.WriteLine("Создано 3 тестовые ячейки");
     }
 
-    // === СОЗДАЁМ ТЕСТОВЫЕ ТОВАРЫ (если нет) ===
     if (!dbContext.Products.Any())
     {
         var products = new[]
@@ -79,7 +78,6 @@ using (var scope = app.Services.CreateScope())
         dbContext.SaveChanges();
         Console.WriteLine("Создано 3 тестовых товара");
     }
-    // === СОЗДАЁМ ТЕСТОВЫЕ ОЖИДАЕМЫЕ ПОСТАВКИ ===
     if (!dbContext.ExpectedShipments.Any())
     {
         var warehouse = dbContext.Warehouses.FirstOrDefault();

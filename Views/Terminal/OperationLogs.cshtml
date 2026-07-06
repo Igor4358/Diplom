@@ -8,7 +8,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <title>История операций - ТСД Автосклад</title>
+    <title>История операций - ТСД Автопитер</title>
     <style>
         * {
             margin: 0;
@@ -43,57 +43,73 @@
             font-size: 24px;
         }
 
-        .log-card {
+        .table-container {
+            overflow-x: auto;
             background: white;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 10px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-radius: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        .log-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
         }
 
-        .log-type {
+        th, td {
+            padding: 10px 8px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
             display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 11px;
             font-weight: bold;
         }
 
-            .log-type.Receiving {
-                background: #d4edda;
-                color: #155724;
-            }
+        .badge-receiving {
+            background: #4caf50;
+            color: white;
+        }
 
-            .log-type.Picking {
-                background: #d1ecf1;
-                color: #0c5460;
-            }
+        .badge-picking {
+            background: #ff9800;
+            color: white;
+        }
 
-            .log-type.Sorting {
-                background: #fff3cd;
-                color: #856404;
-            }
+        .badge-sorting {
+            background: #2196f3;
+            color: white;
+        }
 
-        .log-date {
-            color: #999;
+        .badge-transfer {
+            background: #9c27b0;
+            color: white;
+        }
+
+        .badge-other {
+            background: #999;
+            color: white;
+        }
+
+        .barcode-cell {
+            font-family: monospace;
             font-size: 12px;
-        }
-
-        .log-user {
             color: #667eea;
-            font-size: 14px;
-            margin-bottom: 8px;
-        }
-
-        .log-details {
-            color: #333;
-            font-size: 14px;
         }
 
         .empty {
@@ -103,33 +119,81 @@
             background: white;
             border-radius: 16px;
         }
+
+        .time-cell {
+            white-space: nowrap;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .details-cell {
+            max-width: 300px;
+            word-break: break-word;
+        }
     </style>
 </head>
 <body>
     <div class="header">
         <button class="back-btn" onclick="location.href='/Terminal/MainMenu'">← Назад</button>
-        <h1>📜 История операций</h1>
+        <h1>📋 История операций</h1>
     </div>
 
     @if (Model.Any())
     {
-        foreach (var log in Model)
-        {
-            <div class="log-card">
-                <div class="log-header">
-                    <span class="log-type @log.OperationType">@log.OperationType</span>
-                    <span class="log-date">@log.CreatedAt.ToString("dd.MM.yyyy HH:mm:ss")</span>
-                </div>
-                <div class="log-user">👤 @log.UserName</div>
-                <div class="log-details">@log.Details</div>
-            </div>
-        }
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Время</th>
+                        <th>Пользователь</th>
+                        <th>Тип</th>
+                        <th>Детали</th>
+                        <th>Штрих-код</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var log in Model)
+                    {
+                        var badgeClass = log.OperationType switch
+                        {
+                            "Receiving" => "badge-receiving",
+                            "Picking" => "badge-picking",
+                            "Sorting" => "badge-sorting",
+                            "Transfer" => "badge-transfer",
+                            _ => "badge-other"
+                        };
+                        <tr>
+                            <td class="time-cell">
+                                @{
+                                    var localTime = log.CreatedAt.ToLocalTime();
+                                    @localTime.ToString("dd.MM.yyyy HH:mm")
+                                }
+                            </td>
+                            <td>@log.UserName</td>
+                            <td><span class="badge @badgeClass">@log.OperationType</span></td>
+                            <td class="details-cell">@log.Details</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(log.Barcode))
+                                {
+                                    <span class="barcode-cell">@log.Barcode</span>
+                                }
+                                else
+                                {
+                                    <span style="color:#ccc; font-size:12px;">—</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div style="margin-top: 10px; font-size: 12px; color: #999; text-align: right;">
+            Показано записей: <strong>@Model.Count</strong>
+        </div>
     }
     else
     {
-        <div class="empty">
-            📭 История операций пуста
-        </div>
+        <div class="empty">📭 Нет записей в истории</div>
     }
 </body>
 </html>

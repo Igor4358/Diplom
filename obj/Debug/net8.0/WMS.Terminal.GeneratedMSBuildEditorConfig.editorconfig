@@ -144,6 +144,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcUmVjZWl2aW5nLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/ReceivingConfirmation.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcUmVjZWl2aW5nQ29uZmlybWF0aW9uLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/ScanBarcodeForPicking.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcU2NhbkJhcmNvZGVGb3JQaWNraW5nLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
@@ -178,6 +182,22 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/StartPicking.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcU3RhcnRQaWNraW5nLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/TransferBetweenWarehouses.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcVHJhbnNmZXJCZXR3ZWVuV2FyZWhvdXNlcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/TransferScanCell.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcVHJhbnNmZXJTY2FuQ2VsbC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/TransferSelectProduct.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcVHJhbnNmZXJTZWxlY3RQcm9kdWN0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/TransferSelectQuantity.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcVHJhbnNmZXJTZWxlY3RRdWFudGl0eS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/WarehouseDashboard.cshtml]
