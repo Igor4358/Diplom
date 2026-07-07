@@ -252,19 +252,29 @@
         (Model.Status == "Partial" ? "status-partial" : "status-pending");
 
         <div class="info-card">
-            <!-- Номер заказа -->
             <div class="info-row">
                 <span class="info-label">Номер заказа</span>
                 <span class="info-value">№ @Model.OrderNumber</span>
             </div>
 
-            <!-- Статус -->
             <div class="info-row">
                 <span class="info-label">Статус</span>
-                <span class="info-value"><span class="@statusClass">@Model.Status</span></span>
+                <span class="info-value">
+                    <span class="@statusClass">
+                        @{
+                            var status = Model.Status switch
+                            {
+                                "Pending" => "В ожидании",
+                                "Partial" => "Частично",
+                                "Completed" => "Завершён",
+                                _ => Model.Status
+                            };
+                        }
+                        @status
+                    </span>
+                </span>
             </div>
 
-            <!-- Товар -->
             <div class="info-row">
                 <span class="info-label">Товар</span>
                 <span class="info-value" style="text-align: right;">
@@ -273,9 +283,6 @@
                 </span>
             </div>
 
-            <!-- ============================================================ -->
-            <!-- ЯЧЕЙКА — В ЕДИНОМ СТИЛЕ -->
-            <!-- ============================================================ -->
             <div class="cell-container">
                 <span class="cell-label">📍 Ячейка с товаром</span>
                 <span class="cell-value">
@@ -291,7 +298,6 @@
                 </span>
             </div>
 
-            <!-- Штрих-код (добавим для удобства) -->
             <div class="info-row">
                 <span class="info-label">🏷️ Штрих-код</span>
                 <span class="info-value">
@@ -299,7 +305,6 @@
                 </span>
             </div>
 
-            <!-- Количество -->
             <div class="info-row">
                 <span class="info-label">Заказано</span>
                 <span class="info-value">@Model.Quantity шт</span>
@@ -313,13 +318,11 @@
                 <span class="info-value"><strong style="color: #667eea; font-size: 20px;">@remaining шт</strong></span>
             </div>
 
-            <!-- Прогресс -->
             <div class="status-bar">
                 <div class="status-fill" style="width: @progress%;"></div>
             </div>
             <div style="font-size: 12px; color: #999; margin-top: 5px; text-align: right;">Прогресс: @progress%</div>
 
-            <!-- Склад-получатель -->
             <div class="target-warehouse">
                 🚚 Отгрузить на: <strong>@(Model.TargetWarehouseName ?? "Склад не указан")</strong>
                 @if (Model.TargetWarehouseId.HasValue)

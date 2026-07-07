@@ -2371,9 +2371,7 @@ namespace WMS.Terminal.Controllers
 
             return RedirectToAction("Sorting");
         }
-        // ============================================================
-        //  СОРТИРОВКА
-        // ============================================================
+
 
         [HttpGet]
         public async Task<IActionResult> Sorting(string sku = null)
@@ -2383,10 +2381,6 @@ namespace WMS.Terminal.Controllers
 
             if (userId == null) return RedirectToAction("Login");
             if (warehouseId == null) return RedirectToAction("SelectWarehouse");
-
-            // ============================================================
-            // Если передан штрих-код — ищем товар
-            // ============================================================
             if (!string.IsNullOrEmpty(sku))
             {
                 var stock = await _db.Stocks
@@ -2427,7 +2421,7 @@ namespace WMS.Terminal.Controllers
             return View();
         }
 
-        // Поиск по штрих-коду или адресу ячейки (ТОЛЬКО ПО ШТРИХ-КОДУ)
+        // Поиск по штрих-коду или адресу ячейки 
         [HttpPost]
         public async Task<IActionResult> FindObject(string searchQuery)
         {
@@ -2466,7 +2460,7 @@ namespace WMS.Terminal.Controllers
             {
                 var stocksInCell = await _db.Stocks
                     .Include(s => s.Product)
-                    .Where(s => s.CellId == cell.Id)
+                    .Where(s => s.CellId == cell.Id && s.Quantity > 0)
                     .ToListAsync();
 
                 ViewBag.ResultType = "cell";
@@ -2481,10 +2475,7 @@ namespace WMS.Terminal.Controllers
             ViewBag.SearchQuery = searchQuery;
             return View();
         }
-        // ============================================================
         //  ПЕРЕМЕЩЕНИЕ МЕЖДУ СКЛАДАМИ
-        // ============================================================
-
         // Главная страница перемещения
         [HttpGet]
         public async Task<IActionResult> TransferBetweenWarehouses()
@@ -2666,9 +2657,6 @@ namespace WMS.Terminal.Controllers
                 return RedirectToAction("TransferBetweenWarehouses");
             }
 
-            // ============================================================
-            // СОХРАНЯЕМ ШТРИХ-КОД (НЕ ГЕНЕРИРУЕМ НОВЫЙ!)
-            // ============================================================
             var existingBarcode = stock.Barcode;
 
             if (quantity == stock.Quantity)
@@ -2685,10 +2673,10 @@ namespace WMS.Terminal.Controllers
             var fromWarehouseName = fromWarehouse?.Name ?? fromWarehouseId.ToString();
 
             // 3. Создаём ожидаемую поставку для склада-получателя
-            //    ИСПОЛЬЗУЕМ СТАРЫЙ ШТРИХ-КОД!
+
             var expectedReceipt = new ExpectedReceipt
             {
-                Barcode = existingBarcode, // ← НЕ ГЕНЕРИРУЕМ НОВЫЙ!
+                Barcode = existingBarcode, 
                 Sku = productSku ?? "unknown",
                 ProductName = productName ?? "Неизвестный товар",
                 ExpectedQuantity = quantity,
@@ -2697,7 +2685,7 @@ namespace WMS.Terminal.Controllers
                 ExpectedDate = DateTime.UtcNow,
                 Supplier = $"Перемещение со склада {fromWarehouseName}",
                 WarehouseId = targetWarehouseId,
-                Notes = $"Перемещён со склада {fromWarehouseName} из ячейки {cellAddress} (штрих-код сохранён: {existingBarcode})"
+                Notes = $"Перемещён со склада {fromWarehouseName} из ячейки {cellAddress} )"
             };
             _db.ExpectedReceipts.Add(expectedReceipt);
 
@@ -2711,7 +2699,7 @@ namespace WMS.Terminal.Controllers
                     UserId = userId ?? 0,
                     UserName = userName ?? "Неизвестный",
                     OperationType = "Transfer",
-                    Details = $"Перемещён товар \"{productName}\" в количестве {quantity} шт со склада {fromWarehouseName} на склад {targetWarehouse.Name} (штрих-код: {existingBarcode})",
+                    Details = $"Перемещён товар \"{productName}\" в количестве {quantity} шт со склада {fromWarehouseName} на склад {targetWarehouse.Name}",
                     WarehouseId = fromWarehouseId,
                     Barcode = existingBarcode
                 });
@@ -2727,7 +2715,7 @@ namespace WMS.Terminal.Controllers
             HttpContext.Session.Remove("TransferCellAddress");
             HttpContext.Session.Remove("TransferMaxQuantity");
 
-            TempData["TransferSuccess"] = $"✅ Товар \"{productName}\" в количестве {quantity} шт перемещён на склад '{targetWarehouse.Name}'! Штрих-код сохранён: {existingBarcode}";
+            TempData["TransferSuccess"] = $"✅ Товар \"{productName}\" в количестве {quantity} шт перемещён на склад '{targetWarehouse.Name}'! Штрих-код : {existingBarcode}";
             return RedirectToAction("TransferBetweenWarehouses");
         }
 

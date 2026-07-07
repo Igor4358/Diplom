@@ -200,6 +200,7 @@
         .filter-btn {
         padding: 8px 16px;
         border: none;
+        text-decoration: none;
         border-radius: 20px;
         cursor: pointer;
         font-size: 14px;
@@ -268,17 +269,17 @@
                             <td style="font-family: monospace; font-size: 16px; font-weight: bold; color: #667eea;">@user.PinCode</td>
                             <td>@{
                                     var warehouseNames = user.UserWarehouseAccesses?
-              .Where(a => a.Warehouse != null)
-              .Select(a => a.Warehouse.Name)
-              .ToList() ?? new List<string>();
-              if(warehouseNames.Any())
-              {
-                  <span>@string.Join(", " , warehouseNames)</span>
-              }
-              else
-              {
-                  <span style="color: #ff4444;"> Нет доступа! </span>
-              }
+                                       .Where(a => a.Warehouse != null)
+                                       .Select(a => a.Warehouse.Name)
+                                       .ToList() ?? new List<string>();
+                              if(warehouseNames.Any())
+                                  {
+                                        <span>@string.Join(", " , warehouseNames)</span>
+                                  }
+                              else
+                                  {
+                                        <span style="color: #ff4444;"> Нет доступа! </span>
+                                  }
 
 
                                 }

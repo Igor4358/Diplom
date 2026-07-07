@@ -134,7 +134,7 @@
 </head>
 <body>
     <div class="header">
-        <button class="back-btn" onclick="location.href='/Terminal/MainMenu'">← Назад</button>
+        <button class="back-btn" onclick="history.back()">← Назад</button>
         <h1>📋 История операций</h1>
     </div>
 
@@ -154,14 +154,6 @@
                 <tbody>
                     @foreach (var log in Model)
                     {
-                        var badgeClass = log.OperationType switch
-                        {
-                            "Receiving" => "badge-receiving",
-                            "Picking" => "badge-picking",
-                            "Sorting" => "badge-sorting",
-                            "Transfer" => "badge-transfer",
-                            _ => "badge-other"
-                        };
                         <tr>
                             <td class="time-cell">
                                 @{
@@ -170,7 +162,27 @@
                                 }
                             </td>
                             <td>@log.UserName</td>
-                            <td><span class="badge @badgeClass">@log.OperationType</span></td>
+                            <td>
+                                @{
+                                    var badgeClass = log.OperationType switch
+                                    {
+                                        "Receiving" => "badge-receiving",
+                                        "Picking" => "badge-picking",
+                                        "Sorting" => "badge-sorting",
+                                        "Transfer" => "badge-transfer",
+                                        _ => "badge-other"
+                                    };
+                                    var opType = log.OperationType switch
+                                    {
+                                        "Receiving" => "Приёмка",
+                                        "Picking" => "Сборка",
+                                        "Sorting" => "Сортировка",
+                                        "Transfer" => "Перемещение",
+                                        _ => log.OperationType
+                                    };
+                                }
+                                <span class="badge @badgeClass">@opType</span>
+                            </td>
                             <td class="details-cell">@log.Details</td>
                             <td>
                                 @if (!string.IsNullOrEmpty(log.Barcode))

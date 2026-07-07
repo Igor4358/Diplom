@@ -156,7 +156,18 @@
                     <span>Собрано: @order.CollectedQuantity шт</span>
                     <span>Прогресс: @progress%</span>
                     <span>🚚 @order.TargetWarehouseName</span>
-                    <span class="@statusClass">@order.Status</span>
+                    <span class="@statusClass">
+                        @{
+                            var status = order.Status switch
+                            {
+                                "Pending" => "В ожидании",
+                                "Partial" => "Частично",
+                                "Completed" => "Завершён",
+                                _ => order.Status
+                            };
+                        }
+                        @status
+                    </span>
                 </div>
             </div>
         }

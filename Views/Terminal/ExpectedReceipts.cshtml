@@ -181,7 +181,18 @@
                         <div class="receipt-sku">Артикул: @item.Sku</div>
                         <div class="barcode-display">Штрих-код: @item.Barcode</div>
                     </div>
-                    <span class="@statusClass">@item.Status</span>
+                    <span class="status-@item.Status.ToLower()">
+                        @{
+                            var status = item.Status switch
+                            {
+                                "Pending" => "В ожидании",
+                                "Partial" => "Частично",
+                                "Completed" => "Завершена",
+                                _ => item.Status
+                            };
+                        }
+                        @status
+                    </span>
                 </div>
 
                 <div class="receipt-details">
@@ -208,7 +219,6 @@
             📭 Нет ожидаемых поставок<br>
             <small>Нажмите "Добавить ожидаемую поставку" для создания</small>
         </div>
-        <!-- Добавляем кнопку для просмотра завершённых -->
         <button class="add-btn" style="background:#667eea;" onclick="location.href='/Terminal/CompletedReceipts'">
             📋 Показать завершённые поставки
         </button>
