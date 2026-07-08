@@ -18,7 +18,6 @@ namespace WMS.Terminal.Models
 
         public int PickedQuantity { get; set; } = 0;  // Сколько уже собрано
 
-        // Навигационные свойства
         public Order? Order { get; set; }
         public Product? Product { get; set; }
     }

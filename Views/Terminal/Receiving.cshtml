@@ -188,6 +188,23 @@
                 TempData.Remove("Success");
             }
 
+            @if (TempData["Error"] != null)
+            {
+                <div class="error" style="background: #fee; color: #c33; padding: 15px; border-radius: 12px; margin-bottom: 20px; font-size: 14px; border: 2px solid #c33;">
+                    <strong>❌ @TempData["Error"]</strong>
+                    @if (TempData["ErrorDetails"] != null)
+                    {
+                        <div style="margin-top: 8px; font-size: 13px; color: #666;">@TempData["ErrorDetails"]</div>
+                    }
+                    <button onclick="location.href='/Terminal/SelectWarehouse'" style="margin-top: 10px; padding: 8px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                        🔄 Переключить склад
+                    </button>
+                    <button onclick="location.href='/Terminal/Receiving'" style="margin-top: 10px; padding: 8px 20px; background: #999; color: white; border: none; border-radius: 8px; cursor: pointer; margin-left: 5px;">
+                        ↩️ Продолжить
+                    </button>
+                </div>
+            }
+
             @if (TempData["Warning"] != null)
             {
                 <div class="warning" style="background: #fff3cd; border: 2px solid #ff9800; color: #856404; padding: 15px; border-radius: 12px; margin-bottom: 15px; text-align: left;">
@@ -199,16 +216,6 @@
                     <button onclick="location.href='/Terminal/Receiving'" style="margin-top: 10px; padding: 8px 20px; background: #ff9800; color: white; border: none; border-radius: 8px; cursor: pointer;">
                         🔄 Понятно, продолжить
                     </button>
-                </div>
-            }
-            @if (TempData["Error"] != null)
-            {
-                <div class="error" style="background: #fee; color: #c33; padding: 15px; border-radius: 12px; margin-bottom: 20px; font-size: 14px;">
-                    <strong>❌ @TempData["Error"]</strong>
-                    @if (TempData["ErrorDetails"] != null)
-                    {
-                        <div style="margin-top: 8px; font-size: 13px; color: #666;">@TempData["ErrorDetails"]</div>
-                    }
                 </div>
             }
             <form method="post" id="receivingForm">

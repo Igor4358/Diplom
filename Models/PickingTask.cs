@@ -25,7 +25,6 @@ namespace WMS.Terminal.Models
         [MaxLength(20)]
         public string Status { get; set; } = "New";  // New, InProgress, Completed
 
-        // Навигационные свойства
         public Order? Order { get; set; }
         public Product? Product { get; set; }
         public Cell? Cell { get; set; }

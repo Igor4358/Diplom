@@ -203,10 +203,14 @@
                     {
                         <span>🏭 @item.Supplier</span>
                     }
+                    <span>📍 Склад: <strong>@(item.Warehouse?.Name ?? "Не указан")</strong></span>
+                    <div class="action-buttons">
+                        <button class="btn-print" onclick="location.href='/Terminal/PrintReceiptBarcode?id=@item.Id'">
+                            🏷️ Печать штрих-кода
+                        </button>
                 </div>
-
+                </div>
                 <div class="progress-bar">
-                    <div class="progress-fill" style="width: @percent%;"></div>
                     <div class="progress-fill" style="width: @percent%;"></div>
                 </div>
                 <div style="font-size: 12px; color: #999; margin-top: 5px;">Прогресс: @percent%</div>

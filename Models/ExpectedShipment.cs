@@ -10,7 +10,7 @@ namespace WMS.Terminal.Models
 
         [Required]
         [MaxLength(50)]
-        public string InvoiceNumber { get; set; } = string.Empty;  // Номер накладной
+        public string InvoiceNumber { get; set; } = string.Empty;  
 
         [Required]
         public int ProductId { get; set; }

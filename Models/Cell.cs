@@ -7,7 +7,6 @@
         public int WarehouseId { get; set; }
         public bool IsLocked { get; set; } = false;
 
-        // Связи
         public Warehouse? Warehouse { get; set; }
         public List<Stock> Stocks { get; set; } = new();
     }

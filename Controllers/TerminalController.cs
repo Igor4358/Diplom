@@ -51,7 +51,7 @@ namespace WMS.Terminal.Controllers
 
             HttpContext.Session.SetInt32("UserId", user.Id);
             HttpContext.Session.SetString("UserName", user.FullName);
-            HttpContext.Session.SetString("UserRole", user.Role ?? "Worker"); // ← Добавляем роль
+            HttpContext.Session.SetString("UserRole", user.Role ?? "Worker"); //  роль
 
             // Обновляем время последнего входа
             user.LastLoginAt = DateTime.UtcNow;
@@ -149,10 +149,7 @@ namespace WMS.Terminal.Controllers
             return RedirectToAction("ManageWarehouses");
         }
 
-        // ============================================================
         //  УПРАВЛЕНИЕ ЯЧЕЙКАМИ (АДМИНКА)
-        // ============================================================
-
         // Список всех ячеек
         [HttpGet]
         public async Task<IActionResult> ManageCells()
@@ -285,7 +282,7 @@ namespace WMS.Terminal.Controllers
                     Name = s.Product!.Name,
                     Sku = s.Product!.Sku,
                     CellAddress = s.Cell!.Address,
-                    Barcode = s.Barcode ?? s.Product!.Sku // Если нет штрих-кода — используем артикул
+                    Barcode = s.Barcode ?? s.Product!.Sku 
                 })
                 .ToListAsync();
 
@@ -509,7 +506,7 @@ namespace WMS.Terminal.Controllers
             return View();
         }
 
-        // Обработка сканирования ячейки (POST)
+        // Обработка сканирования ячейки 
         [HttpPost]
         public async Task<IActionResult> ScanCellForPicking(string scannedCell)
         {
@@ -558,7 +555,7 @@ namespace WMS.Terminal.Controllers
             return RedirectToAction("ScanBarcodeForPicking");
         }
 
-        // Сканирование штрих-кода (GET)
+        // Сканирование штрих-кода 
         [HttpGet]
         public async Task<IActionResult> ScanBarcodeForPicking()
         {
@@ -575,7 +572,7 @@ namespace WMS.Terminal.Controllers
             return View();
         }
 
-        // Обработка сканирования штрих-кода (POST)
+        // Обработка сканирования штрих-кода 
         [HttpPost]
         public async Task<IActionResult> ScanBarcodeForPicking(string scannedBarcode)
         {
@@ -612,7 +609,7 @@ namespace WMS.Terminal.Controllers
             return RedirectToAction("ConfirmPickingQuantity");
         }
 
-        // Подтверждение количества (GET)
+        // Подтверждение количества 
         [HttpGet]
         public async Task<IActionResult> ConfirmPickingQuantity()
         {
@@ -633,7 +630,7 @@ namespace WMS.Terminal.Controllers
             return View();
         }
 
-        // Подтверждение количества и завершение сборки (POST)
+        // Подтверждение количества и завершение сборки 
         [HttpPost]
         public async Task<IActionResult> ConfirmPickingQuantity(int pickedQuantity)
         {
@@ -642,7 +639,7 @@ namespace WMS.Terminal.Controllers
             var stockId = HttpContext.Session.GetInt32("PickingStockId");
             var cellId = HttpContext.Session.GetInt32("PickingCellId");
             var cellAddress = HttpContext.Session.GetString("PickingCellAddress");
-            var orderQuantity = HttpContext.Session.GetInt32("OrderQuantity") ?? 0;
+            var orderQuantity = HttpContext.Session.GetInt32("OrderQuantity") ?? 0; // количество товара в заказе
             var orderCollected = HttpContext.Session.GetInt32("OrderCollected") ?? 0;
             var userId = HttpContext.Session.GetInt32("UserId");
             var userName = HttpContext.Session.GetString("UserName");
@@ -728,13 +725,13 @@ namespace WMS.Terminal.Controllers
             bool isCompleted = order?.Status == "Completed";
 
             // Сохраняем данные для страницы подтверждения
-            TempData["PickingSuccess"] = true;
+            TempData["PickingSuccess"] = true; // сборка прошла успешно
             TempData["PickingOrderNumber"] = orderNumber;
             TempData["PickingProductName"] = productName;
-            TempData["PickingQuantity"] = pickedQuantity;
-            TempData["PickingTargetWarehouse"] = targetWarehouseName;
-            TempData["PickingIsCompleted"] = isCompleted;
-            TempData["PickingRemaining"] = orderQuantity - (orderCollected + pickedQuantity);
+            TempData["PickingQuantity"] = pickedQuantity; // количество товара
+            TempData["PickingTargetWarehouse"] = targetWarehouseName; 
+            TempData["PickingIsCompleted"] = isCompleted; // завершён или частично завершён
+            TempData["PickingRemaining"] = orderQuantity - (orderCollected + pickedQuantity); // остаток товара который надо собрать
             TempData["PickingOrderId"] = orderId;
 
             // Перенаправляем на страницу подтверждения
@@ -839,6 +836,7 @@ namespace WMS.Terminal.Controllers
             var availableIds = await GetAvailableWarehouseIds();
 
             var receipts = await _db.ExpectedReceipts
+                .Include(r => r.Warehouse)
                 .Where(e => e.Status != "Completed" && e.Warehouse != null && availableIds.Contains(e.WarehouseId.Value))
                 .OrderBy(e => e.ExpectedDate)
                 .ToListAsync();
@@ -925,7 +923,7 @@ namespace WMS.Terminal.Controllers
             return View(workers);
         }
 
-        // Страница добавления нового кладовщика (GET)
+        // Страница добавления нового кладовщика 
         [HttpGet]
         public async Task<IActionResult> AddUser()
         {
@@ -937,7 +935,7 @@ namespace WMS.Terminal.Controllers
             return View();
         }
 
-        // Добавление нового кладовщика (POST)
+        // Добавление нового кладовщика
         [HttpPost]
         public async Task<IActionResult> AddUser(string fullName, string pinCode, List<int> warehouseIds)
         {
@@ -987,7 +985,7 @@ namespace WMS.Terminal.Controllers
             return RedirectToAction("ManageUsers");
         }
 
-        // Страница редактирования пользователя (GET)
+        // Страница редактирования пользователя 
         [HttpGet]
         public async Task<IActionResult> EditUser(int id)
         {
@@ -1005,7 +1003,7 @@ namespace WMS.Terminal.Controllers
             return View(user);
         }
 
-        // Редактирование пользователя (POST)
+        // Редактирование пользователя 
         [HttpPost]
         public async Task<IActionResult> EditUser(int id, string fullName, string pinCode, List<int> warehouseIds, bool isActive)
         {
@@ -1110,7 +1108,7 @@ namespace WMS.Terminal.Controllers
             TempData["Success"] = $"Новый PIN-код для '{user.FullName}': {newPin}";
             return RedirectToAction("ManageUsers");
         }
-        // Страница добавления новой поставки (GET)
+        // Страница добавления новой поставки 
         [HttpGet]
         public IActionResult AddExpectedReceipt()
         {
@@ -1120,7 +1118,7 @@ namespace WMS.Terminal.Controllers
             return View();
         }
 
-        // Обработка добавления поставки (POST)
+        // Обработка добавления поставки 
         [HttpPost]
         public async Task<IActionResult> AddExpectedReceipt(string sku, string productName, int quantity, string supplier)
         {
@@ -1156,7 +1154,7 @@ namespace WMS.Terminal.Controllers
             TempData["Success"] = $"Поставка '{productName}' добавлена! Штрих-код: {barcode}";
             return RedirectToAction("ExpectedReceipts");
         }
-        // Сканирование ячейки (первый шаг сборки)
+        // Сканирование ячейки 
         [HttpGet]
         public async Task<IActionResult> ScanCell(int taskId)
         {
@@ -1505,7 +1503,10 @@ namespace WMS.Terminal.Controllers
         [HttpPost]
         public async Task<IActionResult> Receiving(string scannedSku)
         {
+            TempData.Keep();
             var warehouseId = HttpContext.Session.GetInt32("WarehouseId");
+            System.Diagnostics.Debug.WriteLine($"=== RECEIVING ===");
+            System.Diagnostics.Debug.WriteLine($"warehouseId из сессии: {warehouseId}");
             if (warehouseId == null) return RedirectToAction("SelectWarehouse");
 
             if (string.IsNullOrEmpty(scannedSku))
@@ -1514,14 +1515,15 @@ namespace WMS.Terminal.Controllers
                 return View();
             }
 
-            // ============================================================
-            // 1. СНАЧАЛА ИЩЕМ В ОЖИДАЕМЫХ ПОСТАВКАХ!
-            // ============================================================
+            // 1. ищем в ожидаемых поставках
             var expected = await _db.ExpectedReceipts
                 .FirstOrDefaultAsync(e => e.Barcode == scannedSku && e.Status != "Completed");
 
             if (expected != null)
             {
+                System.Diagnostics.Debug.WriteLine($"expected.WarehouseId: {expected.WarehouseId}");
+                System.Diagnostics.Debug.WriteLine($"warehouseId: {warehouseId}");
+                System.Diagnostics.Debug.WriteLine($"Совпадают? {expected.WarehouseId == warehouseId}");
                 // Проверяем, что товар принимается на правильный склад
                 if (expected.WarehouseId != warehouseId)
                 {
@@ -1570,10 +1572,7 @@ namespace WMS.Terminal.Controllers
 
                 return RedirectToAction("SelectCellForReceiving");
             }
-
-            // ============================================================
-            // 2. ЕСЛИ НЕТ В ОЖИДАЕМЫХ — проверяем товар на складе
-            // ============================================================
+            // 2. если нет в ожидаемых — проверяем товар на складе
             var existingStock = await _db.Stocks
                 .Include(s => s.Product)
                 .Include(s => s.Cell)
@@ -2071,14 +2070,14 @@ namespace WMS.Terminal.Controllers
             var existingStock = await _db.Stocks
                 .FirstOrDefaultAsync(s => s.ProductId == productId && s.CellId == cellId);
 
-            // ПОЛУЧАЕМ ШТРИХ-КОД ИЗ ОЖИДАЕМОЙ ПОСТАВКИ (ЕСЛИ ЕСТЬ)
+            // получаем штрихкод из ожидаемой поставки
             string barcodeForStock = GenerateEan13Barcode(); // По умолчанию генерируем новый
             if (expectedReceiptId.HasValue)
             {
                 var expected = await _db.ExpectedReceipts.FindAsync(expectedReceiptId.Value);
                 if (expected != null && !string.IsNullOrEmpty(expected.Barcode))
                 {
-                    barcodeForStock = expected.Barcode; // ← ИСПОЛЬЗУЕМ ШТРИХ-КОД ИЗ ПОСТАВКИ!
+                    barcodeForStock = expected.Barcode; // штрихкод из поставки
                 }
             }
 
@@ -2095,7 +2094,7 @@ namespace WMS.Terminal.Controllers
                     ProductId = productId.Value,
                     CellId = cellId,
                     Quantity = quantity,
-                    Barcode = barcodeForStock // ← ИСПОЛЬЗУЕМ СОХРАНЁННЫЙ ШТРИХ-КОД!
+                    Barcode = barcodeForStock // сохранённый штрихкод
                 };
                 _db.Stocks.Add(newStock);
             }
@@ -2221,7 +2220,7 @@ namespace WMS.Terminal.Controllers
             HttpContext.Session.SetString("MovingProductSku", stock.Product?.Sku ?? "");
             HttpContext.Session.SetInt32("MovingFromCellId", stock.CellId);
             HttpContext.Session.SetInt32("MovingQuantity", stock.Quantity);
-            HttpContext.Session.SetString("MovingBarcode", stock.Barcode ?? ""); // ← ДОБАВЛЯЕМ
+            HttpContext.Session.SetString("MovingBarcode", stock.Barcode ?? ""); 
 
             var cells = await _db.Cells
                 .Where(c => c.WarehouseId == warehouseId && c.Id != stock.CellId)
@@ -2231,6 +2230,7 @@ namespace WMS.Terminal.Controllers
             ViewBag.ProductSku = stock.Product?.Sku;
             ViewBag.CurrentCell = stock.Cell?.Address ?? "неизвестно";
             ViewBag.Quantity = stock.Quantity;
+            ViewBag.Barcode = stock.Barcode ?? "";
 
             return View("SelectTargetCell", cells);
         }
@@ -2496,7 +2496,7 @@ namespace WMS.Terminal.Controllers
             return View();
         }
 
-        // Сканирование ячейки (GET)
+        // Сканирование ячейки 
         [HttpGet]
         public async Task<IActionResult> TransferScanCell()
         {
@@ -2506,7 +2506,7 @@ namespace WMS.Terminal.Controllers
             return View();
         }
 
-        // Обработка сканирования ячейки (POST)
+        // Обработка сканирования ячейки 
         [HttpPost]
         public async Task<IActionResult> TransferScanCell(string scannedCell)
         {
@@ -2759,8 +2759,18 @@ namespace WMS.Terminal.Controllers
             ViewBag.Found = false;
             return View();
         }
+        [HttpGet]
+        public async Task<IActionResult> PrintReceiptBarcode(int id)
+        {
+            var receipt = await _db.ExpectedReceipts
+                .FirstOrDefaultAsync(r => r.Id == id);
 
-        // Поиск товара по штрих-коду (POST)
+            if (receipt == null) return NotFound();
+
+            ViewBag.Receipt = receipt;
+            return View(receipt);
+        }
+        // Поиск товара по штрих-коду 
         [HttpPost]
         public async Task<IActionResult> PrintBarcode(string barcode, string dummy)
         {
@@ -2800,7 +2810,6 @@ namespace WMS.Terminal.Controllers
                 stock.Quantity -= pickedQuantity;
             }
 
-            // Отмечаем задание выполненным
             task.Status = "Completed";
             task.PickedQuantity = pickedQuantity;
 

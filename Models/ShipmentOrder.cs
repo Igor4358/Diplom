@@ -17,7 +17,7 @@ namespace WMS.Terminal.Models
 
         public int CollectedQuantity { get; set; } = 0;  // Сколько уже собрано
 
-        public string Status { get; set; } = "Pending";  // Pending, Partial, Completed
+        public string Status { get; set; } = "Pending";  // Pending, Partial, Completed, лжидаемый, частичто завершён и завершён
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
@@ -29,7 +29,6 @@ namespace WMS.Terminal.Models
 
         public string? Notes { get; set; }  // Примечания
 
-        // Навигационные свойства
         public Product? Product { get; set; }
     }
 }

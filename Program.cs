@@ -26,7 +26,7 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 app.UseStaticFiles();       // для CSS, JS, PWA файлов
 app.UseRouting();
-app.UseSession();           // включаем сессии (ДО UseAuthorization)
+app.UseSession();          
 app.UseAuthorization();
 
 // 5. Маршруты
@@ -39,10 +39,9 @@ using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-    // Создаём БД, если её нет
     dbContext.Database.EnsureCreated();
 
-    // === СОЗДАЁМ ТЕСТОВЫЙ СКЛАД (если нет) 
+    // ТЕСТОВЫЙ СКЛАД 
     if (!dbContext.Warehouses.Any())
     {
         var warehouse = new Warehouse { Name = "406" };
@@ -51,7 +50,7 @@ using (var scope = app.Services.CreateScope())
         Console.WriteLine("Склад 406 создан");
     }
 
-    // === СОЗДАЁМ ТЕСТОВЫЕ ЯЧЕЙКИ 
+    // ТЕСТОВЫЕ ЯЧЕЙКИ 
     if (!dbContext.Cells.Any())
     {
         var warehouse = dbContext.Warehouses.First();
@@ -99,7 +98,7 @@ using (var scope = app.Services.CreateScope())
                 ReceivedQuantity = 0,
                 ExpectedDate = DateTime.UtcNow.AddDays(3),
                 Status = "Pending",
-                WarehouseId = warehouse.Id  // ← используем реальный ID
+                WarehouseId = warehouse.Id  
             });
 
             shipments.Add(new ExpectedShipment
@@ -110,7 +109,7 @@ using (var scope = app.Services.CreateScope())
                 ReceivedQuantity = 30,
                 ExpectedDate = DateTime.UtcNow.AddDays(-1),
                 Status = "Partial",
-                WarehouseId = warehouse.Id  // ← используем реальный ID
+                WarehouseId = warehouse.Id  
             });
 
             if (product2 != null)
@@ -123,7 +122,7 @@ using (var scope = app.Services.CreateScope())
                     ReceivedQuantity = 0,
                     ExpectedDate = DateTime.UtcNow.AddDays(5),
                     Status = "Pending",
-                    WarehouseId = warehouse.Id  // ← используем реальный ID
+                    WarehouseId = warehouse.Id  
                 });
             }
 

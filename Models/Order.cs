@@ -17,7 +17,6 @@ namespace WMS.Terminal.Models
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
-        // Навигационные свойства
         public List<OrderItem> OrderItems { get; set; } = new();
         public List<PickingTask> PickingTasks { get; set; } = new();
     }

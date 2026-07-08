@@ -9,6 +9,10 @@
       "PackagePath": "staticwebassets\\favicon.ico"
     },
     {
+      "Id": "C:\\Users\\Ингвар\\Diplom\\Diplom\\wwwroot\\icon-192.png",
+      "PackagePath": "staticwebassets\\icon-192.png"
+    },
+    {
       "Id": "C:\\Users\\Ингвар\\Diplom\\Diplom\\wwwroot\\js\\quagga.min.js",
       "PackagePath": "staticwebassets\\js\\quagga.min.js"
     },
@@ -243,6 +247,10 @@
     {
       "Id": "C:\\Users\\Ингвар\\Diplom\\Diplom\\wwwroot\\lib\\jquery\\dist\\jquery.min.map",
       "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.map"
+    },
+    {
+      "Id": "C:\\Users\\Ингвар\\Diplom\\Diplom\\wwwroot\\manifest.json",
+      "PackagePath": "staticwebassets\\manifest.json"
     },
     {
       "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.WMS.Terminal.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
