@@ -1,0 +1,344 @@
+﻿@{
+    Layout = null;
+}
+@model List<WMS.Terminal.Models.Package>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Упаковки - ТСД Автосклад</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: -20px -20px 20px -20px;
+            padding: 20px;
+            color: white;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            color: white;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .action-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+            .action-btn:active {
+                transform: scale(0.98);
+            }
+
+            .action-btn.blue {
+                background: #2196f3;
+            }
+
+            .action-btn.orange {
+                background: #ff9800;
+            }
+
+        .package-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .package-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .package-barcode {
+            font-family: monospace;
+            font-size: 18px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .package-name {
+            font-size: 16px;
+            color: #333;
+        }
+
+        .package-info {
+            color: #999;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .items-list {
+            margin-top: 10px;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+            .item-row .name {
+                font-weight: 500;
+            }
+
+            .item-row .qty {
+                color: #4caf50;
+            }
+
+        .empty {
+            text-align: center;
+            padding: 50px;
+            color: #999;
+            background: white;
+            border-radius: 16px;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .btn-remove {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+            .btn-remove:active {
+                transform: scale(0.95);
+            }
+
+        .cell-info {
+            color: #667eea;
+            font-size: 12px;
+        }
+
+        .action-btn.green {
+            background: #4caf50;
+        }
+
+        .action-btn.purple {
+            background: #9c27b0;
+        }
+        .copy-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            color: #667eea;
+            transition: background-color 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .copy-btn:hover {
+                background-color: #e8f0fe;
+            }
+
+            .copy-btn:active {
+                transform: scale(0.8);
+            }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="back-btn" onclick="location.href='/Terminal/MainMenu'">← Назад</button>
+        <h1>📦 Упаковки</h1>
+    </div>
+
+    @if (TempData["PackageSuccess"] != null)
+    {
+        <div class="success">✅ @TempData["PackageSuccess"]</div>
+    }
+    @if (TempData["PackageError"] != null)
+    {
+        <div class="error">❌ @TempData["PackageError"]</div>
+    }
+
+    <div style="margin: 15px 0; display: flex; flex-wrap: wrap; gap: 10px;">
+        <form method="post" asp-action="CreatePackage" style="display:inline;">
+            <button type="submit" class="action-btn">➕ Создать упаковку</button>
+        </form>
+        <button class="action-btn blue" onclick="location.href='/Terminal/AddToPackage'">📥 Добавить товар</button>
+        <button class="action-btn orange" onclick="location.href='/Terminal/PackageContents'">🔍 Содержимое упаковки</button>
+        <button class="action-btn green" onclick="location.href='/Terminal/ReceivePackage'">📥 Принять упаковку</button>
+        <button class="action-btn purple" onclick="location.href='/Terminal/TransferBetweenWarehouses'">🔄 Переместить на другой склад</button>
+    </div>
+
+    @if (Model.Any())
+    {
+        @foreach (var pkg in Model)
+        {
+            var totalItems = pkg.Items.Sum(i => i.Quantity);
+            <div class="package-card">
+                <div class="package-header">
+                    <div>
+                        <div class="package-barcode">🏷️ @pkg.Barcode
+                            <button class="copy-btn" onclick="copyBarcode('@pkg.Barcode', this)" title="Скопировать штрих-код">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="package-name">@pkg.Name</div>
+                        <div class="package-info">
+                            📦 Товаров: @totalItems шт
+                            @if (pkg.Cell != null)
+                            {
+                                <span> | 📍 @pkg.Cell.Address</span>
+                            }
+                            else
+                            {
+                                <span style="color:#ff9800;"> | ⚠️ Не размещена</span>
+                            }
+                        </div>
+                    </div>
+                    @if (pkg.Cell == null)
+                    {
+                        <button class="action-btn blue" onclick="location.href='/Terminal/PlacePackage?packageId=@pkg.Id'">📍 Разместить</button>
+                    }
+                </div>
+
+                @if (pkg.Items.Any())
+                {
+                    <div class="items-list">
+                        @foreach (var item in pkg.Items)
+                        {
+                            <div class="item-row">
+                                <span class="name">@item.Product?.Name</span>
+                                <span>
+                                    <span class="qty">@item.Quantity шт</span>
+                                    <form method="post" asp-action="RemoveFromPackage" style="display:inline;">
+                                        <input type="hidden" name="packageId" value="@pkg.Id">
+                                        <input type="hidden" name="itemId" value="@item.Id">
+                                        <button type="submit" class="btn-remove" onclick="return confirm('Извлечь @item.Product?.Name из упаковки?')">✕</button>
+                                    </form>
+                                </span>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div style="color:#999; font-size:14px; margin-top:10px;">📭 Упаковка пуста</div>
+                }
+            </div>
+        }
+    }
+    else
+    {
+        <div class="empty">
+            📭 Нет упаковок<br>
+            <small>Нажмите "Создать упаковку" для начала</small>
+        </div>
+    }
+    <script>
+        function copyBarcode(text, element) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text)
+                    .then(() => {
+                        showCopyFeedback(element, '✅ Скопировано!');
+                    })
+                    .catch(() => {
+                        fallbackCopy(text, element);
+                    });
+            } else {
+                fallbackCopy(text, element);
+            }
+        }
+        function showCopyFeedback(element, message) {
+            const container = element.closest('.barcode-container') || element.closest('.barcode-wrapper') || element.parentElement;
+
+            const tooltip = document.createElement('span');
+            tooltip.textContent = message;
+            tooltip.style.cssText = `
+                position: absolute;
+                background: #333;
+                color: white;
+                padding: 4px 12px;
+                border-radius: 8px;
+                font-size: 12px;
+                font-weight: 500;
+                margin-left: 8px;
+                white-space: nowrap;
+                animation: fadeInOut 1.5s ease forwards;
+                z-index: 1000;
+            `;
+
+            if (!document.getElementById('copyTooltipStyles')) {
+                const style = document.createElement('style');
+                style.id = 'copyTooltipStyles';
+                style.textContent = `
+        @@keyframes fadeInOut {
+                        0% { opacity: 0; transform: translateY(-5px); }
+                        20% { opacity: 1; transform: translateY(0); }
+                        80% { opacity: 1; transform: translateY(0); }
+                        100% { opacity: 0; transform: translateY(-5px); }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+
+            const rect = element.getBoundingClientRect();
+            tooltip.style.position = 'fixed';
+            tooltip.style.top = (rect.top - 30) + 'px';
+            tooltip.style.left = (rect.left + rect.width / 2 - 60) + 'px';
+
+            document.body.appendChild(tooltip);
+
+            setTimeout(() => {
+                if (tooltip.parentNode) tooltip.remove();
+            }, 1500);
+        }
+    </script>
+</body>
+</html>

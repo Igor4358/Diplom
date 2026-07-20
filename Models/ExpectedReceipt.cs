@@ -25,7 +25,8 @@ namespace WMS.Terminal.Models
         public DateTime ExpectedDate { get; set; } = DateTime.UtcNow;
 
         public string? Supplier { get; set; }
-
+        public bool IsPackage { get; set; } = false;
+        public int? PackageId { get; set; }
         public string? Notes { get; set; }
 
         public int? WarehouseId { get; set; }

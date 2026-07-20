@@ -28,6 +28,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcQWRkRXhwZWN0ZWRSZWNlaXB0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/AddToPackage.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcQWRkVG9QYWNrYWdlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/AddUser.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcQWRkVXNlci5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
@@ -120,12 +124,24 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcT3BlcmF0aW9uTG9ncy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/PackageContents.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcUGFja2FnZUNvbnRlbnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/Packages.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcUGFja2FnZXMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/PickingConfirmation.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcUGlja2luZ0NvbmZpcm1hdGlvbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/PickingOrders.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcUGlja2luZ09yZGVycy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/PlacePackage.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcUGxhY2VQYWNrYWdlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/PrintBarcode.cshtml]
@@ -138,6 +154,14 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/ReceiveByInvoice.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcUmVjZWl2ZUJ5SW52b2ljZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/ReceivePackage.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcUmVjZWl2ZVBhY2thZ2UuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/ReceivePackagePlace.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcUmVjZWl2ZVBhY2thZ2VQbGFjZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/ReceiveShipment.cshtml]

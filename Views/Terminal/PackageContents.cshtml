@@ -1,0 +1,363 @@
+﻿@{
+    Layout = null;
+}
+@model List<WMS.Terminal.Models.PackageItem>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Содержимое упаковки - ТСД Автосклад</title>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 480px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .scan-input {
+            width: 100%;
+            padding: 18px;
+            font-size: 22px;
+            text-align: center;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .scan-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-bottom: 12px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .back-btn {
+            background: #999;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 12px;
+        }
+
+        #reader {
+            width: 100%;
+            max-width: 480px;
+            margin: 10px auto;
+            border-radius: 16px;
+            overflow: hidden;
+            background: #000;
+        }
+
+            #reader video {
+                width: 100%;
+                height: auto;
+                display: block;
+            }
+
+        .stop-scan-btn {
+            width: 100%;
+            padding: 14px;
+            background: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .item-list {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .item-name {
+            font-weight: bold;
+        }
+
+        .item-qty {
+            color: #4caf50;
+        }
+
+        .package-info {
+            background: #e8f0fe;
+            padding: 15px;
+            border-radius: 12px;
+            margin: 15px 0;
+        }
+
+            .package-info .barcode {
+                font-family: monospace;
+                font-size: 18px;
+                color: #667eea;
+            }
+
+        .copy-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            color: #667eea;
+            transition: background-color 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .copy-btn:hover {
+                background-color: #e8f0fe;
+            }
+
+            .copy-btn:active {
+                transform: scale(0.8);
+            }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h2>🔍 Содержимое упаковки</h2>
+
+            <form method="get">
+                <input type="text" name="barcode" id="barcode" class="scan-input" placeholder="Штрих-код упаковки" value="@ViewBag.Package?.Barcode" autofocus>
+                <button type="button" id="scanButton" class="scan-btn">📷 Сканировать упаковку</button>
+                <div id="reader" style="display:none;"></div>
+                <button type="button" id="stopScanBtn" class="stop-scan-btn">⏹ Остановить сканер</button>
+                <button type="submit" class="submit-btn">🔍 Показать</button>
+            </form>
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="error">❌ @ViewBag.Error</div>
+            }
+
+            @if (ViewBag.Package != null)
+            {
+                <div class="package-info">
+                    <div>📦 Упаковка: <span class="barcode">@ViewBag.Package.Barcode</span></div>
+                    <div style="font-size:14px; color:#666;">@ViewBag.Package.Name</div>
+                    <div style="font-size:12px; color:#999;">📍 @(ViewBag.Package.Cell?.Address ?? "Не размещена")</div>
+                </div>
+
+                @if (Model.Any())
+                {
+                    <div class="item-list">
+                        @foreach (var item in Model)
+                        {
+                            <div class="item-row">
+                                <div>
+                                    <div class="item-name">@item.Product?.Name</div>
+                                    <div style="font-size:12px; color:#999;">Артикул: @item.Product?.Sku</div>
+                                    <div style="font-size:11px; color:#667eea; font-family: monospace; margin-top: 2px;">
+                                        🏷️ Штрих-код: <span style="color:#667eea;">@item.Barcode</span>
+                                        <button class="copy-btn" onclick="copyBarcode('@item.Barcode', this)" title="Скопировать штрих-код">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="item-qty">@item.Quantity шт</div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div style="color:#999; padding:30px;">📭 Упаковка пуста</div>
+                }
+            }
+            else
+            {
+                <div style="color:#999; padding:20px;">🔍 Введите или отсканируйте штрих-код упаковки</div>
+            }
+
+            <button class="back-btn" onclick="location.href='/Terminal/Packages'">← Назад</button>
+        </div>
+    </div>
+
+    <script>
+        let scanner = null;
+        const btn = document.getElementById('scanButton');
+        const stopBtn = document.getElementById('stopScanBtn');
+        const input = document.getElementById('barcode');
+        const reader = document.getElementById('reader');
+
+        function startScanner() {
+            if (typeof Html5Qrcode === 'undefined') { alert('Библиотека не загружена'); return; }
+            reader.style.display = 'block';
+            btn.textContent = '⏳ Запуск...';
+            btn.disabled = true;
+
+            scanner = new Html5Qrcode("reader");
+            scanner.start(
+                { facingMode: "environment" },
+                { fps: 15, qrbox: { width: 250, height: 100 } },
+                (text) => {
+                    input.value = text;
+                    stopScanner();
+                    if (navigator.vibrate) navigator.vibrate(200);
+                    document.querySelector('form').submit();
+                },
+                () => {}
+            ).then(() => {
+                btn.textContent = '⏹ Остановить';
+                btn.disabled = false;
+                btn.classList.add('scan-btn-stop');
+                stopBtn.style.display = 'block';
+            }).catch((err) => {
+                alert('Ошибка: ' + err);
+                reader.style.display = 'none';
+                btn.textContent = '📷 Сканировать упаковку';
+                btn.disabled = false;
+                btn.classList.remove('scan-btn-stop');
+                stopBtn.style.display = 'none';
+            });
+        }
+
+        function stopScanner() {
+            if (scanner) {
+                scanner.stop().then(() => {
+                    scanner.clear();
+                    reader.style.display = 'none';
+                    btn.textContent = '📷 Сканировать упаковку';
+                    btn.disabled = false;
+                    btn.classList.remove('scan-btn-stop');
+                    stopBtn.style.display = 'none';
+                    scanner = null;
+                });
+            }
+        }
+
+        btn.addEventListener('click', () => { if (scanner) stopScanner(); else startScanner(); });
+        stopBtn.addEventListener('click', stopScanner);
+        input.addEventListener('keypress', (e) => { if (e.key === 'Enter') document.querySelector('form').submit(); });
+        window.addEventListener('beforeunload', stopScanner);
+    </script>
+    <script>
+        function copyBarcode(text, element) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text)
+                    .then(() => {
+                        showCopyFeedback(element, '✅ Скопировано!');
+                    })
+                    .catch(() => {
+                        fallbackCopy(text, element);
+                    });
+            } else {
+                fallbackCopy(text, element);
+            }
+        }
+        function showCopyFeedback(element, message) {
+            const container = element.closest('.barcode-container') || element.closest('.barcode-wrapper') || element.parentElement;
+
+            const tooltip = document.createElement('span');
+            tooltip.textContent = message;
+            tooltip.style.cssText = `
+                position: absolute;
+                background: #333;
+                color: white;
+                padding: 4px 12px;
+                border-radius: 8px;
+                font-size: 12px;
+                font-weight: 500;
+                margin-left: 8px;
+                white-space: nowrap;
+                animation: fadeInOut 1.5s ease forwards;
+                z-index: 1000;
+            `;
+
+            if (!document.getElementById('copyTooltipStyles')) {
+                const style = document.createElement('style');
+                style.id = 'copyTooltipStyles';
+                style.textContent = `
+        @@keyframes fadeInOut {
+                        0% { opacity: 0; transform: translateY(-5px); }
+                        20% { opacity: 1; transform: translateY(0); }
+                        80% { opacity: 1; transform: translateY(0); }
+                        100% { opacity: 0; transform: translateY(-5px); }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+
+            const rect = element.getBoundingClientRect();
+            tooltip.style.position = 'fixed';
+            tooltip.style.top = (rect.top - 30) + 'px';
+            tooltip.style.left = (rect.left + rect.width / 2 - 60) + 'px';
+
+            document.body.appendChild(tooltip);
+
+            setTimeout(() => {
+                if (tooltip.parentNode) tooltip.remove();
+            }, 1500);
+        }
+    </script>
+</body>
+</html>

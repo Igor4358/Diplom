@@ -1,14 +1,14 @@
 ﻿@{
     Layout = null;
 }
-@model List<WMS.Terminal.Models.Stock>
+@model dynamic
 
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <title>Выбор товара - ТСД Автопитер</title>
+    <title>Выбор объекта - ТСД Автосклад</title>
     <style>
         * {
             margin: 0;
@@ -114,27 +114,32 @@
                 transform: scale(0.98);
             }
 
-        .error {
-            background: #fee;
-            color: #c33;
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            font-size: 14px;
+        .section-title {
+            margin-top: 15px;
+            font-weight: bold;
+            color: #333;
+            text-align: left;
+        }
+
+        .empty {
+            color: #999;
+            padding: 20px;
+            text-align: center;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="card">
-            <h2>📦 Выбор товара</h2>
-            <div class="subtitle">Выберите товар для перемещения</div>
+            <h2>📦 Выбор объекта</h2>
+            <div class="subtitle">Выберите товар или упаковку для перемещения</div>
 
             <div class="cell-title">📍 Ячейка @ViewBag.CellAddress</div>
 
-            @if (Model != null && Model.Any())
+            @if (ViewBag.Stocks != null && ((IEnumerable<dynamic>)ViewBag.Stocks).Any())
             {
-                @foreach (var stock in Model)
+                <div class="section-title">📦 Товары:</div>
+                @foreach (var stock in ViewBag.Stocks)
                 {
                     <form method="post" asp-action="TransferSelectProduct" style="margin:0;">
                         <input type="hidden" name="stockId" value="@stock.Id">
@@ -148,9 +153,37 @@
                     </form>
                 }
             }
-            else
+
+            @if (ViewBag.Packages != null && ((IEnumerable<dynamic>)ViewBag.Packages).Any())
             {
-                <div class="error">❌ В ячейке нет товаров</div>
+                <div class="section-title" style="color: #9c27b0;">📦 Упаковки:</div>
+                @foreach (var package in ViewBag.Packages)
+                {
+                    var itemsCount = 0;
+                    if (package.Items != null)
+                    {
+                        foreach (var item in package.Items)
+                        {
+                            itemsCount += item.Quantity;
+                        }
+                    }
+                    <form method="post" asp-action="TransferSelectPackage" style="margin:0;">
+                        <input type="hidden" name="packageId" value="@package.Id">
+                        <button type="submit" class="product-btn" style="border-color: #9c27b0;">
+                            <div>
+                                <div class="product-name" style="color: #9c27b0;">📦 @package.Barcode</div>
+                                <div class="product-sku">@package.Name</div>
+                            </div>
+                            <div class="product-qty" style="background: #9c27b0;">@itemsCount шт</div>
+                        </button>
+                    </form>
+                }
+            }
+
+            @if ((ViewBag.Stocks == null || !((IEnumerable<dynamic>)ViewBag.Stocks).Any()) &&
+            (ViewBag.Packages == null || !((IEnumerable<dynamic>)ViewBag.Packages).Any()))
+            {
+                <div class="empty">📭 В ячейке нет товаров или упаковок</div>
             }
 
             <button class="back-btn" onclick="location.href='/Terminal/TransferBetweenWarehouses'">← Назад</button>

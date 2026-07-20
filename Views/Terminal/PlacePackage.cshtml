@@ -1,0 +1,213 @@
+﻿@{
+    Layout = null;
+}
+@model List<WMS.Terminal.Models.Cell>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Разместить упаковку - ТСД Автосклад</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 480px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .package-info {
+            background: #e8f0fe;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+            .package-info .barcode {
+                font-family: monospace;
+                font-size: 20px;
+                color: #667eea;
+            }
+
+            .package-info .name {
+                font-size: 16px;
+                color: #333;
+                margin-top: 5px;
+            }
+
+        .cell-list {
+            margin: 20px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .cell-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 8px 0;
+            background: #f8f9fa;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+        }
+
+            .cell-btn:active {
+                background: #e0e0e0;
+                transform: scale(0.98);
+            }
+
+            .cell-btn.selected {
+                background: #667eea;
+                color: white;
+                border-color: #667eea;
+            }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+            .submit-btn:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+
+        .back-btn {
+            background: #999;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 12px;
+        }
+
+            .back-btn:active {
+                transform: scale(0.98);
+            }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h2>📍 Разместить упаковку</h2>
+            <div class="subtitle">Выберите ячейку для упаковки</div>
+
+            @if (ViewBag.Package != null)
+            {
+                <div class="package-info">
+                    <div class="barcode">🏷️ @ViewBag.Package.Barcode</div>
+                    <div class="name">@ViewBag.Package.Name</div>
+                    <div style="font-size: 14px; color: #666; margin-top: 5px;">
+                        📦 Товаров в упаковке: @ViewBag.Package.Items.Count
+                    </div>
+                </div>
+            }
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="error">❌ @ViewBag.Error</div>
+            }
+
+            <form method="post" asp-action="PlacePackage" id="placementForm">
+                <input type="hidden" name="packageId" value="@ViewBag.Package?.Id">
+                <input type="hidden" name="cellId" id="selectedCellId" value="">
+
+                <div class="cell-list">
+                    <div style="margin-bottom: 10px; color: #666; font-size: 14px;">Выберите ячейку:</div>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var cell in Model)
+                        {
+                            <button type="button" class="cell-btn" data-cell-id="@cell.Id" data-cell-addr="@cell.Address">
+                                📦 @cell.Address
+                            </button>
+                        }
+                    }
+                    else
+                    {
+                        <div style="text-align: center; padding: 20px; color: #999;">
+                            ⚠️ Нет доступных ячеек
+                        </div>
+                    }
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn" disabled>
+                    ✅ Разместить упаковку
+                </button>
+            </form>
+
+            <button class="back-btn" onclick="location.href='/Terminal/Packages'">← Назад</button>
+        </div>
+    </div>
+
+    <script>
+        let selectedCellId = null;
+
+        document.querySelectorAll('.cell-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.cell-btn').forEach(b => b.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedCellId = this.getAttribute('data-cell-id');
+                document.getElementById('selectedCellId').value = selectedCellId;
+                document.getElementById('submitBtn').disabled = false;
+            });
+        });
+    </script>
+</body>
+</html>

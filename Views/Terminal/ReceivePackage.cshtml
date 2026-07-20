@@ -1,0 +1,140 @@
+﻿@{
+    Layout = null;
+}
+@model List<WMS.Terminal.Models.ExpectedReceipt>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Приёмка упаковки - ТСД Автосклад</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: -20px -20px 20px -20px;
+            padding: 20px;
+            color: white;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            color: white;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        h1 {
+            font-size: 24px;
+        }
+
+        .receipt-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .receipt-barcode {
+            font-family: monospace;
+            font-size: 18px;
+            color: #667eea;
+        }
+
+        .receipt-info {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .action-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+            .action-btn:active {
+                transform: scale(0.98);
+            }
+
+        .empty {
+            text-align: center;
+            padding: 50px;
+            color: #999;
+            background: white;
+            border-radius: 16px;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="back-btn" onclick="location.href='/Terminal/Packages'">← Назад</button>
+        <h1>📥 Приёмка упаковки</h1>
+    </div>
+
+    @if (TempData["PackageSuccess"] != null)
+    {
+        <div class="success">✅ @TempData["PackageSuccess"]</div>
+    }
+    @if (TempData["PackageError"] != null)
+    {
+        <div class="error">❌ @TempData["PackageError"]</div>
+    }
+
+    @if (Model.Any())
+    {
+        foreach (var receipt in Model)
+        {
+            <div class="receipt-card">
+                <div class="receipt-barcode">🏷️ @receipt.Barcode</div>
+                <div class="receipt-info">📦 @receipt.ProductName</div>
+                <div class="receipt-info">🚚 @receipt.Supplier</div>
+                <div class="receipt-info">📅 @receipt.ExpectedDate.ToString("dd.MM.yyyy HH:mm")</div>
+                <button class="action-btn" onclick="location.href='/Terminal/ReceivePackagePlace?receiptId=@receipt.Id'">
+                    📍 Разместить в ячейке
+                </button>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="empty">📭 Нет упаковок для приёмки</div>
+    }
+</body>
+</html>

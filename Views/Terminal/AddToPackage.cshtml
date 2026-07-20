@@ -1,0 +1,310 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Добавить в упаковку - ТСД Автосклад</title>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 480px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .scan-input {
+            width: 100%;
+            padding: 18px;
+            font-size: 22px;
+            text-align: center;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .scan-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-bottom: 12px;
+        }
+
+            .scan-btn:active {
+                transform: scale(0.97);
+            }
+
+        #reader {
+            width: 100%;
+            max-width: 480px;
+            margin: 10px auto;
+            border-radius: 16px;
+            overflow: hidden;
+            background: #000;
+        }
+
+            #reader video {
+                width: 100%;
+                height: auto;
+                display: block;
+            }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .back-btn {
+            background: #999;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 12px;
+        }
+
+        .stop-scan-btn {
+            width: 100%;
+            padding: 14px;
+            background: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .package-info {
+            background: #e8f0fe;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #667eea;
+        }
+
+        .qty-input {
+            width: 100%;
+            padding: 18px;
+            font-size: 22px;
+            text-align: center;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+            .qty-input:focus {
+                outline: none;
+                border-color: #667eea;
+            }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h2>📥 Добавить товар в упаковку</h2>
+            <div class="subtitle">Отсканируйте упаковку и товар</div>
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="error">❌ @ViewBag.Error</div>
+            }
+
+            <form method="post" asp-action="AddToPackageSubmit">
+                <div class="form-group">
+                    <label style="display:block; font-weight:bold; text-align:left; margin-bottom:5px;">📦 Штрих-код упаковки</label>
+                    <input type="text" name="packageBarcode" id="packageBarcode" class="scan-input" placeholder="Сканируйте упаковку" autofocus>
+                    <button type="button" id="scanPackageBtn" class="scan-btn">📷 Сканировать упаковку</button>
+                </div>
+                <div id="packageReader" style="display:none;"></div>
+
+                <div class="form-group" style="margin-top:15px;">
+                    <label style="display:block; font-weight:bold; text-align:left; margin-bottom:5px;">🏷️ Штрих-код товара</label>
+                    <input type="text" name="productBarcode" id="productBarcode" class="scan-input" placeholder="Сканируйте товар">
+                    <button type="button" id="scanProductBtn" class="scan-btn">📷 Сканировать товар</button>
+                </div>
+                <div id="productReader" style="display:none;"></div>
+                <div class="form-group" style="margin-top:15px;">
+                    <label style="display:block; font-weight:bold; text-align:left; margin-bottom:5px;">📊 Количество</label>
+                    <input type="number" name="quantity" id="quantity" class="qty-input" value="1" min="1" max="999">
+                </div>
+                <button type="submit" class="submit-btn">✅ Добавить</button>
+            </form>
+
+            <button class="back-btn" onclick="location.href='/Terminal/Packages'">← Назад</button>
+        </div>
+    </div>
+
+    <script>
+        let packageScanner = null;
+        let productScanner = null;
+
+        function startPackageScanner() {
+            const reader = document.getElementById('packageReader');
+            reader.style.display = 'block';
+            const btn = document.getElementById('scanPackageBtn');
+            btn.textContent = '⏳ Запуск...';
+            btn.disabled = true;
+
+            packageScanner = new Html5Qrcode("packageReader");
+            packageScanner.start(
+                { facingMode: "environment" },
+                { fps: 15, qrbox: { width: 250, height: 100 } },
+                (text) => {
+                    document.getElementById('packageBarcode').value = text;
+                    stopPackageScanner();
+                    if (navigator.vibrate) navigator.vibrate(200);
+                },
+                () => {}
+            ).then(() => {
+                btn.textContent = '⏹ Остановить';
+                btn.disabled = false;
+                btn.classList.add('scan-btn-stop');
+            }).catch((err) => {
+                alert('Ошибка камеры: ' + err);
+                reader.style.display = 'none';
+                btn.textContent = '📷 Сканировать упаковку';
+                btn.disabled = false;
+                btn.classList.remove('scan-btn-stop');
+            });
+        }
+
+        function stopPackageScanner() {
+            if (packageScanner) {
+                packageScanner.stop().then(() => {
+                    packageScanner.clear();
+                    document.getElementById('packageReader').style.display = 'none';
+                    const btn = document.getElementById('scanPackageBtn');
+                    btn.textContent = '📷 Сканировать упаковку';
+                    btn.disabled = false;
+                    btn.classList.remove('scan-btn-stop');
+                    packageScanner = null;
+                });
+            }
+        }
+
+        document.getElementById('scanPackageBtn').addEventListener('click', function() {
+            if (packageScanner) stopPackageScanner();
+            else startPackageScanner();
+        });
+
+        function startProductScanner() {
+            const reader = document.getElementById('productReader');
+            reader.style.display = 'block';
+            const btn = document.getElementById('scanProductBtn');
+            btn.textContent = '⏳ Запуск...';
+            btn.disabled = true;
+
+            productScanner = new Html5Qrcode("productReader");
+            productScanner.start(
+                { facingMode: "environment" },
+                { fps: 15, qrbox: { width: 250, height: 100 } },
+                (text) => {
+                    document.getElementById('productBarcode').value = text;
+                    stopProductScanner();
+                    if (navigator.vibrate) navigator.vibrate(200);
+                    const form = document.querySelector('form');
+                    if (form) setTimeout(() => form.submit(), 400);
+                },
+                () => {}
+            ).then(() => {
+                btn.textContent = '⏹ Остановить';
+                btn.disabled = false;
+                btn.classList.add('scan-btn-stop');
+            }).catch((err) => {
+                alert('Ошибка камеры: ' + err);
+                reader.style.display = 'none';
+                btn.textContent = '📷 Сканировать товар';
+                btn.disabled = false;
+                btn.classList.remove('scan-btn-stop');
+            });
+        }
+
+        function stopProductScanner() {
+            if (productScanner) {
+                productScanner.stop().then(() => {
+                    productScanner.clear();
+                    document.getElementById('productReader').style.display = 'none';
+                    const btn = document.getElementById('scanProductBtn');
+                    btn.textContent = '📷 Сканировать товар';
+                    btn.disabled = false;
+                    btn.classList.remove('scan-btn-stop');
+                    productScanner = null;
+                });
+            }
+        }
+
+        document.getElementById('scanProductBtn').addEventListener('click', function() {
+            if (productScanner) stopProductScanner();
+            else startProductScanner();
+        });
+
+        window.addEventListener('beforeunload', function() {
+            stopPackageScanner();
+            stopProductScanner();
+        });
+    </script>
+</body>
+</html>

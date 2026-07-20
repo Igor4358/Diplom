@@ -152,6 +152,27 @@
             border-radius: 3px;
             background: #4caf50;
         }
+
+        .copy-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            color: #667eea;
+            transition: background-color 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .copy-btn:hover {
+                background-color: #e8f0fe;
+            }
+
+            .copy-btn:active {
+                transform: scale(0.9);
+            }
     </style>
 </head>
 <body>
@@ -179,7 +200,15 @@
                     <div>
                         <div class="receipt-product">@item.ProductName</div>
                         <div class="receipt-sku">Артикул: @item.Sku</div>
-                        <div class="barcode-display">Штрих-код: @item.Barcode</div>
+                        <div class="barcode-display">Штрих-код: @item.Barcode
+                            <button class="copy-btn" onclick="copyBarcode('@item.Barcode', this)" title="Скопировать штрих-код">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                            </button>
+                        </div>
+
                     </div>
                     <span class="status-@item.Status.ToLower()">
                         @{
@@ -227,5 +256,74 @@
             📋 Показать завершённые поставки
         </button>
     }
+    <script>
+        // Универсальная функция копирования текста в буфер обмена
+        function copyBarcode(text, element) {
+            // Пробуем через Clipboard API
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text)
+                    .then(() => {
+                        showCopyFeedback(element, '✅ Скопировано!');
+                    })
+                    .catch(() => {
+                        // Если Clipboard API не сработал — используем fallback
+                        fallbackCopy(text, element);
+                    });
+            } else {
+                // Fallback для старых браузеров
+                fallbackCopy(text, element);
+            }
+        }
+        // Показываем всплывающую подсказку
+        function showCopyFeedback(element, message) {
+            // Находим родительский контейнер
+            const container = element.closest('.barcode-container') || element.closest('.barcode-wrapper') || element.parentElement;
+
+            // Создаём временную подсказку
+            const tooltip = document.createElement('span');
+            tooltip.textContent = message;
+            tooltip.style.cssText = `
+                position: absolute;
+                background: #333;
+                color: white;
+                padding: 4px 12px;
+                border-radius: 8px;
+                font-size: 12px;
+                font-weight: 500;
+                margin-left: 8px;
+                white-space: nowrap;
+                animation: fadeInOut 1.5s ease forwards;
+                z-index: 1000;
+            `;
+
+            // Добавляем стили для анимации
+            if (!document.getElementById('copyTooltipStyles')) {
+                const style = document.createElement('style');
+                style.id = 'copyTooltipStyles';
+                style.textContent = `
+        @@keyframes fadeInOut {
+                        0% { opacity: 0; transform: translateY(-5px); }
+                        20% { opacity: 1; transform: translateY(0); }
+                        80% { opacity: 1; transform: translateY(0); }
+                        100% { opacity: 0; transform: translateY(-5px); }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+
+            // Позиционируем подсказку
+            const rect = element.getBoundingClientRect();
+            tooltip.style.position = 'fixed';
+            tooltip.style.top = (rect.top - 30) + 'px';
+            tooltip.style.left = (rect.left + rect.width / 2 - 60) + 'px';
+
+            document.body.appendChild(tooltip);
+
+            // Удаляем подсказку через 1.5 секунды
+            setTimeout(() => {
+                if (tooltip.parentNode) tooltip.remove();
+            }, 1500);
+        }
+    </script>
 </body>
 </html>

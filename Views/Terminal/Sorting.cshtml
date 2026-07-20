@@ -8,7 +8,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Сортировка - ТСД Автосклад</title>
 
-    <!-- ПОДКЛЮЧАЕМ БИБЛИОТЕКУ ДЛЯ СКАНЕРА -->
     <script src="https://unpkg.com/html5-qrcode"></script>
 
     <style>
@@ -177,8 +176,11 @@
 <body>
     <div class="container">
         <div class="card">
-            <h2>🔄 Сортировка товара</h2>
-
+            <div style="margin: 15px 0; display: flex; gap: 10px; justify-content: center;">
+                <button type="button" id="toggleType" class="scan-btn" style="background: #667eea; padding: 10px 20px;">
+                    🔄 Искать: <span id="searchTypeLabel">Товар</span>
+                </button>
+            </div>
             @if (TempData["SortingSuccess"] != null)
             {
                 <div class="success">✅ @TempData["SortingSuccess"]</div>
@@ -199,9 +201,21 @@
             <button class="back-btn" onclick="location.href='/Terminal/MainMenu'">← Главное меню</button>
         </div>
     </div>
-
     <script>
-        // === УНИВЕРСАЛЬНЫЙ СКАНЕР НА HTML5-QRCODE ===
+        let searchType = 'product'; 
+        document.getElementById('toggleType').addEventListener('click', function() {
+            if (searchType === 'product') {
+                searchType = 'package';
+                document.getElementById('searchTypeLabel').textContent = 'Упаковка';
+                document.getElementById('scannedSku').placeholder = 'Штрих-код упаковки';
+            } else {
+                searchType = 'product';
+                document.getElementById('searchTypeLabel').textContent = 'Товар';
+                document.getElementById('scannedSku').placeholder = 'Штрих-код товара';
+            }
+        });
+    </script>
+    <script>
         let html5Scanner = null;
         let isScanning = false;
         const scanBtn = document.getElementById('scanButton');
