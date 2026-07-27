@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WMS.Terminal.Data;
@@ -11,9 +12,11 @@ using WMS.Terminal.Data;
 namespace WMS.Terminal.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260727122341_AddCitiesAndWarehouseFields")]
+    partial class AddCitiesAndWarehouseFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,26 +51,6 @@ namespace WMS.Terminal.Migrations
                     b.HasIndex("WarehouseId");
 
                     b.ToTable("Cells");
-                });
-
-            modelBuilder.Entity("WMS.Terminal.Models.City", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Region")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Cities");
                 });
 
             modelBuilder.Entity("WMS.Terminal.Models.ExpectedReceipt", b =>
@@ -560,8 +543,6 @@ namespace WMS.Terminal.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CityId");
-
                     b.ToTable("Warehouses");
                 });
 
@@ -734,15 +715,6 @@ namespace WMS.Terminal.Migrations
                     b.Navigation("User");
 
                     b.Navigation("Warehouse");
-                });
-
-            modelBuilder.Entity("WMS.Terminal.Models.Warehouse", b =>
-                {
-                    b.HasOne("WMS.Terminal.Models.City", "City")
-                        .WithMany()
-                        .HasForeignKey("CityId");
-
-                    b.Navigation("City");
                 });
 
             modelBuilder.Entity("WMS.Terminal.Models.Cell", b =>

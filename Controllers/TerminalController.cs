@@ -303,6 +303,175 @@ namespace WMS.Terminal.Controllers
             return View(model);
         }
         [HttpGet]
+        public async Task<IActionResult> ManageCities()
+        {
+            if (!IsAuthenticated()) return RedirectToAction("Login");
+            if (!IsAdmin()) return RedirectToAction("MainMenu");
+
+            var cities = await _db.Cities
+                .OrderBy(c => c.Name)
+                .ToListAsync();
+
+            return View(cities);
+        }
+
+        // Страница добавления города (GET)
+        [HttpGet]
+        public IActionResult AddCity()
+        {
+            if (!IsAuthenticated()) return RedirectToAction("Login");
+            if (!IsAdmin()) return RedirectToAction("MainMenu");
+
+            return View();
+        }
+
+        // Добавление города (POST)
+        [HttpPost]
+        public async Task<IActionResult> AddCity(string name, string region)
+        {
+            if (!IsAuthenticated()) return RedirectToAction("Login");
+            if (!IsAdmin()) return RedirectToAction("MainMenu");
+
+            if (string.IsNullOrEmpty(name))
+            {
+                ViewBag.Error = "Введите название города";
+                return View();
+            }
+
+            if (await _db.Cities.AnyAsync(c => c.Name == name))
+            {
+                ViewBag.Error = $"Город '{name}' уже существует";
+                return View();
+            }
+
+            var city = new City
+            {
+                Name = name,
+                Region = region
+            };
+
+            _db.Cities.Add(city);
+            await _db.SaveChangesAsync();
+
+            TempData["Success"] = $"Город '{name}' успешно добавлен!";
+            return RedirectToAction("ManageCities");
+        }
+
+        // Удаление города (только если нет привязанных складов)
+        [HttpPost]
+        public async Task<IActionResult> DeleteCity(int id)
+        {
+            if (!IsAuthenticated()) return RedirectToAction("Login");
+            if (!IsAdmin()) return RedirectToAction("MainMenu");
+
+            var city = await _db.Cities
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (city == null) return NotFound();
+
+            // Проверяем, есть ли склады, привязанные к этому городу
+            var hasWarehouses = await _db.Warehouses.AnyAsync(w => w.CityId == id);
+            if (hasWarehouses)
+            {
+                TempData["Error"] = $"Нельзя удалить город '{city.Name}', так как к нему привязаны склады!";
+                return RedirectToAction("ManageCities");
+            }
+
+            _db.Cities.Remove(city);
+            await _db.SaveChangesAsync();
+
+            TempData["Success"] = $"Город '{city.Name}' успешно удалён";
+            return RedirectToAction("ManageCities");
+        }
+
+        // Редактирование города (GET)
+        [HttpGet]
+        public async Task<IActionResult> EditCity(int id)
+        {
+            if (!IsAuthenticated()) return RedirectToAction("Login");
+            if (!IsAdmin()) return RedirectToAction("MainMenu");
+
+            var city = await _db.Cities.FindAsync(id);
+            if (city == null) return NotFound();
+
+            return View(city);
+        }
+
+        // Редактирование города (POST)
+        [HttpPost]
+        public async Task<IActionResult> EditCity(int id, string name, string region)
+        {
+            if (!IsAuthenticated()) return RedirectToAction("Login");
+            if (!IsAdmin()) return RedirectToAction("MainMenu");
+
+            var city = await _db.Cities.FindAsync(id);
+            if (city == null) return NotFound();
+
+            if (string.IsNullOrEmpty(name))
+            {
+                ViewBag.Error = "Введите название города";
+                return View(city);
+            }
+
+            // Проверяем, не занято ли имя другим городом
+            if (await _db.Cities.AnyAsync(c => c.Name == name && c.Id != id))
+            {
+                ViewBag.Error = $"Город '{name}' уже существует";
+                return View(city);
+            }
+
+            city.Name = name;
+            city.Region = region;
+
+            await _db.SaveChangesAsync();
+
+            TempData["Success"] = $"Город '{name}' успешно обновлён!";
+            return RedirectToAction("ManageCities");
+        }
+        [HttpGet]
+        public async Task<IActionResult> EditWarehouse(int id)
+        {
+            if (!IsAuthenticated()) return RedirectToAction("Login");
+            if (!IsAdmin()) return RedirectToAction("MainMenu");
+
+            var warehouse = await _db.Warehouses
+                .FirstOrDefaultAsync(w => w.Id == id);
+
+            if (warehouse == null) return NotFound();
+
+            ViewBag.Cities = await _db.Cities.OrderBy(c => c.Name).ToListAsync();
+            return View(warehouse);
+        }
+
+        // Редактирование склада (POST)
+        [HttpPost]
+        public async Task<IActionResult> EditWarehouse(int id, string name, int? cityId, int? travelDays, string? address)
+        {
+            if (!IsAuthenticated()) return RedirectToAction("Login");
+            if (!IsAdmin()) return RedirectToAction("MainMenu");
+
+            var warehouse = await _db.Warehouses.FindAsync(id);
+            if (warehouse == null) return NotFound();
+
+            if (string.IsNullOrEmpty(name))
+            {
+                ViewBag.Error = "Введите название склада";
+                ViewBag.Cities = await _db.Cities.OrderBy(c => c.Name).ToListAsync();
+                return View(warehouse);
+            }
+
+            warehouse.Name = name;
+            warehouse.CityId = cityId;
+            warehouse.TravelDays = travelDays;
+            warehouse.Address = address;
+
+            await _db.SaveChangesAsync();
+
+            TempData["Success"] = $"Склад '{name}' успешно обновлён!";
+            return RedirectToAction("ManageWarehouses");
+        }
+
+        [HttpGet]
         public async Task<IActionResult> SelectWarehouse()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
@@ -3068,6 +3237,7 @@ namespace WMS.Terminal.Controllers
             ViewBag.MaxQuantity = maxQuantity;
 
             var targetWarehouses = await _db.Warehouses
+                .Include(w => w.City)
                 .Where(w => w.Id != currentWarehouseId)
                 .ToListAsync();
 

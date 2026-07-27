@@ -177,12 +177,18 @@
 
                 <div class="form-group">
                     <label>Склад-получатель</label>
-                    <select name="targetWarehouseId" required>
+                    <select name="targetWarehouseId" id="targetWarehouseSelect" required>
                         @if (ViewBag.TargetWarehouses != null && ViewBag.TargetWarehouses.Count > 0)
                         {
                             @foreach (var warehouse in ViewBag.TargetWarehouses)
                             {
-                                <option value="@warehouse.Id">@warehouse.Name</option>
+                                var cityName = warehouse.City?.Name ?? "Город не указан";
+                                var travelDays = warehouse.TravelDays > 0 ? $" ({warehouse.TravelDays} дн.)" : "";
+                                <option value="@warehouse.Id"
+                                        data-city="@cityName"
+                                        data-travel="@warehouse.TravelDays">
+                                    @warehouse.Name — @cityName @travelDays
+                                </option>
                             }
                         }
                         else

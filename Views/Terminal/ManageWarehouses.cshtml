@@ -121,6 +121,20 @@
             margin-bottom: 15px;
             font-size: 14px;
         }
+
+        .btn-edit {
+            background: #2196f3;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+            .btn-edit:active {
+                transform: scale(0.95);
+            }
     </style>
 </head>
 <body>
@@ -158,6 +172,7 @@
                             <td>@warehouse.Id</td>
                             <td><strong>@warehouse.Name</strong></td>
                             <td>
+                                <button class="btn-edit" onclick="location.href='/Terminal/EditWarehouse?id=@warehouse.Id'">✏️</button>
                                 <form method="post" action="/Terminal/DeleteWarehouse" style="display:inline;"
                                       onsubmit="return confirm('Удалить склад @warehouse.Name?');">
                                     <input type="hidden" name="id" value="@warehouse.Id">

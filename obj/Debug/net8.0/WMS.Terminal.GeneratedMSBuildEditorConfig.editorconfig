@@ -24,6 +24,10 @@ build_property.EnableCodeStyleSeverity =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcQWRkQ2VsbC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/AddCity.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcQWRkQ2l0eS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/AddExpectedReceipt.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcQWRkRXhwZWN0ZWRSZWNlaXB0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
@@ -80,8 +84,16 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcQ3JlYXRlTmV3UHJvZHVjdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/EditCity.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcRWRpdENpdHkuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/EditUser.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcRWRpdFVzZXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/EditWarehouse.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcRWRpdFdhcmVob3VzZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/ExpectedReceipts.cshtml]
@@ -110,6 +122,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/ManageCells.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcTWFuYWdlQ2VsbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/ManageCities.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcTWFuYWdlQ2l0aWVzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/ManageUsers.cshtml]

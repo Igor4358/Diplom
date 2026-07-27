@@ -22,6 +22,7 @@ namespace WMS.Terminal.Data
         public DbSet<ExpectedReceipt> ExpectedReceipts { get; set; }
         public DbSet<ExpectedShipment> ExpectedShipments { get; set; }
         public DbSet<Package> Packages { get; set; }
+        public DbSet<City> Cities { get; set; }
         public DbSet<PackageItem> PackageItems { get; set; }
         public DbSet<OperationLog> OperationLogs { get; set; }
         public DbSet<ExpectedShipment> ExpectedShipment { get; set; }
