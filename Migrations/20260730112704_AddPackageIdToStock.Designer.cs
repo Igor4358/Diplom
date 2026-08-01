@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WMS.Terminal.Data;
@@ -11,9 +12,11 @@ using WMS.Terminal.Data;
 namespace WMS.Terminal.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260730112704_AddPackageIdToStock")]
+    partial class AddPackageIdToStock
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -453,7 +456,7 @@ namespace WMS.Terminal.Migrations
                     b.Property<string>("Barcode")
                         .HasColumnType("text");
 
-                    b.Property<int?>("CellId")
+                    b.Property<int>("CellId")
                         .HasColumnType("integer");
 
                     b.Property<int?>("PackageId")
@@ -465,16 +468,11 @@ namespace WMS.Terminal.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("WarehouseId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CellId");
 
                     b.HasIndex("PackageId");
-
-                    b.HasIndex("WarehouseId");
 
                     b.HasIndex("ProductId", "CellId")
                         .IsUnique();
@@ -701,7 +699,9 @@ namespace WMS.Terminal.Migrations
                 {
                     b.HasOne("WMS.Terminal.Models.Cell", "Cell")
                         .WithMany("Stocks")
-                        .HasForeignKey("CellId");
+                        .HasForeignKey("CellId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("WMS.Terminal.Models.Package", "Package")
                         .WithMany()
@@ -713,17 +713,11 @@ namespace WMS.Terminal.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WMS.Terminal.Models.Warehouse", "Warehouse")
-                        .WithMany()
-                        .HasForeignKey("WarehouseId");
-
                     b.Navigation("Cell");
 
                     b.Navigation("Package");
 
                     b.Navigation("Product");
-
-                    b.Navigation("Warehouse");
                 });
 
             modelBuilder.Entity("WMS.Terminal.Models.User", b =>

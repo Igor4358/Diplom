@@ -186,6 +186,28 @@
             .copy-btn:active {
                 transform: scale(0.8);
             }
+        
+        .action-btn.delete {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+            .action-btn.delete:active {
+                transform: scale(0.95);
+            }
+
+            .action-btn.delete:hover {
+                background: #cc0000;
+            }
     </style>
 </head>
 <body>
@@ -246,6 +268,9 @@
                     {
                         <button class="action-btn blue" onclick="location.href='/Terminal/PlacePackage?packageId=@pkg.Id'">📍 Разместить</button>
                     }
+                    <button class="action-btn delete" onclick="deletePackage(@pkg.Id, '@pkg.Barcode')">
+                        🗑️
+                    </button>
                 </div>
 
                 @if (pkg.Items.Any())
@@ -281,6 +306,35 @@
             <small>Нажмите "Создать упаковку" для начала</small>
         </div>
     }
+    <script>
+        function deletePackage(packageId, barcode) {
+            const card = document.getElementById('package-' + packageId);
+            const itemsList = card ? card.querySelector('.items-list') : null;
+            const hasItems = itemsList && itemsList.children.length > 0;
+
+            let confirmMessage = `Удалить упаковку ${barcode}?`;
+            if (hasItems) {
+                confirmMessage = `⚠️ В упаковке ${barcode} есть товары!\n\nСначала извлеките все товары из упаковки.\n\nУдалить упаковку вместе с товарами нельзя.`;
+                alert(confirmMessage);
+                return;
+            }
+
+            if (confirm(confirmMessage)) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '/Terminal/DeletePackage';
+
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'id';
+                input.value = packageId;
+
+                form.appendChild(input);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+    </script>
     <script>
         function copyBarcode(text, element) {
             if (navigator.clipboard && navigator.clipboard.writeText) {

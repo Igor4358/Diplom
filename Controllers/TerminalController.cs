@@ -11,6 +11,7 @@ using System.IO;
 using ZXing.QrCode;
 using System.Linq;
 using BarcodeStandard;
+using Microsoft.AspNetCore.Http;
 namespace WMS.Terminal.Controllers
 {
     public class TerminalController : Controller
@@ -579,7 +580,8 @@ namespace WMS.Terminal.Controllers
             var stocks = await _db.Stocks
                 .Include(s => s.Product)
                 .Include(s => s.Cell)
-                .Where(s => s.Cell != null && s.Cell.WarehouseId == warehouseId && s.Quantity > 0)
+                .Include(s => s.Package)
+                .Where(s => s.WarehouseId == warehouseId && s.Quantity > 0)
                 .ToListAsync();
 
             if (!string.IsNullOrEmpty(search))
@@ -587,7 +589,8 @@ namespace WMS.Terminal.Controllers
                 stocks = stocks.Where(s =>
                     s.Product!.Name.Contains(search, StringComparison.OrdinalIgnoreCase) ||
                     s.Product!.Sku.Contains(search, StringComparison.OrdinalIgnoreCase) ||
-                    s.Cell!.Address.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                    (s.Cell != null && s.Cell.Address.Contains(search, StringComparison.OrdinalIgnoreCase)) ||
+                    (s.Package != null && s.Package.Barcode.Contains(search, StringComparison.OrdinalIgnoreCase)) ||
                     (s.Barcode != null && s.Barcode.Contains(search, StringComparison.OrdinalIgnoreCase))
                 ).ToList();
             }
@@ -2294,7 +2297,8 @@ namespace WMS.Terminal.Controllers
                     ProductId = productId.Value,
                     CellId = cellId,
                     Quantity = quantity,
-                    Barcode = barcodeForStock // сохранённый штрихкод
+                    Barcode = barcodeForStock,
+                    WarehouseId = warehouseId 
                 };
                 _db.Stocks.Add(newStock);
             }
@@ -2451,7 +2455,7 @@ namespace WMS.Terminal.Controllers
             HttpContext.Session.SetInt32("MovingProductId", stock.ProductId);
             HttpContext.Session.SetString("MovingProductName", stock.Product?.Name ?? "Неизвестный товар");
             HttpContext.Session.SetString("MovingProductSku", stock.Product?.Sku ?? "");
-            HttpContext.Session.SetInt32("MovingFromCellId", stock.CellId);
+            HttpContext.Session.SetInt32("MovingFromCellId", stock.CellId.Value);
             HttpContext.Session.SetInt32("MovingQuantity", stock.Quantity);
             HttpContext.Session.SetString("MovingBarcode", stock.Barcode ?? "");
             HttpContext.Session.SetString("IsPackage", "false");
@@ -2574,7 +2578,8 @@ namespace WMS.Terminal.Controllers
                     ProductId = productId.Value,
                     CellId = targetCellId,
                     Quantity = moveQuantity,
-                    Barcode = barcodeToMove 
+                    Barcode = barcodeToMove,
+                    WarehouseId = warehouseId
                 };
                 _db.Stocks.Add(toStock);
             }
@@ -2594,7 +2599,7 @@ namespace WMS.Terminal.Controllers
                     {
                         UserId = userId ?? 0,
                         UserName = HttpContext.Session.GetString("UserName") ?? "Неизвестный",
-                        OperationType = "Sorting",
+                        OperationType = "Сортировка упаковки",
                         Details = $"Перемещена упаковка '{package.Barcode}' в ячейку {targetCell.Address}",
                         WarehouseId = warehouseId,
                         Barcode = package.Barcode
@@ -2605,7 +2610,7 @@ namespace WMS.Terminal.Controllers
                     return RedirectToAction("Sorting");
                 }
             }
-            // Логируем
+
             _db.OperationLogs.Add(new OperationLog
             {
                 UserId = userId ?? 0,
@@ -2748,7 +2753,7 @@ namespace WMS.Terminal.Controllers
             var package = new Package
             {
                 Barcode = GenerateEan13Barcode(),
-                Name = string.IsNullOrEmpty(name) ? $"Упаковка {DateTime.Now:dd.MM.yyyy HH:mm}" : name,
+                Name = string.IsNullOrEmpty(name) ? $"Упаковка создана {DateTime.Now:dd.MM.yyyy HH:mm}" : name,
                 WarehouseId = warehouseId,
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = userName ?? "Неизвестный"
@@ -2756,6 +2761,21 @@ namespace WMS.Terminal.Controllers
 
             _db.Packages.Add(package);
             await _db.SaveChangesAsync();
+
+            if(_db.OperationLogs !=null)
+            {
+                _db.OperationLogs.Add(new OperationLog
+                {
+                    UserId = userId ?? 0,
+                    UserName = userName ?? "Неизвестный",
+                    OperationType = "Создание упаковки",
+                    Details = $"Создана упаковка '{package.Barcode}'",
+                    WarehouseId = warehouseId,
+                    Barcode = package.Barcode
+                });
+                await _db.SaveChangesAsync();
+            }
+
 
             TempData["PackageSuccess"] = $"✅ Упаковка создана! Штрих-код: {package.Barcode}";
             return RedirectToAction("Packages");
@@ -2783,6 +2803,8 @@ namespace WMS.Terminal.Controllers
         [HttpPost]
         public async Task<IActionResult> AddToPackageSubmit(string packageBarcode, string productBarcode, int quantity = 1)
         {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var userName = HttpContext.Session.GetString("UserName");
             var warehouseId = HttpContext.Session.GetInt32("WarehouseId");
             if (warehouseId == null) return RedirectToAction("SelectWarehouse");
 
@@ -2800,6 +2822,7 @@ namespace WMS.Terminal.Controllers
 
             // 1. Находим упаковку
             var package = await _db.Packages
+                .Include(p => p.Items)
                 .FirstOrDefaultAsync(p => p.Barcode == packageBarcode && p.WarehouseId == warehouseId);
 
             if (package == null)
@@ -2808,10 +2831,11 @@ namespace WMS.Terminal.Controllers
                 return View("AddToPackage");
             }
 
-            // 2. Находим товар на складе
+            // 2. Находим товар на складе (в ячейке)
             var stock = await _db.Stocks
                 .Include(s => s.Product)
-                .FirstOrDefaultAsync(s => s.Barcode == productBarcode && s.Quantity > 0);
+                .Include(s => s.Cell)
+                .FirstOrDefaultAsync(s => s.Barcode == productBarcode && s.Quantity > 0 && s.CellId != null);
 
             if (stock == null)
             {
@@ -2830,15 +2854,48 @@ namespace WMS.Terminal.Controllers
             var existingItem = await _db.PackageItems
                 .FirstOrDefaultAsync(i => i.PackageId == package.Id && i.Barcode == productBarcode);
 
+            // 4. Проверяем, есть ли уже запись в Stocks для этого товара в упаковке
+            var packageStock = await _db.Stocks
+                .FirstOrDefaultAsync(s => s.PackageId == package.Id && s.ProductId == stock.ProductId);
+
             if (existingItem != null)
             {
-                // Увеличиваем количество
+                // === ТОВАР УЖЕ ЕСТЬ В УПАКОВКЕ ===
+                // Увеличиваем количество в PackageItems
                 existingItem.Quantity += quantity;
-                stock.Quantity -= quantity;
+
+                // Обновляем или создаём запись в Stocks для упаковки
+                if (packageStock != null)
+                {
+                    packageStock.Quantity += quantity;
+                }
+                else
+                {
+                    packageStock = new Stock
+                    {
+                        ProductId = stock.ProductId,
+                        CellId = null,
+                        PackageId = package.Id,
+                        Quantity = quantity,
+                        Barcode = stock.Barcode,
+                        WarehouseId = warehouseId
+                    };
+                    _db.Stocks.Add(packageStock);
+                }
+
+                // Уменьшаем количество на складе (в ячейке)
+                if (stock.Quantity == quantity)
+                {
+                    _db.Stocks.Remove(stock);
+                }
+                else
+                {
+                    stock.Quantity -= quantity;
+                }
             }
             else
             {
-                // Добавляем новый товар
+                // Добавляем в PackageItems
                 var packageItem = new PackageItem
                 {
                     PackageId = package.Id,
@@ -2848,20 +2905,63 @@ namespace WMS.Terminal.Controllers
                     AddedAt = DateTime.UtcNow
                 };
                 _db.PackageItems.Add(packageItem);
-                stock.Quantity -= quantity;
+
+                // Уменьшаем количество на складе (в ячейке)
+                if (stock.Quantity == quantity)
+                {
+                    _db.Stocks.Remove(stock);
+                }
+                else
+                {
+                    stock.Quantity -= quantity;
+                }
+
+                // Создаём запись в Stocks для упаковки
+                if (packageStock != null)
+                {
+                    packageStock.Quantity += quantity;
+                }
+                else
+                {
+                    packageStock = new Stock
+                    {
+                        ProductId = stock.ProductId,
+                        CellId = null,
+                        PackageId = package.Id,
+                        Quantity = quantity,
+                        Barcode = stock.Barcode,
+                        WarehouseId = warehouseId
+                    };
+                    _db.Stocks.Add(packageStock);
+                }
             }
 
             await _db.SaveChangesAsync();
 
+            if (_db.OperationLogs != null)
+            {
+                _db.OperationLogs.Add(new OperationLog
+                {
+                    UserId = userId ?? 0,
+                    UserName = userName ?? "неизвестный",
+                    OperationType = "Добавление в упаковку",
+                    Details = $"Добавлен товар '{stock.Product?.Name}' в количестве {quantity} шт в упаковку{package.Barcode}",
+                    WarehouseId = warehouseId,
+                    Barcode = stock.Barcode
+                });
+                await _db.SaveChangesAsync();
+            }
+
             TempData["PackageSuccess"] = $"✅ Товар '{stock.Product?.Name}' в количестве {quantity} шт добавлен в упаковку {package.Barcode}";
             return RedirectToAction("Packages");
         }
-
         // Извлечение товара из упаковки
         [HttpPost]
         public async Task<IActionResult> RemoveFromPackage(int packageId, int itemId)
         {
             var warehouseId = HttpContext.Session.GetInt32("WarehouseId");
+            var userId = HttpContext.Session.GetInt32("userId");
+            var userName = HttpContext.Session.GetString("userName");
             if (warehouseId == null) return RedirectToAction("SelectWarehouse");
 
             var item = await _db.PackageItems
@@ -2871,39 +2971,101 @@ namespace WMS.Terminal.Controllers
 
             if (item == null) return NotFound();
 
-            // Ищем свободную ячейку
-            var freeCell = await _db.Cells
-                .FirstOrDefaultAsync(c => c.WarehouseId == warehouseId);
+            // 1. Находим запись в Stocks для этого товара в упаковке
+            var packageStock = await _db.Stocks
+                .FirstOrDefaultAsync(s => s.PackageId == packageId && s.ProductId == item.ProductId);
 
-            if (freeCell == null)
+            if (packageStock != null)
             {
-                TempData["PackageError"] = "Нет свободных ячеек для размещения товара";
-                return RedirectToAction("Packages");
+                if (packageStock.Quantity == item.Quantity)
+                {
+                    _db.Stocks.Remove(packageStock);
+                }
+                else
+                {
+                    packageStock.Quantity -= item.Quantity;
+                }
             }
 
-            // Возвращаем товар на склад
-            var stock = await _db.Stocks
-                .FirstOrDefaultAsync(s => s.ProductId == item.ProductId && s.CellId == freeCell.Id);
+            // 2. Удаляем запись из PackageItems
+            _db.PackageItems.Remove(item);
 
-            if (stock != null)
+
+            // Ищем, есть ли уже этот товар в какой-нибудь ячейке
+            var existingStock = await _db.Stocks
+                .FirstOrDefaultAsync(s => s.ProductId == item.ProductId && s.CellId != null && s.WarehouseId == warehouseId);
+
+            if (existingStock != null)
             {
-                stock.Quantity += item.Quantity;
+                // Если товар уже есть в ячейке — просто увеличиваем количество
+                existingStock.Quantity += item.Quantity;
             }
             else
             {
-                _db.Stocks.Add(new Stock
-                {
-                    ProductId = item.ProductId,
-                    CellId = freeCell.Id,
-                    Quantity = item.Quantity,
-                    Barcode = item.Barcode ?? GenerateEan13Barcode()
-                });
-            }
+                // Ищем свободную ячейку (где нет товаров)
+                var occupiedCellIds = await _db.Stocks
+                    .Where(s => s.WarehouseId == warehouseId && s.CellId != null)
+                    .Select(s => s.CellId)
+                    .Distinct()
+                    .ToListAsync();
 
-            _db.PackageItems.Remove(item);
+                var freeCell = await _db.Cells
+                    .FirstOrDefaultAsync(c => c.WarehouseId == warehouseId && !occupiedCellIds.Contains(c.Id));
+
+                // Если нет свободных ячеек — ищем любую ячейку с этим товаром
+                if (freeCell == null)
+                {
+                    // Ищем ячейку, где уже есть этот товар (но мы уже проверили выше)
+                    // Если нет — берём первую попавшуюся ячейку
+                    freeCell = await _db.Cells
+                        .FirstOrDefaultAsync(c => c.WarehouseId == warehouseId);
+                }
+
+                if (freeCell == null)
+                {
+                    TempData["PackageError"] = "Нет свободных ячеек для размещения товара";
+                    return RedirectToAction("Packages");
+                }
+
+                // Проверяем, нет ли уже записи с таким ProductId и CellId
+                var duplicateCheck = await _db.Stocks
+                    .FirstOrDefaultAsync(s => s.ProductId == item.ProductId && s.CellId == freeCell.Id);
+
+                if (duplicateCheck != null)
+                {
+                    // Если такая запись уже есть — увеличиваем количество
+                    duplicateCheck.Quantity += item.Quantity;
+                }
+                else
+                {
+                    // Создаём новую запись
+                    var newStock = new Stock
+                    {
+                        ProductId = item.ProductId,
+                        CellId = freeCell.Id,
+                        Quantity = item.Quantity,
+                        Barcode = item.Barcode ?? GenerateEan13Barcode(),
+                        WarehouseId = warehouseId
+                    };
+                    _db.Stocks.Add(newStock);
+                }
+            }
+            if (_db.OperationLogs != null)
+            {
+                _db.OperationLogs.Add(new OperationLog
+                {
+                    UserId = userId ?? 0,
+                    UserName = userName ?? "Неизвестный",
+                    OperationType = "Извлечение из упаковки",
+                    Details = $"Извлечён товар '{item.Product?.Name}' в количестве {item.Quantity} шт из упаковки {item.Package?.Barcode}",
+                    WarehouseId = warehouseId,
+                    Barcode = item.Barcode
+                });
+                await _db.SaveChangesAsync();
+            }
             await _db.SaveChangesAsync();
 
-            TempData["PackageSuccess"] = $"✅ Товар '{item.Product?.Name}' извлечён из упаковки";
+            TempData["PackageSuccess"] = $"✅ Товар '{item.Product?.Name}' извлечён из упаковки и размещён на складе";
             return RedirectToAction("Packages");
         }
 
@@ -2940,6 +3102,8 @@ namespace WMS.Terminal.Controllers
         public async Task<IActionResult> PlacePackage(int packageId, int cellId)
         {
             var warehouseId = HttpContext.Session.GetInt32("WarehouseId");
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var userName = HttpContext.Session.GetString("UserName");
             if (warehouseId == null) return RedirectToAction("SelectWarehouse");
 
             var package = await _db.Packages
@@ -2957,8 +3121,22 @@ namespace WMS.Terminal.Controllers
             package.CellId = cellId;
             await _db.SaveChangesAsync();
             var updatedPackage = await _db.Packages
-      .Include(p => p.Cell)
-      .FirstOrDefaultAsync(p => p.Id == packageId);
+               .Include(p => p.Cell)
+               .FirstOrDefaultAsync(p => p.Id == packageId);
+
+            if (_db.OperationLogs != null)
+            {
+                _db.OperationLogs.Add(new OperationLog
+                {
+                    UserId = userId ?? 0,
+                    UserName = userName ?? "Неизвестный",
+                    OperationType = "Размещение упаковки",
+                    Details = $"Упаковка '{package.Barcode}' размещена в ячейке {cell.Address}",
+                    WarehouseId = warehouseId,
+                    Barcode = package.Barcode
+                });
+                await _db.SaveChangesAsync();
+            }
 
             TempData["PackageSuccess"] = $"✅ Упаковка '{package.Barcode}' размещена в ячейке {cell.Address}";
             return RedirectToAction("Packages");
@@ -2984,7 +3162,7 @@ namespace WMS.Terminal.Controllers
                     HttpContext.Session.SetInt32("MovingProductId", stock.ProductId);
                     HttpContext.Session.SetString("MovingProductName", stock.Product?.Name ?? "Неизвестный товар");
                     HttpContext.Session.SetString("MovingProductSku", stock.Product?.Sku ?? "");
-                    HttpContext.Session.SetInt32("MovingFromCellId", stock.CellId);
+                    HttpContext.Session.SetInt32("MovingFromCellId", stock.CellId.Value);
                     HttpContext.Session.SetInt32("MovingQuantity", stock.Quantity);
 
                     var cells = await _db.Cells
@@ -3039,9 +3217,29 @@ namespace WMS.Terminal.Controllers
                 ViewBag.Quantity = stock.Quantity;
                 ViewBag.Barcode = stock.Barcode;
                 ViewBag.SearchQuery = searchQuery;
+                ViewBag.IsInPackage = false;
                 return View();
             }
+            var packageStock = await _db.Stocks
+              .Include(s => s.Product)
+              .Include(s => s.Package)
+              .ThenInclude(p => p.Cell)  // ← Загружаем ячейку, где стоит упаковка
+              .FirstOrDefaultAsync(s => s.Barcode == searchQuery && s.PackageId != null && s.Quantity > 0);
 
+            if (packageStock != null && packageStock.Package != null)
+            {
+                ViewBag.ResultType = "product";
+                ViewBag.ProductName = packageStock.Product?.Name;
+                ViewBag.ProductSku = packageStock.Product?.Sku;
+                ViewBag.ProductDescription = packageStock.Product?.Description;
+                ViewBag.CellAddress = packageStock.Package.Cell?.Address ?? "В упаковке (не размещена)";
+                ViewBag.Quantity = packageStock.Quantity;
+                ViewBag.Barcode = packageStock.Barcode;
+                ViewBag.SearchQuery = searchQuery;
+                ViewBag.IsInPackage = true;
+                ViewBag.PackageBarcode = packageStock.Package.Barcode;
+                return View();
+            }
             // 2. Пробуем найти как ячейку
             var cell = await _db.Cells
                 .Include(c => c.Warehouse)
@@ -3054,9 +3252,16 @@ namespace WMS.Terminal.Controllers
                     .Where(s => s.CellId == cell.Id && s.Quantity > 0)
                     .ToListAsync();
 
+                var packagesInCell = await _db.Packages
+                .Include(p => p.Items)
+                .ThenInclude(i => i.Product)
+                .Where(p => p.CellId == cell.Id)
+                .ToListAsync();
+
                 ViewBag.ResultType = "cell";
                 ViewBag.CellAddress = cell.Address;
                 ViewBag.Products = stocksInCell;
+                ViewBag.Packages = packagesInCell;
                 ViewBag.SearchQuery = searchQuery;
                 return View();
             }
@@ -3210,7 +3415,7 @@ namespace WMS.Terminal.Controllers
             HttpContext.Session.SetInt32("TransferProductId", stock.ProductId);
             HttpContext.Session.SetString("TransferProductName", stock.Product?.Name);
             HttpContext.Session.SetString("TransferProductSku", stock.Product?.Sku);
-            HttpContext.Session.SetInt32("TransferCellId", stock.CellId);
+            HttpContext.Session.SetInt32("TransferCellId", stock.CellId.Value);
             HttpContext.Session.SetString("TransferCellAddress", stock.Cell?.Address);
             HttpContext.Session.SetInt32("TransferMaxQuantity", stock.Quantity);
 
@@ -3251,6 +3456,59 @@ namespace WMS.Terminal.Controllers
             }
 
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeletePackage(int id)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var warehouseId = HttpContext.Session.GetInt32("WarehouseId");
+            var userName = HttpContext.Session.GetString("UserName");
+
+            if (userId == null) return RedirectToAction("Login");
+            if (warehouseId == null) return RedirectToAction("SelectWarehouse");
+
+            var package = await _db.Packages
+                .Include(p => p.Items)
+                .ThenInclude(i => i.Product)
+                .Include(p => p.Cell)
+                .FirstOrDefaultAsync(p => p.Id == id && p.WarehouseId == warehouseId);
+
+            if (package == null)
+            {
+                TempData["PackageError"] = "Упаковка не найдена";
+                return RedirectToAction("Packages");
+            }
+
+            // Проверяем, есть ли товары в упаковке
+            if (package.Items.Any())
+            {
+                var itemsList = string.Join(", ", package.Items.Select(i => $"{i.Product?.Name} x{i.Quantity}"));
+                TempData["PackageError"] = $"❌ Нельзя удалить упаковку '{package.Barcode}', так как в ней есть товары: {itemsList}. Сначала извлеките все товары.";
+                return RedirectToAction("Packages");
+            }
+
+            // Удаляем упаковку (она пуста)
+            _db.Packages.Remove(package);
+            await _db.SaveChangesAsync();
+
+            // Логируем
+            if (_db.OperationLogs != null)
+            {
+                _db.OperationLogs.Add(new OperationLog
+                {
+                    UserId = userId ?? 0,
+                    UserName = userName ?? "Неизвестный",
+                    OperationType = "Удаление упаковки",
+                    Details = $"Удалена пустая упаковка '{package.Barcode}'",
+                    WarehouseId = warehouseId,
+                    Barcode = package.Barcode
+                });
+                await _db.SaveChangesAsync();
+            }
+
+            TempData["PackageSuccess"] = $"✅ Упаковка '{package.Barcode}' успешно удалена!";
+            return RedirectToAction("Packages");
         }
         //  ПРИЁМКА УПАКОВКИ
 
@@ -3307,6 +3565,8 @@ namespace WMS.Terminal.Controllers
         public async Task<IActionResult> ReceivePackage(int receiptId, int cellId)
         {
             var warehouseId = HttpContext.Session.GetInt32("WarehouseId");
+            var userId = HttpContext.Session.GetInt32("userId");
+            var userName = HttpContext.Session.GetString("userName");
             if (warehouseId == null) return RedirectToAction("SelectWarehouse");
 
             var receipt = await _db.ExpectedReceipts
@@ -3347,6 +3607,20 @@ namespace WMS.Terminal.Controllers
             receipt.ReceivedQuantity = 1;
 
             await _db.SaveChangesAsync();
+
+            if (_db.OperationLogs != null)
+            {
+                _db.OperationLogs.Add(new OperationLog
+                {
+                    UserId = userId ?? 0,
+                    UserName = userName ?? "Неизвестный",
+                    OperationType = "Приёмка упаковки",
+                    Details = $"Принята упаковка '{package.Barcode}' с {package.Items.Count} товарами в ячейку {cellAddress}",
+                    WarehouseId = warehouseId,
+                    Barcode = package.Barcode
+                });
+                await _db.SaveChangesAsync();
+            }
 
             TempData["PackageSuccess"] = $"✅ Упаковка '{package.Barcode}' принята и размещена в ячейке {cellId}!";
             return RedirectToAction("Packages");
@@ -3426,14 +3700,13 @@ namespace WMS.Terminal.Controllers
 
                 await _db.SaveChangesAsync();
 
-                // Логируем
                 if (_db.OperationLogs != null)
                 {
                     _db.OperationLogs.Add(new OperationLog
                     {
                         UserId = userId ?? 0,
                         UserName = userName ?? "Неизвестный",
-                        OperationType = "Transfer",
+                        OperationType = "Перемещение упаковки между складами",
                         Details = $"Перемещена упаковка '{package.Barcode}' с {package.Items.Count} товарами со склада {srcWarehouseName} на склад {targetWarehouse.Name}",
                         WarehouseId = fromWarehouseId,
                         Barcode = package.Barcode

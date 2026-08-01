@@ -206,7 +206,7 @@
                     <tr>
                         <th>№</th>
                         <th>Товар</th>
-                        <th>Ячейка</th>
+                        <th>Местоположение</th>
                         <th>Кол-во</th>
                         <th style="min-width: 150px;">🏷️ Штрих-код</th>
                     </tr>
@@ -223,7 +223,20 @@
                                 <div class="product-name">@stock.Product?.Name</div>
                                 <div class="product-sku">Артикул: @stock.Product?.Sku</div>
                             </td>
-                            <td><span class="cell"> @stock.Cell?.Address</span></td>
+                            <td>
+                                @if (stock.Cell != null)
+                                {
+                                    <span class="cell">📍 @stock.Cell.Address</span>
+                                }
+                                else if (stock.Package != null)
+                                {
+                                    <span class="cell package">📦 В упаковке @stock.Package.Barcode</span>
+                                }
+                                else
+                                {
+                                    <span style="color:#999;">Не размещён</span>
+                                }
+                            </td>
                             <td class="quantity">@stock.Quantity шт</td>
                             <td>
                                 @if (!string.IsNullOrEmpty(stock.Barcode))
