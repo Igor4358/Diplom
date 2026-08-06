@@ -275,29 +275,22 @@
         </div>
     }
     <script>
-        // Универсальная функция копирования текста в буфер обмена
         function copyBarcode(text, element) {
-            // Пробуем через Clipboard API
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(text)
                     .then(() => {
                         showCopyFeedback(element, '✅ Скопировано!');
                     })
                     .catch(() => {
-                        // Если Clipboard API не сработал — используем fallback
                         fallbackCopy(text, element);
                     });
             } else {
-                // Fallback для старых браузеров
                 fallbackCopy(text, element);
             }
         }
-        // Показываем всплывающую подсказку
         function showCopyFeedback(element, message) {
-            // Находим родительский контейнер
             const container = element.closest('.barcode-container') || element.closest('.barcode-wrapper') || element.parentElement;
 
-            // Создаём временную подсказку
             const tooltip = document.createElement('span');
             tooltip.textContent = message;
             tooltip.style.cssText = `
@@ -314,7 +307,6 @@
                 z-index: 1000;
             `;
 
-            // Добавляем стили для анимации
             if (!document.getElementById('copyTooltipStyles')) {
                 const style = document.createElement('style');
                 style.id = 'copyTooltipStyles';
@@ -329,7 +321,6 @@
                 document.head.appendChild(style);
             }
 
-            // Позиционируем подсказку
             const rect = element.getBoundingClientRect();
             tooltip.style.position = 'fixed';
             tooltip.style.top = (rect.top - 30) + 'px';
@@ -337,7 +328,6 @@
 
             document.body.appendChild(tooltip);
 
-            // Удаляем подсказку через 1.5 секунды
             setTimeout(() => {
                 if (tooltip.parentNode) tooltip.remove();
             }, 1500);

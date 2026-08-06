@@ -32,6 +32,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcQWRkRXhwZWN0ZWRSZWNlaXB0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/AddRoute.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcQWRkUm91dGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/AddToPackage.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcQWRkVG9QYWNrYWdlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
@@ -88,6 +92,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcRWRpdENpdHkuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/EditRoute.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcRWRpdFJvdXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/EditUser.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcRWRpdFVzZXIuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
@@ -126,6 +134,14 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/ManageCities.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcTWFuYWdlQ2l0aWVzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/ManageCitiesAndRoutes.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcTWFuYWdlQ2l0aWVzQW5kUm91dGVzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/ManageRoutes.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVybWluYWxcTWFuYWdlUm91dGVzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Ингвар/Diplom/Diplom/Views/Terminal/ManageUsers.cshtml]

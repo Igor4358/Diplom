@@ -191,8 +191,8 @@
             font-weight: bold;
             color: #666;
             flex-shrink: 0;
-            min-width: 90px;
-            max-width: 90px;
+            min-width: 145px;
+            max-width: 145px;
             white-space: nowrap;
             padding-top: 1px;
         }
@@ -286,11 +286,11 @@
                     <div class="info-value" style="font-family: monospace; color: #667eea;">@ViewBag.Barcode</div>
                 </div>
                 <div class="info-row">
-                    <div class="info-label">Местоположение:</div>
+                    <div class="info-label">Местоположение: </div>
                     <div class="info-value">
                         @if (ViewBag.IsInPackage == true)
                         {
-                            <div style="color: #9c27b0; font-weight: bold;margin-bottom: 10px;margin-top: 10px; padding-left: 50px;">
+                            <div style="color: #9c27b0; font-weight: bold;margin-bottom: 10px;margin-top: 10px; padding-left: 10px;">
                                 📦 В упаковке @ViewBag.PackageBarcode
                             </div>
                             <div style="font-size: 12px; color: #999; display: block;margin-top: 4px; padding-left: 40px;">
@@ -386,7 +386,6 @@
     </div>
 
     <script>
-        // === СКАНЕР ===
         let html5Scanner = null;
         let isScanning = false;
         const scanBtn = document.getElementById('scanButton');

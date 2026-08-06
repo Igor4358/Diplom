@@ -8,24 +8,24 @@ namespace WMS.Terminal.Models
         public int Id { get; set; }
 
         [Required]
-        public string OrderNumber { get; set; } = string.Empty;  // Номер заказа, например "SO-2026-001"
+        public string OrderNumber { get; set; } = string.Empty;  
 
         [Required]
-        public int ProductId { get; set; }  // Какой товар заказан
+        public int ProductId { get; set; }  
 
-        public int Quantity { get; set; }  // Сколько заказано
+        public int Quantity { get; set; }  
 
         public int CollectedQuantity { get; set; } = 0;  // Сколько уже собрано
 
-        public string Status { get; set; } = "Pending";  // Pending, Partial, Completed, лжидаемый, частичто завершён и завершён
+        public string Status { get; set; } = "Pending";  // Pending, Partial, Completed, ожидаемый, частично завершён и завершён
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public DateTime? CompletedAt { get; set; }
 
-        public int? TargetWarehouseId { get; set; }  // ID склада-получателя (1-1000)
+        public int? TargetWarehouseId { get; set; }  
 
-        public string TargetWarehouseName { get; set; } = string.Empty;  // Название склада-получателя
+        public string TargetWarehouseName { get; set; } = string.Empty;  
 
         public string? Notes { get; set; }  // Примечания
 

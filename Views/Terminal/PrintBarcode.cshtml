@@ -8,9 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Печать штрих-кода - ТСД Автосклад</title>
 
-    <!-- Подключаем JsBarcode для генерации штрих-кода -->
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
-    <!-- Подключаем сканер -->
     <script src="https://unpkg.com/html5-qrcode"></script>
 
     <style>
@@ -175,7 +173,6 @@
                 transform: scale(0.98);
             }
 
-        /* Стили для этикетки */
         .label-container {
             margin-top: 20px;
             padding: 20px;
@@ -283,6 +280,17 @@
             .back-btn, .print-btn, .scan-btn, .submit-btn, .stop-scan-btn, #reader, .scan-input {
                 display: none !important;
             }
+
+            .package-info {
+                color: #7b1fa2;
+                font-weight: bold;
+            }
+
+            .package-items {
+                font-size: 12px;
+                color: #666;
+                margin-top: 5px;
+            }
         }
     </style>
 </head>
@@ -290,7 +298,7 @@
     <div class="container">
         <div class="card">
             <h2>🏷️ Печать штрих-кода</h2>
-            <div class="subtitle">Найдите товар и напечатайте этикетку</div>
+            <div class="subtitle">Найдите товар или упаковку и напечатайте этикетку</div>
 
             @if (ViewBag.Error != null)
             {
@@ -301,37 +309,43 @@
                 <div class="success">✅ @TempData["Success"]</div>
             }
 
-            <!-- Форма поиска -->
             <form method="post" id="searchForm" class="no-print">
-                <input type="text" name="barcode" id="searchBarcode" class="scan-input" placeholder="Штрих-код товара" autofocus>
+                <input type="text" name="barcode" id="searchBarcode" class="scan-input" placeholder="Штрих-код товара или упаковки" autofocus>
                 <button type="button" id="scanButton" class="scan-btn">📷 Сканировать штрих-код</button>
                 <div id="reader" style="display:none;"></div>
                 <button type="button" id="stopScanBtn" class="stop-scan-btn">⏹ Остановить сканер</button>
                 <button type="submit" class="submit-btn">🔍 Найти</button>
             </form>
 
-            <!-- Результат поиска и этикетка -->
             @if (ViewBag.Found == true)
             {
                 <div class="label-container" id="labelContainer">
-                    <div class="product-name">@ViewBag.ProductName</div>
-                    <div class="product-sku">Артикул: @ViewBag.ProductSku</div>
-                    <div class="cell-address">📍 Ячейка: @ViewBag.CellAddress</div>
+                    @if (ViewBag.IsPackage == true)
+                    {
+                        <div class="product-name" style="color: #7b1fa2;">📦 @ViewBag.ProductName</div>
+                        <div class="package-info">Упаковка</div>
+                        <div class="package-items">Содержит: @ViewBag.PackageItems</div>
+                        <div class="package-items">Всего товаров: @ViewBag.PackageItemsCount шт</div>
+                    }
+                    else
+                    {
+                        <div class="product-name">@ViewBag.ProductName</div>
+                        <div class="product-sku">Артикул: @ViewBag.ProductSku</div>
+                    }
+                    <div class="cell-address">📍 @ViewBag.CellAddress</div>
                     <div style="font-size: 14px; color: #4caf50;">Количество: @ViewBag.Quantity шт</div>
 
-                    <!-- Генерируем штрих-код -->
+                    <!-- Генерируем штрих-код???? -->
                     <svg id="barcodeImage" class="barcode-image"></svg>
                     <div class="barcode-number">@ViewBag.Barcode</div>
                 </div>
 
-                <!-- Кнопки действий -->
                 <button class="print-btn no-print" onclick="printLabel()">🖨️ Печать этикетки</button>
                 <button class="print-btn no-print" style="background: #ff9800; margin-top: 10px;" onclick="location.href='/Terminal/PrintBarcode'">
                     🔄 Новый поиск
                 </button>
 
                 <script>
-                    // Генерируем штрих-код
                     try {
                         JsBarcode("#barcodeImage", "@ViewBag.Barcode", {
                             format: "CODE128",
@@ -362,7 +376,6 @@
     </div>
 
     <script>
-        // === СКАНЕР ===
         let html5Scanner = null;
         let isScanning = false;
         const scanBtn = document.getElementById('scanButton');
@@ -436,7 +449,6 @@
         });
         stopBtn.addEventListener('click', stopScanner);
 
-        // Поддержка Enter
         inputField.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 const form = this.closest('form');
@@ -444,7 +456,6 @@
             }
         });
 
-        // Останавливаем сканер при уходе со страницы
         window.addEventListener('beforeunload', stopScanner);
         console.log('✅ Сканер для печати загружен');
     </script>

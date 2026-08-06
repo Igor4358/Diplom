@@ -1,4 +1,4 @@
-namespace Diplom.Models
+namespace WMS.Terminal.Models
 {
     public class ErrorViewModel
     {

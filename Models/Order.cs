@@ -9,7 +9,7 @@ namespace WMS.Terminal.Models
 
         [Required]
         [MaxLength(50)]
-        public string OrderNumber { get; set; } = string.Empty;  // "126083522"
+        public string OrderNumber { get; set; } = string.Empty;  
 
         [Required]
         [MaxLength(20)]

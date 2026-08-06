@@ -1,12 +1,14 @@
 ﻿@{
     Layout = null;
 }
+@model WMS.Terminal.Models.Route
+
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <title>Добавить поставку - ТСД Автосклад</title>
+    <title>Редактировать маршрут - ТСД Автосклад</title>
     <style>
         * {
             margin: 0;
@@ -54,7 +56,6 @@
             padding: 12px;
             border-radius: 12px;
             margin-bottom: 15px;
-            font-size: 14px;
         }
 
         .form-group {
@@ -70,7 +71,7 @@
                 font-size: 14px;
             }
 
-            .form-group input {
+            .form-group input, .form-group select {
                 width: 100%;
                 padding: 14px;
                 font-size: 16px;
@@ -79,7 +80,7 @@
                 background: #fafafa;
             }
 
-                .form-group input:focus {
+                .form-group input:focus, .form-group select:focus {
                     outline: none;
                     border-color: #667eea;
                     background: white;
@@ -97,10 +98,6 @@
             margin-top: 10px;
         }
 
-            .btn-primary:active {
-                transform: scale(0.98);
-            }
-
         .btn-secondary {
             width: 100%;
             padding: 14px;
@@ -113,7 +110,7 @@
             margin-top: 10px;
         }
 
-            .btn-secondary:active {
+            .btn-primary:active, .btn-secondary:active {
                 transform: scale(0.98);
             }
 
@@ -127,8 +124,8 @@
 <body>
     <div class="container">
         <div class="card">
-            <h2>➕ Новая ожидаемая поставка</h2>
-            <div class="subtitle">Добавьте товар, который должен поступить на склад</div>
+            <h2>✏️ Редактировать маршрут</h2>
+            <div class="subtitle">Измените данные маршрута</div>
 
             @if (ViewBag.Error != null)
             {
@@ -136,30 +133,47 @@
             }
 
             <form method="post">
+                <input type="hidden" name="id" value="@Model.Id">
+
                 <div class="form-group">
-                    <label>Артикул (SKU)</label>
-                    <input type="text" name="sku" placeholder="Например: WA22724" required>
+                    <label>Откуда</label>
+                    <select name="fromWarehouseId" required>
+                        @foreach (var warehouse in ViewBag.Warehouses)
+                        {
+                            <option value="@warehouse.Id" selected="@(Model.FromWarehouseId == warehouse.Id)">@warehouse.Name</option>
+                        }
+                    </select>
                 </div>
 
                 <div class="form-group">
-                    <label>Название товара</label>
-                    <input type="text" name="productName" placeholder="Например: Омыватель зима 4л" required>
+                    <label>Куда</label>
+                    <select name="toWarehouseId" required>
+                        @foreach (var warehouse in ViewBag.Warehouses)
+                        {
+                            <option value="@warehouse.Id" selected="@(Model.ToWarehouseId == warehouse.Id)">@warehouse.Name</option>
+                        }
+                    </select>
                 </div>
 
                 <div class="form-group">
-                    <label>Количество</label>
-                    <input type="number" name="quantity" value="1" min="1">
+                    <label>Время в пути (дни)</label>
+                    <input type="number" name="travelDays" value="@Model.TravelDays" min="1" required>
                 </div>
 
                 <div class="form-group">
-                    <label>Поставщик (необязательно)</label>
-                    <input type="text" name="supplier" placeholder="Например: ООО АвтоПлюс">
+                    <label>Расстояние (км, необязательно)</label>
+                    <input type="number" name="distanceKm" value="@Model.DistanceKm" placeholder="Например: 700" step="0.1" min="0">
                 </div>
 
-                <button type="submit" class="btn-primary">✅ Добавить поставку</button>
+                <div class="form-group">
+                    <label>Описание (необязательно)</label>
+                    <input type="text" name="description" value="@Model.Description" placeholder="Например: Автотранспорт, трасса М10">
+                </div>
+
+                <button type="submit" class="btn-primary">✅ Сохранить</button>
             </form>
 
-            <button class="btn-secondary" onclick="location.href='/Terminal/ExpectedReceipts'">← Назад</button>
+            <button class="btn-secondary" onclick="location.href='/Terminal/ManageRoutes'">← Назад</button>
         </div>
     </div>
 </body>

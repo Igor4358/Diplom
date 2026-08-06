@@ -1,8 +1,8 @@
 using System.Diagnostics;
-using Diplom.Models;
 using Microsoft.AspNetCore.Mvc;
+using WMS.Terminal.Models;
 
-namespace Diplom.Controllers
+namespace WMS.Terminal.Controllers
 {
     public class HomeController : Controller
     {

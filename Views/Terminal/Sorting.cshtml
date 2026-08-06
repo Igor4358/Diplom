@@ -177,9 +177,6 @@
     <div class="container">
         <div class="card">
             <div style="margin: 15px 0; display: flex; gap: 10px; justify-content: center;">
-                <button type="button" id="toggleType" class="scan-btn" style="background: #667eea; padding: 10px 20px;">
-                    🔄 Искать: <span id="searchTypeLabel">Товар</span>
-                </button>
             </div>
             @if (TempData["SortingSuccess"] != null)
             {
@@ -191,7 +188,7 @@
             }
 
             <form method="post" asp-action="FindProductForSorting" id="sortingForm">
-                <input type="text" name="scannedSku" id="scannedSku" class="scan-input" placeholder="Штрихкод товара" autofocus>
+                <input type="text" name="scannedSku" id="scannedSku" class="scan-input" placeholder="Штрихкод товара или упаковки" autofocus>
                 <button type="button" id="scanButton" class="scan-btn">📷 Сканировать штрих-код</button>
                 <div id="reader" style="display:none;"></div>
                 <button type="button" id="stopScanBtn" class="stop-scan-btn">⏹ Остановить сканер</button>

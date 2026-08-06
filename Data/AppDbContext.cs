@@ -25,6 +25,7 @@ namespace WMS.Terminal.Data
         public DbSet<City> Cities { get; set; }
         public DbSet<PackageItem> PackageItems { get; set; }
         public DbSet<OperationLog> OperationLogs { get; set; }
+        public DbSet<Models.Route> Routes { get; set; }
         public DbSet<ExpectedShipment> ExpectedShipment { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -35,6 +36,10 @@ namespace WMS.Terminal.Data
             modelBuilder.Entity<Stock>()
                 .HasIndex(s => new { s.ProductId, s.CellId })
                 .IsUnique();
+
+            modelBuilder.Entity<Models.Route>()
+      .HasIndex(r => new { r.FromWarehouseId, r.ToWarehouseId })
+      .IsUnique();
         }
     }
 }

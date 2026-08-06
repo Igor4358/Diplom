@@ -20,7 +20,6 @@
             padding: 20px;
         }
 
-        /* ========== HEADER ========== */
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             margin: -20px -20px 20px -20px;
@@ -115,7 +114,6 @@
                 transform: scale(0.95);
             }
 
-        /* ========== МЕНЮ ========== */
         .menu-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -124,7 +122,6 @@
             margin: 0 auto;
         }
 
-        /* На планшетах и ПК — 3 колонки */
         @@media (min-width: 600px) {
             .menu-grid
 
@@ -136,7 +133,6 @@
 
         }
 
-        /* На больших экранах — 4 колонки */
         @@media (min-width: 1024px) {
             .menu-grid
 
@@ -164,7 +160,6 @@
                 background: #f0f0f0;
             }
 
-        /* На ПК — hover эффект */
         @@media (hover: hover) {
             .menu-btn:hover
 
@@ -187,7 +182,6 @@
             color: #333;
         }
 
-        /* Адаптация для телефонов */
         @@media (max-width: 480px) {
             .menu-btn
 
@@ -294,14 +288,15 @@
             <span class="menu-icon">📋</span>
             <span class="menu-title">Все товары</span>
         </button>
-        <button class="menu-btn" onclick="location.href='/Terminal/CellContents'">
-            <span class="menu-icon">📦</span>
-            <span class="menu-title">Содержимое ячейки</span>
-        </button>
         <button class="menu-btn" onclick="location.href='/Terminal/ExpectedReceipts'">
             <span class="menu-icon">📋</span>
             <span class="menu-title">Ожидаемые поставки</span>
         </button>
+        <button class="menu-btn" onclick="location.href='/Terminal/CellContents'">
+            <span class="menu-icon">📦</span>
+            <span class="menu-title">Содержимое ячейки</span>
+        </button>
+
         <button class="menu-btn" onclick="location.href='/Terminal/TransferBetweenWarehouses'">
             <span class="menu-icon">🔄</span>
             <span class="menu-title">Перемещение между складами</span>
@@ -338,7 +333,7 @@
 
         <button class="menu-btn" onclick="location.href='/Terminal/ExpectedShipments'">
             <span class="menu-icon">🚚</span>
-            <span class="menu-title">Ожидаемые поставки</span>
+            <span class="menu-title">Ожидаемые поставки по накладной</span>
         </button> -->
         <button class="menu-btn" onclick="location.href='/Terminal/WarehouseDashboard'">
             <span class="menu-icon">📊</span>

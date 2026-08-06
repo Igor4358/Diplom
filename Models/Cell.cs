@@ -3,7 +3,7 @@
     public class Cell
     {
         public int Id { get; set; }
-        public string Address { get; set; } = string.Empty;  // "406a231"
+        public string Address { get; set; } = string.Empty;  
         public int WarehouseId { get; set; }
         public bool IsLocked { get; set; } = false;
 

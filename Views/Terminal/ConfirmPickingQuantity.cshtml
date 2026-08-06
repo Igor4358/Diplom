@@ -213,7 +213,6 @@
             document.getElementById('confirmForm').submit();
         }
 
-        // Ограничиваем ввод вручную
         input.addEventListener('change', function() {
             if (parseInt(this.value) > maxQty) this.value = maxQty;
             if (parseInt(this.value) < 1) this.value = 1;

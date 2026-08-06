@@ -4,14 +4,11 @@ using WMS.Terminal.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Подключаем PostgreSQL
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// 2. Добавляем MVC (контроллеры и представления)
 builder.Services.AddControllersWithViews();
 
-// 3. Сессии (для хранения ID пользователя после логина)
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
@@ -22,26 +19,23 @@ builder.Services.AddSession(options =>
 
 var app = builder.Build();
 
-// 4. Middleware 
 app.UseHttpsRedirection();
-app.UseStaticFiles();       // для CSS, JS, PWA файлов
+app.UseStaticFiles();       
 app.UseRouting();
 app.UseSession();          
 app.UseAuthorization();
 
-// 5. Маршруты
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Terminal}/{action=Login}/{id?}");
 
-// 6. Инициализация базы данных и тестовых данных
+
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
     dbContext.Database.EnsureCreated();
 
-    // ТЕСТОВЫЙ СКЛАД 
     if (!dbContext.Warehouses.Any())
     {
         var warehouse = new Warehouse { Name = "406" };
@@ -50,7 +44,6 @@ using (var scope = app.Services.CreateScope())
         Console.WriteLine("Склад 406 создан");
     }
 
-    // ТЕСТОВЫЕ ЯЧЕЙКИ 
     if (!dbContext.Cells.Any())
     {
         var warehouse = dbContext.Warehouses.First();
@@ -137,7 +130,6 @@ using (var scope = app.Services.CreateScope())
         }
     }
 
-    // === СОЗДАЁМ ОСТАТКИ (товары на ячейках) ===
     if (!dbContext.Stocks.Any())
     {
         var product1 = dbContext.Products.First(p => p.Sku == "WA22724");
@@ -153,7 +145,6 @@ using (var scope = app.Services.CreateScope())
         Console.WriteLine("Созданы остатки товаров на ячейках");
     }
 
-    // === СОЗДАЁМ ТЕСТОВОГО ПОЛЬЗОВАТЕЛЯ (PIN: 1234) ===
     if (!dbContext.Users.Any(u => u.PinCode == "1234"))
     {
         var warehouse = dbContext.Warehouses.First();
@@ -167,7 +158,6 @@ using (var scope = app.Services.CreateScope())
         dbContext.SaveChanges();
         Console.WriteLine("Пользователь с PIN 1234 создан");
     }
-    // === СОЗДАЁМ ТЕСТОВЫЙ ЗАКАЗ ДЛЯ СБОРКИ ===
     if (!dbContext.Orders.Any())
     {
         var product = dbContext.Products.FirstOrDefault();
@@ -208,7 +198,6 @@ using (var scope = app.Services.CreateScope())
             Console.WriteLine("Тестовый заказ 126083522 создан");
         }
     }
-    // === ВЫВОДИМ ИНФОРМАЦИЮ В КОНСОЛЬ (для отладки) ===
     var users = dbContext.Users.ToList();
     Console.WriteLine($"\n=== ИТОГО В БАЗЕ ДАННЫХ ===");
     Console.WriteLine($"Пользователей: {users.Count}");

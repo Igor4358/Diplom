@@ -4,6 +4,7 @@
     {
         public List<BarcodeProduct> Products { get; set; } = new();
         public List<BarcodeCell> Cells { get; set; } = new();
+        public List<BarcodePackage> Packages { get; set; } = new();
     }
 
     public class BarcodeProduct
@@ -16,7 +17,16 @@
 
     public class BarcodeCell
     {
-        public string Address { get; set; } = string.Empty;
-        public bool IsOccupied { get; set; }
+         public string Address { get; set; } = string.Empty;
+         public bool IsOccupied { get; set; }
+    }
+    public class BarcodePackage
+    {
+        public string Barcode { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string? CellAddress { get; set; }
+        public int ItemsCount { get; set; }
+        public DateTime CreatedAt { get; set; }
+
     }
 }

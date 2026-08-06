@@ -234,6 +234,47 @@
     {
         <div class="empty">📭 Нет ячеек на складе</div>
     }
+    <div class="section-title" style="border-bottom-color: #9c27b0;">📦 Упаковки на складе</div>
+    @if (Model.Packages.Any())
+    {
+        <div class="barcode-grid">
+            @foreach (var pkg in Model.Packages)
+            {
+                <div class="barcode-card" style="border: 2px solid #e8d5f5;">
+                    <div class="barcode-label" style="color: #7b1fa2;">
+                        📦 @pkg.Name
+                        <span class="package-tag">@pkg.ItemsCount товаров</span>
+                    </div>
+                    <svg id="barcode-pkg-@pkg.Barcode" class="barcode-image"></svg>
+                    <div class="barcode-code" style="color: #7b1fa2;">
+                        Штрих-код: @pkg.Barcode
+                    </div>
+                    <div style="font-size: 12px; color: @(string.IsNullOrEmpty(pkg.CellAddress) ? "#ff9800" : "#4caf50");">
+                        @(string.IsNullOrEmpty(pkg.CellAddress) ? "⚠️ Не размещена" : $"📍 {pkg.CellAddress}")
+                    </div>
+                    <div style="font-size: 11px; color: #999; margin-top: 5px;">
+                        📅 @pkg.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+                    </div>
+                    <script>
+                        try {
+                            JsBarcode("#barcode-pkg-@pkg.Barcode", "@pkg.Barcode", {
+                                format: "CODE128",
+                                width: 2,
+                                height: 80,
+                                displayValue: true,
+                                fontSize: 14,
+                                margin: 10
+                            });
+                        } catch(e) { console.log('Ошибка:', e); }
+                    </script>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="empty">📭 Нет упаковок на складе</div>
+    }
     <script>
         function copyBarcode(text, element) {
             if (navigator.clipboard && navigator.clipboard.writeText) {

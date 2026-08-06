@@ -130,6 +130,14 @@
             {
                 <div class="error">❌ @TempData["TransferError"]</div>
             }
+            @if (TempData["PackageSuccess"] != null)
+            {
+                <div class="success">✅ @TempData["PackageSuccess"]</div>
+            }
+            @if (TempData["PackageError"] != null)
+            {
+                <div class="error">❌ @TempData["PackageError"]</div>
+            }
 
             <div class="info-text">
                 <strong>Инструкция:</strong>
