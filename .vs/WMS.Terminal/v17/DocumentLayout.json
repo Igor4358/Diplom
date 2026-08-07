@@ -3,12 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\views\\terminal\\transferscancell.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:views\\terminal\\transferscancell.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\controllers\\terminalcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:controllers\\terminalcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\views\\terminal\\operationlogs.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:views\\terminal\\operationlogs.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\views\\terminal\\transferscancell.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:views\\terminal\\transferscancell.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\views\\admin\\manageroutes.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
@@ -187,10 +191,6 @@
       "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:views\\terminal\\packages.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\views\\terminal\\operationlogs.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:views\\terminal\\operationlogs.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|c:\\users\\\u0438\u043D\u0433\u0432\u0430\u0440\\diplom\\diplom\\views\\terminal\\managewarehouses.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{AA3D460A-CE29-494C-8E50-36DCE3BBFE7C}|WMS.Terminal.csproj|solutionrelative:views\\terminal\\managewarehouses.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
@@ -354,7 +354,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Bookmark",
@@ -370,46 +370,33 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "TransferScanCell.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\TransferScanCell.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\TransferScanCell.cshtml",
               "ToolTip": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\TransferScanCell.cshtml",
               "RelativeToolTip": "Views\\Terminal\\TransferScanCell.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAGAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAOAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2026-08-07T16:01:17.685Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "ManageRoutes.cshtml",
-              "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Admin\\ManageRoutes.cshtml",
-              "RelativeDocumentMoniker": "Views\\Admin\\ManageRoutes.cshtml",
-              "ToolTip": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Admin\\ManageRoutes.cshtml",
-              "RelativeToolTip": "Views\\Admin\\ManageRoutes.cshtml",
-              "ViewState": "AgIAALkAAAAAAAAAAAAAwNYAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-08-07T13:32:10.088Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "TerminalController.cs",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Controllers\\TerminalController.cs",
               "RelativeDocumentMoniker": "Controllers\\TerminalController.cs",
               "ToolTip": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Controllers\\TerminalController.cs",
               "RelativeToolTip": "Controllers\\TerminalController.cs",
-              "ViewState": "AgIAABcGAAAAAAAAAAAAACEGAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAA4OAAAAAAAAAAAAABgOAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-08-06T15:23:17.78Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "AddRoute.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Admin\\AddRoute.cshtml",
               "RelativeDocumentMoniker": "Views\\Admin\\AddRoute.cshtml",
@@ -422,7 +409,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "ManageCells.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Admin\\ManageCells.cshtml",
               "RelativeDocumentMoniker": "Views\\Admin\\ManageCells.cshtml",
@@ -435,7 +422,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "ManageCities.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Admin\\ManageCities.cshtml",
               "RelativeDocumentMoniker": "Views\\Admin\\ManageCities.cshtml",
@@ -448,7 +435,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "AddWarehouse.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Admin\\AddWarehouse.cshtml",
               "RelativeDocumentMoniker": "Views\\Admin\\AddWarehouse.cshtml",
@@ -461,7 +448,33 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "OperationLogs.cshtml",
+              "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\OperationLogs.cshtml",
+              "RelativeDocumentMoniker": "Views\\Terminal\\OperationLogs.cshtml",
+              "ToolTip": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\OperationLogs.cshtml",
+              "RelativeToolTip": "Views\\Terminal\\OperationLogs.cshtml",
+              "ViewState": "AgIAAHAAAAAAAAAAAAAAAHgAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-08-06T14:42:27.722Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 3,
+              "Title": "ManageRoutes.cshtml",
+              "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Admin\\ManageRoutes.cshtml",
+              "RelativeDocumentMoniker": "Views\\Admin\\ManageRoutes.cshtml",
+              "ToolTip": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Admin\\ManageRoutes.cshtml",
+              "RelativeToolTip": "Views\\Admin\\ManageRoutes.cshtml",
+              "ViewState": "AgIAALkAAAAAAAAAAAAAwNYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-08-07T13:32:10.088Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "ManageCitiesAndRoutes.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Admin\\ManageCitiesAndRoutes.cshtml",
               "RelativeDocumentMoniker": "Views\\Admin\\ManageCitiesAndRoutes.cshtml",
@@ -474,7 +487,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "ManageUsers.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Admin\\ManageUsers.cshtml",
               "RelativeDocumentMoniker": "Views\\Admin\\ManageUsers.cshtml",
@@ -487,7 +500,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 10,
               "Title": "EditRoute.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Admin\\EditRoute.cshtml",
               "RelativeDocumentMoniker": "Views\\Admin\\EditRoute.cshtml",
@@ -500,7 +513,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 11,
               "Title": "AddUser.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Admin\\AddUser.cshtml",
               "RelativeDocumentMoniker": "Views\\Admin\\AddUser.cshtml",
@@ -513,7 +526,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 12,
               "Title": "AddCity.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Admin\\AddCity.cshtml",
               "RelativeDocumentMoniker": "Views\\Admin\\AddCity.cshtml",
@@ -526,7 +539,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 13,
               "Title": "AddExpectedReceipt.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\AddExpectedReceipt.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\AddExpectedReceipt.cshtml",
@@ -539,7 +552,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 14,
               "Title": "AddCell.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Admin\\AddCell.cshtml",
               "RelativeDocumentMoniker": "Views\\Admin\\AddCell.cshtml",
@@ -552,7 +565,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 15,
               "Title": "PickingOrders.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\PickingOrders.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\PickingOrders.cshtml",
@@ -565,7 +578,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 16,
               "Title": "PickingConfirmation.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\PickingConfirmation.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\PickingConfirmation.cshtml",
@@ -578,7 +591,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 17,
               "Title": "PackageContents.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\PackageContents.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\PackageContents.cshtml",
@@ -591,7 +604,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 18,
               "Title": "WarehouseDashboard.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\WarehouseDashboard.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\WarehouseDashboard.cshtml",
@@ -604,7 +617,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 19,
               "Title": "TransferBetweenWarehouses.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\TransferBetweenWarehouses.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\TransferBetweenWarehouses.cshtml",
@@ -617,7 +630,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 20,
               "Title": "ScanCellForPicking.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\ScanCellForPicking.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\ScanCellForPicking.cshtml",
@@ -629,7 +642,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 21,
               "Title": "StartPicking.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\StartPicking.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\StartPicking.cshtml",
@@ -641,7 +654,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 22,
               "Title": "Login.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\Login.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\Login.cshtml",
@@ -653,7 +666,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 23,
               "Title": "LinkBarcodeToExistingProduct.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\LinkBarcodeToExistingProduct.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\LinkBarcodeToExistingProduct.cshtml",
@@ -665,7 +678,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 24,
               "Title": "ScanProduct.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\ScanProduct.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\ScanProduct.cshtml",
@@ -677,7 +690,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 25,
               "Title": "ScanBarcodeForPicking.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\ScanBarcodeForPicking.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\ScanBarcodeForPicking.cshtml",
@@ -689,7 +702,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 26,
               "Title": "ReceiveByInvoice.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\ReceiveByInvoice.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\ReceiveByInvoice.cshtml",
@@ -701,7 +714,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 27,
               "Title": "PrintReceiptBarcode.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\PrintReceiptBarcode.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\PrintReceiptBarcode.cshtml",
@@ -714,7 +727,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 28,
               "Title": "PrintBarcode.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\PrintBarcode.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\PrintBarcode.cshtml",
@@ -726,7 +739,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 29,
               "Title": "AllBarcodes.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\AllBarcodes.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\AllBarcodes.cshtml",
@@ -738,7 +751,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 30,
               "Title": "AllProducts.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\AllProducts.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\AllProducts.cshtml",
@@ -750,7 +763,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
+              "DocumentIndex": 31,
               "Title": "HomeController.cs",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Controllers\\HomeController.cs",
               "RelativeDocumentMoniker": "Controllers\\HomeController.cs",
@@ -762,7 +775,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
+              "DocumentIndex": 32,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\appsettings.json",
               "RelativeDocumentMoniker": "appsettings.json",
@@ -774,7 +787,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 33,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
@@ -786,7 +799,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 33,
+              "DocumentIndex": 34,
               "Title": "_ViewStart.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\_ViewStart.cshtml",
               "RelativeDocumentMoniker": "Views\\_ViewStart.cshtml",
@@ -798,7 +811,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 35,
+              "DocumentIndex": 36,
               "Title": "TransferSelectQuantity.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\TransferSelectQuantity.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\TransferSelectQuantity.cshtml",
@@ -810,7 +823,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 36,
+              "DocumentIndex": 37,
               "Title": "TransferSelectProduct.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\TransferSelectProduct.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\TransferSelectProduct.cshtml",
@@ -822,7 +835,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 34,
+              "DocumentIndex": 35,
               "Title": "_ViewImports.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\_ViewImports.cshtml",
               "RelativeDocumentMoniker": "Views\\_ViewImports.cshtml",
@@ -834,7 +847,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 38,
+              "DocumentIndex": 39,
               "Title": "SelectWarehouse.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\SelectWarehouse.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\SelectWarehouse.cshtml",
@@ -847,7 +860,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 39,
+              "DocumentIndex": 40,
               "Title": "SelectTargetCell.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\SelectTargetCell.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\SelectTargetCell.cshtml",
@@ -859,7 +872,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 40,
+              "DocumentIndex": 41,
               "Title": "SelectCellForReceiving.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\SelectCellForReceiving.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\SelectCellForReceiving.cshtml",
@@ -872,7 +885,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 41,
+              "DocumentIndex": 42,
               "Title": "ScanCell.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\ScanCell.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\ScanCell.cshtml",
@@ -884,7 +897,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 37,
+              "DocumentIndex": 38,
               "Title": "Sorting.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\Sorting.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\Sorting.cshtml",
@@ -896,7 +909,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 43,
+              "DocumentIndex": 44,
               "Title": "ReceivePackagePlace.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\ReceivePackagePlace.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\ReceivePackagePlace.cshtml",
@@ -908,7 +921,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 42,
+              "DocumentIndex": 43,
               "Title": "ReceivePackage.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\ReceivePackage.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\ReceivePackage.cshtml",
@@ -920,7 +933,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 44,
+              "DocumentIndex": 45,
               "Title": "PlacePackage.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\PlacePackage.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\PlacePackage.cshtml",
@@ -932,7 +945,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 45,
+              "DocumentIndex": 46,
               "Title": "Packages.cshtml",
               "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\Packages.cshtml",
               "RelativeDocumentMoniker": "Views\\Terminal\\Packages.cshtml",
@@ -941,19 +954,6 @@
               "ViewState": "AgIAAHABAAAAAAAAAAAAwI0BAAAHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2026-08-06T14:43:10.929Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 46,
-              "Title": "OperationLogs.cshtml",
-              "DocumentMoniker": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\OperationLogs.cshtml",
-              "RelativeDocumentMoniker": "Views\\Terminal\\OperationLogs.cshtml",
-              "ToolTip": "C:\\Users\\\u0418\u043D\u0433\u0432\u0430\u0440\\Diplom\\Diplom\\Views\\Terminal\\OperationLogs.cshtml",
-              "RelativeToolTip": "Views\\Terminal\\OperationLogs.cshtml",
-              "ViewState": "AgIAAA4BAAAAAAAAAAAAwCsBAAAHAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-08-06T14:42:27.722Z",
-              "EditorCaption": ""
             },
             {
               "$type": "Document",

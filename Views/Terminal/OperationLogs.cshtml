@@ -126,9 +126,14 @@
             color: #999;
         }
 
-        .details-cell {
-            max-width: 300px;
-            word-break: break-word;
+        @@media (max-width: 600px) {
+            .details-cell
+
+        {
+            max-width: 200px;
+            font-size: 12px;
+        }
+
         }
 
         .copy-btn {

@@ -2970,8 +2970,8 @@ namespace WMS.Terminal.Controllers
         public async Task<IActionResult> RemoveFromPackage(int packageId, int itemId)
         {
             var warehouseId = HttpContext.Session.GetInt32("WarehouseId");
-            var userId = HttpContext.Session.GetInt32("userId");
-            var userName = HttpContext.Session.GetString("userName");
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var userName = HttpContext.Session.GetString("UserName");
             if (warehouseId == null) return RedirectToAction("SelectWarehouse");
 
             var item = await _db.PackageItems
@@ -3376,6 +3376,7 @@ namespace WMS.Terminal.Controllers
             if (warehouseId == null) return RedirectToAction("SelectWarehouse");
 
             var package = await _db.Packages
+                .Include(p => p.Cell)
                 .Include(p => p.Items)
                 .FirstOrDefaultAsync(p => p.Id == packageId && p.WarehouseId == warehouseId);
 
@@ -3599,8 +3600,8 @@ namespace WMS.Terminal.Controllers
         public async Task<IActionResult> ReceivePackage(int receiptId, int cellId)
         {
             var warehouseId = HttpContext.Session.GetInt32("WarehouseId");
-            var userId = HttpContext.Session.GetInt32("userId");
-            var userName = HttpContext.Session.GetString("userName");
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var userName = HttpContext.Session.GetString("UserName");
             if (warehouseId == null) return RedirectToAction("SelectWarehouse");
 
             var receipt = await _db.ExpectedReceipts
