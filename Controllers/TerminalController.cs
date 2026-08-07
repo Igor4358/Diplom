@@ -82,7 +82,7 @@ namespace WMS.Terminal.Controllers
             if (!IsAuthenticated()) return RedirectToAction("Login");
             if (!IsAdmin()) return RedirectToAction("MainMenu");
 
-            return View();
+            return View("~/Views/Admin/AddWarehouse.cshtml");
         }
 
         [HttpPost]
@@ -94,13 +94,13 @@ namespace WMS.Terminal.Controllers
             if (string.IsNullOrEmpty(name))
             {
                 ViewBag.Error = "Введите название склада";
-                return View();
+                return View("~/Views/Admin/AddWarehouse.cshtml");
             }
 
             if (await _db.Warehouses.AnyAsync(w => w.Name == name))
             {
                 ViewBag.Error = $"Склад '{name}' уже существует";
-                return View();
+                return View("~/Views/Admin/AddWarehouse.cshtml");
             }
 
             var warehouse = new Warehouse { Name = name };
@@ -124,13 +124,13 @@ namespace WMS.Terminal.Controllers
 
             if (warehouse == null) return NotFound();
 
-            if (warehouse.Cells.Any())
+            if (warehouse.Cells.Count != 0)
             {
                 TempData["Error"] = $"Нельзя удалить склад '{warehouse.Name}', так как есть привязанные ячейки!";
                 return RedirectToAction("ManageWarehouses");
             }
 
-            if (warehouse.Users.Any())
+            if (warehouse.Users.Count != 0)
             {
                 TempData["Error"] = $"Нельзя удалить склад '{warehouse.Name}', так как есть привязанные пользователи!";
                 return RedirectToAction("ManageWarehouses");
@@ -143,7 +143,7 @@ namespace WMS.Terminal.Controllers
             return RedirectToAction("ManageWarehouses");
         }
 
-        // Список всех ячеек
+        // управление ячейками
         [HttpGet]
         public async Task<IActionResult> ManageCells()
         {
@@ -157,7 +157,7 @@ namespace WMS.Terminal.Controllers
                 .ToListAsync();
 
             ViewBag.Warehouses = await _db.Warehouses.ToListAsync();
-            return View(cells);
+            return View("~/Views/Admin/ManageCells.cshtml",cells);
         }
 
         [HttpGet]
@@ -167,7 +167,7 @@ namespace WMS.Terminal.Controllers
             if (!IsAdmin()) return RedirectToAction("MainMenu");
 
             ViewBag.Warehouses = await _db.Warehouses.ToListAsync();
-            return View();
+            return View("~/Views/Admin/AddCell.cshtml");
         }
 
         [HttpPost]
@@ -180,14 +180,14 @@ namespace WMS.Terminal.Controllers
             {
                 ViewBag.Error = "Введите адрес ячейки";
                 ViewBag.Warehouses = await _db.Warehouses.ToListAsync();
-                return View();
+                return View("~/Views/Admin/AddCell.cshtml");
             }
 
             if (await _db.Cells.AnyAsync(c => c.Address == address && c.WarehouseId == warehouseId))
             {
                 ViewBag.Error = $"Ячейка '{address}' уже существует на этом складе";
                 ViewBag.Warehouses = await _db.Warehouses.ToListAsync();
-                return View();
+                return View("~/Views/Admin/AddCell.cshtml");
             }
 
             var cell = new Cell
@@ -311,7 +311,7 @@ namespace WMS.Terminal.Controllers
             if (!IsAuthenticated()) return RedirectToAction("Login");
             if (!IsAdmin()) return RedirectToAction("MainMenu");
 
-            return View();
+            return View("~/Views/Admin/AddCity.cshtml");
         }
 
         [HttpPost]
@@ -323,13 +323,13 @@ namespace WMS.Terminal.Controllers
             if (string.IsNullOrEmpty(name))
             {
                 ViewBag.Error = "Введите название города";
-                return View();
+                return View("~/Views/Admin/AddCity.cshtml");
             }
 
             if (await _db.Cities.AnyAsync(c => c.Name == name))
             {
                 ViewBag.Error = $"Город '{name}' уже существует";
-                return View();
+                return View("~/Views/Admin/AddCity.cshtml");
             }
 
             var city = new City
@@ -360,14 +360,14 @@ namespace WMS.Terminal.Controllers
             if (hasWarehouses)
             {
                 TempData["Error"] = $"Нельзя удалить город '{city.Name}', так как к нему привязаны склады!";
-                return RedirectToAction("ManageCities");
+                return RedirectToAction("ManageCitiesAndRoutes");
             }
 
             _db.Cities.Remove(city);
             await _db.SaveChangesAsync();
 
             TempData["Success"] = $"Город '{city.Name}' успешно удалён";
-            return RedirectToAction("ManageCities");
+            return RedirectToAction("ManageCitiesAndRoutes");
         }
 
         [HttpGet]
@@ -379,7 +379,7 @@ namespace WMS.Terminal.Controllers
             var city = await _db.Cities.FindAsync(id);
             if (city == null) return NotFound();
 
-            return View(city);
+            return View("~/Views/Admin/EditCity.cshtml", city);
         }
 
         [HttpPost]
@@ -394,13 +394,13 @@ namespace WMS.Terminal.Controllers
             if (string.IsNullOrEmpty(name))
             {
                 ViewBag.Error = "Введите название города";
-                return View(city);
+                return View("~/Views/Admin/EditCity.cshtml", city);
             }
 
             if (await _db.Cities.AnyAsync(c => c.Name == name && c.Id != id))
             {
                 ViewBag.Error = $"Город '{name}' уже существует";
-                return View(city);
+                return View("~/Views/Admin/EditCity.cshtml", city);
             }
 
             city.Name = name;
@@ -423,7 +423,7 @@ namespace WMS.Terminal.Controllers
             if (warehouse == null) return NotFound();
 
             ViewBag.Cities = await _db.Cities.OrderBy(c => c.Name).ToListAsync();
-            return View(warehouse);
+            return View("~/Views/Admin/EditWarehouse.cshtml", warehouse);
         }
 
         [HttpPost]
@@ -439,7 +439,7 @@ namespace WMS.Terminal.Controllers
             {
                 ViewBag.Error = "Введите название склада";
                 ViewBag.Cities = await _db.Cities.OrderBy(c => c.Name).ToListAsync();
-                return View(warehouse);
+                return View("~/Views/Admin/EditWarehouse.cshtml", warehouse);
             }
 
             warehouse.Name = name;
@@ -990,7 +990,7 @@ namespace WMS.Terminal.Controllers
                 .ToListAsync();
 
             ViewBag.AdminName = HttpContext.Session.GetString("UserName");
-            return View(users);
+            return View("~/Views/Admin/AdminPanel.cshtml",users);
         }
 
         [HttpGet]
@@ -1037,7 +1037,7 @@ namespace WMS.Terminal.Controllers
             ViewBag.CurrentFilter = filter;
             ViewBag.WorkersWithAccess = workersWithAccess;
 
-            return View(workers);
+            return View("~/Views/Admin/ManageUsers.cshtml",workers);
         }
 
         [HttpGet]
@@ -1048,7 +1048,7 @@ namespace WMS.Terminal.Controllers
 
             var warehouses = await _db.Warehouses.ToListAsync();
             ViewBag.Warehouses = warehouses;
-            return View();
+            return View("~/Views/Admin/AddUser.cshtml");
         }
 
         [HttpPost]
@@ -1061,14 +1061,14 @@ namespace WMS.Terminal.Controllers
             {
                 ViewBag.Error = "Заполните все поля и выберите хотя бы один склад";
                 ViewBag.Warehouses = await _db.Warehouses.ToListAsync();
-                return View();
+                return View("~/Views/Admin/AddUser.cshtml");
             }
 
             if (await _db.Users.AnyAsync(u => u.PinCode == pinCode))
             {
                 ViewBag.Error = $"Пользователь с PIN-кодом {pinCode} уже существует";
                 ViewBag.Warehouses = await _db.Warehouses.ToListAsync();
-                return View();
+                return View("~/Views/Admin/AddUser.cshtml");
             }
 
             var user = new User
@@ -1112,7 +1112,7 @@ namespace WMS.Terminal.Controllers
 
             var warehouses = await _db.Warehouses.ToListAsync();
             ViewBag.Warehouses = warehouses;
-            return View(user);
+            return View("~/Views/Admin/EditUser.cshtml", user);
         }
  
         [HttpPost]
@@ -1130,14 +1130,14 @@ namespace WMS.Terminal.Controllers
             {
                 ViewBag.Error = "Заполните все поля и выберите хотя бы один склад";
                 ViewBag.Warehouses = await _db.Warehouses.ToListAsync();
-                return View(user);
+                return View("~/Views/Admin/EditUser.cshtml", user);
             }
 
             if (await _db.Users.AnyAsync(u => u.PinCode == pinCode && u.Id != id))
             {
                 ViewBag.Error = $"Пользователь с PIN-кодом {pinCode} уже существует";
                 ViewBag.Warehouses = await _db.Warehouses.ToListAsync();
-                return View(user);
+                return View("~/Views/Admin/EditUser.cshtml", user);
             }
 
             user.FullName = fullName;
@@ -1566,18 +1566,37 @@ namespace WMS.Terminal.Controllers
 
             if (userId == null) return RedirectToAction("Login");
 
+            var availableIds = await GetAvailableWarehouseIds();
+
+            System.Diagnostics.Debug.WriteLine($"=== DEBUG OperationLogs ===");
+            System.Diagnostics.Debug.WriteLine($"UserId: {userId}");
+            System.Diagnostics.Debug.WriteLine($"UserRole: {userRole}");
+            System.Diagnostics.Debug.WriteLine($"AvailableWarehouseIds: {string.Join(", ", availableIds)}");
+
+            var totalLogs = await _db.OperationLogs.CountAsync();
+            System.Diagnostics.Debug.WriteLine($"Total logs in DB: {totalLogs}");
+
             var query = _db.OperationLogs.AsQueryable();
 
             if (userRole != "Admin")
             {
-                var availableIds = await GetAvailableWarehouseIds();
                 query = query.Where(l => l.WarehouseId != null && availableIds.Contains(l.WarehouseId.Value));
+
+                var filteredCount = await query.CountAsync();
+                System.Diagnostics.Debug.WriteLine($"Filtered logs (after filter): {filteredCount}");
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine($"Admin mode: showing all logs");
             }
 
             var logs = await query
                 .OrderByDescending(l => l.CreatedAt)
                 .Take(100)
                 .ToListAsync();
+
+            System.Diagnostics.Debug.WriteLine($"Logs returned to view: {logs.Count}");
+            System.Diagnostics.Debug.WriteLine($"=== END DEBUG ===");
 
             return View(logs);
         }
@@ -1707,7 +1726,7 @@ namespace WMS.Terminal.Controllers
             if (!IsAdmin()) return RedirectToAction("MainMenu");
 
             ViewBag.Warehouses = await _db.Warehouses.OrderBy(w => w.Name).ToListAsync();
-            return View();
+            return View("~/Views/Admin/AddRoute.cshtml");
         }
 
         [HttpPost]
@@ -1720,7 +1739,7 @@ namespace WMS.Terminal.Controllers
             {
                 ViewBag.Error = "Нельзя создать маршрут из склада в самого себя";
                 ViewBag.Warehouses = await _db.Warehouses.OrderBy(w => w.Name).ToListAsync();
-                return View();
+                return View("~/Views/Admin/AddRoute.cshtml");
             }
 
             var existingRoute = await _db.Routes
@@ -1730,7 +1749,7 @@ namespace WMS.Terminal.Controllers
             {
                 ViewBag.Error = "Маршрут между этими складами уже существует";
                 ViewBag.Warehouses = await _db.Warehouses.OrderBy(w => w.Name).ToListAsync();
-                return View();
+                return View("~/Views/Admin/AddRoute.cshtml");
             }
 
             var route = new Models.Route
@@ -1786,7 +1805,7 @@ namespace WMS.Terminal.Controllers
             if (route == null) return NotFound();
 
             ViewBag.Warehouses = await _db.Warehouses.OrderBy(w => w.Name).ToListAsync();
-            return View(route);
+            return View("~/Views/Admin/EditRoute.cshtml", route);
         }
 
         [HttpPost]
@@ -1802,7 +1821,7 @@ namespace WMS.Terminal.Controllers
             {
                 ViewBag.Error = "Нельзя создать маршрут из склада в самого себя";
                 ViewBag.Warehouses = await _db.Warehouses.OrderBy(w => w.Name).ToListAsync();
-                return View(route);
+                return View("~/Views/Admin/EditRoute.cshtml", route);
             }
 
             var existingRoute = await _db.Routes
@@ -1812,7 +1831,7 @@ namespace WMS.Terminal.Controllers
             {
                 ViewBag.Error = "Маршрут между этими складами уже существует";
                 ViewBag.Warehouses = await _db.Warehouses.OrderBy(w => w.Name).ToListAsync();
-                return View(route);
+                return View("~/Views/Admin/EditRoute.cshtml", route);
             }
 
             route.FromWarehouseId = fromWarehouseId;
@@ -2034,7 +2053,7 @@ namespace WMS.Terminal.Controllers
 
             HttpContext.Session.SetInt32("CurrentShipmentId", shipment.Id);
             HttpContext.Session.SetInt32("ShipmentProductId", shipment.ProductId);
-            HttpContext.Session.SetString("ShipmentProductName", shipment.Product?.Name);
+            HttpContext.Session.SetString("ShipmentProductName", shipment.Product?.Name ?? "Неизвестный товар");
             HttpContext.Session.SetInt32("ShipmentExpectedQty", shipment.ExpectedQuantity);
             HttpContext.Session.SetInt32("ShipmentReceivedQty", shipment.ReceivedQuantity);
 
@@ -2217,7 +2236,7 @@ namespace WMS.Terminal.Controllers
 
             return View(freeCells);
         }
-        private string GenerateEan13Barcode()
+        private static string GenerateEan13Barcode()
         {
             var random = new Random();
 
@@ -2363,17 +2382,17 @@ namespace WMS.Terminal.Controllers
         public IActionResult ReceivingConfirmation()
         {
             // Проверяем, что есть данные подтверждения
-            if (TempData["ReceivingSuccess"] == null || !(bool)TempData["ReceivingSuccess"])
+            if (TempData["ReceivingSuccess"] == null || !Convert.ToBoolean(TempData["ReceivingSuccess"]))
             {
                 return RedirectToAction("Receiving");
             }
 
             var productName = TempData["ReceivingProductName"]?.ToString();
-            var quantity = TempData["ReceivingQuantity"] != null ? (int)TempData["ReceivingQuantity"] : 0;
+            var quantity = TempData["ReceivingQuantity"] != null ? Convert.ToInt32(TempData["ReceivingQuantity"]) : 0;
             var cellAddress = TempData["ReceivingCellAddress"]?.ToString();
-            var isCompleted = TempData["ReceivingIsCompleted"] != null && (bool)TempData["ReceivingIsCompleted"];
-            var remaining = TempData["ReceivingRemaining"] != null ? (int)TempData["ReceivingRemaining"] : 0;
-            var expectedReceiptId = TempData["ReceivingExpectedReceiptId"] != null ? (int)TempData["ReceivingExpectedReceiptId"] : 0;
+            var isCompleted = TempData["ReceivingIsCompleted"] != null && Convert.ToBoolean(TempData["ReceivingIsCompleted"]);
+            var remaining = TempData["ReceivingRemaining"] != null ? Convert.ToInt32(TempData["ReceivingRemaining"]) : 0;
+            var expectedReceiptId = TempData["ReceivingExpectedReceiptId"] != null ? Convert.ToInt32(TempData["ReceivingExpectedReceiptId"]) : 0;
 
             ViewBag.ProductName = productName;
             ViewBag.Quantity = quantity;
@@ -2405,6 +2424,11 @@ namespace WMS.Terminal.Controllers
 
             if (stock != null)
             {
+                if (stock.CellId == null)
+                {
+                    TempData["SortingError"] = "Товар не привязан к ячейке";
+                    return RedirectToAction("Sorting");
+                }
                 HttpContext.Session.SetInt32("MovingProductId", stock.ProductId);
                 HttpContext.Session.SetString("MovingProductName", stock.Product?.Name ?? "Неизвестный товар");
                 HttpContext.Session.SetString("MovingProductSku", stock.Product?.Sku ?? "");
@@ -3116,7 +3140,7 @@ namespace WMS.Terminal.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Sorting(string sku = null)
+        public async Task<IActionResult> Sorting(string? sku = null)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             var warehouseId = HttpContext.Session.GetInt32("WarehouseId");
@@ -3132,6 +3156,11 @@ namespace WMS.Terminal.Controllers
 
                 if (stock != null)
                 {
+                    if (stock.CellId == null)
+                    {
+                        TempData["SortingError"] = "Товар не привязан к ячейке";
+                        return RedirectToAction("Sorting");
+                    }
                     HttpContext.Session.SetInt32("MovingProductId", stock.ProductId);
                     HttpContext.Session.SetString("MovingProductName", stock.Product?.Name ?? "Неизвестный товар");
                     HttpContext.Session.SetString("MovingProductSku", stock.Product?.Sku ?? "");
@@ -3195,7 +3224,7 @@ namespace WMS.Terminal.Controllers
             var packageStock = await _db.Stocks
               .Include(s => s.Product)
               .Include(s => s.Package)
-              .ThenInclude(p => p.Cell)  
+              .ThenInclude(p => p != null ? p.Cell : null)
               .FirstOrDefaultAsync(s => s.Barcode == searchQuery && s.PackageId != null && s.Quantity > 0);
 
             if (packageStock != null && packageStock.Package != null)
@@ -3311,8 +3340,8 @@ namespace WMS.Terminal.Controllers
                 var stock = stocks.First();
                 HttpContext.Session.SetInt32("TransferStockId", stock.Id);
                 HttpContext.Session.SetInt32("TransferProductId", stock.ProductId);
-                HttpContext.Session.SetString("TransferProductName", stock.Product?.Name);
-                HttpContext.Session.SetString("TransferProductSku", stock.Product?.Sku);
+                HttpContext.Session.SetString("TransferProductName", stock.Product?.Name ?? "Неизвестный товар");
+                HttpContext.Session.SetString("TransferProductSku", stock.Product?.Sku ?? "нет артикула");
                 HttpContext.Session.SetInt32("TransferCellId", cell.Id);
                 HttpContext.Session.SetString("TransferCellAddress", cell.Address);
                 HttpContext.Session.SetInt32("TransferMaxQuantity", stock.Quantity);
@@ -3372,12 +3401,17 @@ namespace WMS.Terminal.Controllers
 
             if (stock == null) return NotFound();
 
+            if (!stock.CellId.HasValue)
+            {
+                TempData["TransferError"] = "Ошибка: товар не привязан к ячейке. Перемещение невозможно.";
+                return RedirectToAction("TransferBetweenWarehouses");
+            }
             HttpContext.Session.SetInt32("TransferStockId", stock.Id);
             HttpContext.Session.SetInt32("TransferProductId", stock.ProductId);
-            HttpContext.Session.SetString("TransferProductName", stock.Product?.Name);
-            HttpContext.Session.SetString("TransferProductSku", stock.Product?.Sku);
+            HttpContext.Session.SetString("TransferProductName", stock.Product?.Name ?? "Неизвестный товар");
+            HttpContext.Session.SetString("TransferProductSku", stock.Product?.Sku ?? "Нет артикула");
             HttpContext.Session.SetInt32("TransferCellId", stock.CellId.Value);
-            HttpContext.Session.SetString("TransferCellAddress", stock.Cell?.Address);
+            HttpContext.Session.SetString("TransferCellAddress", stock.Cell?.Address ?? "неизвестно");
             HttpContext.Session.SetInt32("TransferMaxQuantity", stock.Quantity);
 
             return RedirectToAction("TransferSelectQuantity");
@@ -3450,7 +3484,7 @@ namespace WMS.Terminal.Controllers
                 Warehouses = await _db.Warehouses.OrderBy(w => w.Name).ToListAsync()
             };
 
-            return View(model);
+            return View("~/Views/Admin/ManageCitiesAndRoutes.cshtml",model);
         }
 
         [HttpGet]
@@ -3738,6 +3772,12 @@ namespace WMS.Terminal.Controllers
             if (stock == null)
             {
                 TempData["TransferError"] = "Товар не найден на складе";
+                return RedirectToAction("TransferBetweenWarehouses");
+            }
+
+            if (string.IsNullOrEmpty(stock.Barcode))
+            {
+                TempData["TransferError"] = "У товара отсутствует штрих-код. Перемещение невозможно.";
                 return RedirectToAction("TransferBetweenWarehouses");
             }
 

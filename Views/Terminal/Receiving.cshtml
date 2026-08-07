@@ -119,7 +119,6 @@
             background: #ff4444;
         }
 
-        /* КОНТЕЙНЕР ДЛЯ НОВОГО СКАНЕРА */
         #reader {
             width: 100%;
             max-width: 480px;
@@ -245,14 +244,12 @@
         const inputField = document.getElementById('scannedSku');
         const readerContainer = document.getElementById('reader');
 
-        // Функция запуска сканера
         function startScanner() {
             if (typeof Html5Qrcode === 'undefined') {
                 alert('Библиотека сканера не загружена. Проверьте интернет.');
                 return;
             }
 
-            // Показываем контейнер
             readerContainer.style.display = 'block';
             scanBtn.textContent = '⏳ Запуск...';
             scanBtn.disabled = true;
@@ -268,26 +265,19 @@
             html5Scanner.start(
                 { facingMode: "environment" },
                 config,
-                // onScanSuccess
                 (decodedText) => {
-                    // Успешное сканирование!
                     inputField.value = decodedText;
 
-                    // Вибрация (если есть)
                     if (navigator.vibrate) navigator.vibrate(200);
 
-                    // Отправляем форму
                     const form = document.getElementById('receivingForm');
                     if (form) {
                         setTimeout(() => form.submit(), 300);
                     }
 
-                    // Останавливаем сканер
                     stopScanner();
                 },
-                // onScanError (игнорируем)
                 (error) => {
-                    // Ничего не делаем — это нормально, кадры сканируются постоянно
                 }
             ).then(() => {
                 isScanning = true;
@@ -305,7 +295,6 @@
             });
         }
 
-        // Функция остановки сканера
         function stopScanner() {
             if (html5Scanner) {
                 html5Scanner.stop().then(() => {
@@ -340,7 +329,6 @@
 
         stopBtn.addEventListener('click', stopScanner);
 
-        // Если пользователь нажал Enter в поле ввода
         inputField.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 const form = this.closest('form');
@@ -348,12 +336,10 @@
             }
         });
 
-        // Очищаем сканер при уходе со страницы
         window.addEventListener('beforeunload', function() {
             stopScanner();
         });
 
-        // Для отладки
         console.log('✅ Сканер на html5-qrcode загружен. Нажмите кнопку для запуска.');
     </script>
 

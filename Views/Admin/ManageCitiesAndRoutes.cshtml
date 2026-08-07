@@ -231,7 +231,14 @@
         <button class="back-btn" onclick="location.href='/Terminal/AdminPanel'">← Назад</button>
         <h1>🏙️ Города и маршруты</h1>
     </div>
-
+    @if (TempData["Error"] != null)
+    {
+        <div class="error">❌ @TempData["Error"]</div>
+    }
+    @if (TempData["Success"] != null)
+    {
+        <div class="success">✅ @TempData["Success"]</div>
+    }
     <div class="tabs">
         <button class="tab active" onclick="switchTab('cities')">🏙️ Города (@Model.Cities.Count)</button>
         <button class="tab" onclick="switchTab('routes')">🛤️ Маршруты (@Model.Routes.Count)</button>
