@@ -200,7 +200,8 @@ https://mywmsapp.loca.lt
 Важно: браузеры разрешают доступ к камере только через HTTPS, поэтому без туннеля сканер на телефоне не заработает.
 
 📁 Структура проекта
-text
+
+```text
 WMS.Terminal/
 │
 ├── Controllers/
@@ -248,6 +249,7 @@ WMS.Terminal/
 ├── appsettings.json                # Конфигурация
 ├── Program.cs                      # Точка входа
 └── WMS.Terminal.csproj
+```
 
 🗄 Схема базы данных
 Таблица	Назначение
