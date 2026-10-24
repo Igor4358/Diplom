@@ -152,10 +152,13 @@ Visual Studio 2022 (или VS Code)
 Node.js (для localtunnel)
 
 Шаг 1. Клонировать репозиторий
+
 bash
 git clone https://github.com/your-username/wms-terminal.git
 cd wms-terminal
+
 Шаг 2. Настроить подключение к БД
+
 Откройте appsettings.json и укажите строку подключения:
 
 json
@@ -173,7 +176,9 @@ dotnet ef database update
 Шаг 4. Запустить проект
 
 bash
+
 dotnet run --urls="http://0.0.0.0:5000"
+
 Приложение будет доступно по адресу: http://localhost:5000
 
 Тестовые данные
@@ -340,6 +345,7 @@ private string GenerateEan13Barcode()
 Где используется: страница аналитики склада → кнопка «Экспорт в Excel».
 
 📝 Лицензия
+
 Проект создан в учебных целях. Сторонние библиотеки используются согласно их лицензиям:
 
 EPPlus — Polyform Noncommercial (для дипломных проектов)
