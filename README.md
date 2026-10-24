@@ -316,7 +316,9 @@ Worker	Работа с товарами: приёмка, сборка, сорт�
 html5-qrcode	Сканирование через камеру телефона/ТСД
 
 Алгоритм EAN-13 (контрольная сумма)
+
 csharp
+
 private string GenerateEan13Barcode()
 {
     var random = new Random();
