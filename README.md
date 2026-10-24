@@ -336,6 +336,7 @@ private string GenerateEan13Barcode()
     
     return digits + checkDigit.ToString();
 }
+
 Зачем нужна контрольная сумма: сканер проверяет правильность чтения кода. Если одна цифра прочитана неверно — код не будет принят.
 
 📎 Экспорт в Excel
